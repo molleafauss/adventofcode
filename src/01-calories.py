@@ -5,7 +5,7 @@ if __name__ == '__main__':
     elf = 0
     elf_calories = 0
     max_calories = 0
-    with open("01a-calories.txt") as f:
+    with open("01-calories.txt") as f:
         for l in f:
             l = l.strip()
             if not l:
