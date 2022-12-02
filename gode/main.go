@@ -1,7 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"gode/day1"
+)
 
 func main() {
-	fmt.Println("Hello, World!")
+	day1.Calories()
 }

@@ -8,7 +8,7 @@ if __name__ == '__main__':
     elf = 0
     elf_calories = 0
     calories = []
-    with open("01-calories.txt") as f:
+    with open("../files/01-calories.txt") as f:
         for l in f:
             l = l.strip()
             if not l:
