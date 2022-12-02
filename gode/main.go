@@ -1,9 +1,9 @@
 package main
 
 import (
-	"gode/day1"
+	"gode/day01"
 )
 
 func main() {
-	day1.Calories()
+	day01.Calories()
 }
