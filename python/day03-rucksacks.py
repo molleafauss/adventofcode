@@ -1,9 +1,13 @@
-# upper score: ord(ch) - 'A' + 27
+from utils import Parser, loader
+
+# https://adventofcode.com/2022/day/3
+# score of uppercase letter: ord(ch) - 'A' + 27
 UPPER = 27 - ord('A')
+# score of uppercase letter: ord(ch) - 'a' + 1
 LOWER = 1 - ord('a')
 
 
-class Day03:
+class Day03(Parser):
     def __init__(self):
         self.count = 0
         self.count2 = 0
@@ -37,9 +41,4 @@ class Day03:
 
 
 if __name__ == '__main__':
-    parser = Day03()
-    with open("../files/day03-rucksacks.txt") as f:
-        for l in f:
-            l = l.strip()
-            parser.parse(l)
-    parser.solve()
+    loader("../files/day03-rucksacks.txt", Day03())
