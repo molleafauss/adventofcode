@@ -30,5 +30,4 @@ class Day04(Parser):
 
 
 if __name__ == '__main__':
-    # loader("../files/day04-test.txt", Day04())
     loader("../files/day04-cleanup.txt", Day04())
