@@ -14,5 +14,5 @@ class Parser(Protocol):
 def loader(filename: str, parser: Parser):
     with open(filename) as f:
         for l in f:
-            parser.parse(l.strip())
+            parser.parse(l.rstrip())
     parser.solve()
