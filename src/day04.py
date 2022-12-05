@@ -1,5 +1,6 @@
 from utils import Parser, loader
 
+# https://adventofcode.com/2022/day/4
 
 def inside(pos, range):
     return range[0] <= pos <= range[1]
