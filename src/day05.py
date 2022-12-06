@@ -2,6 +2,10 @@ import re
 from adc import Solver
 
 # https://adventofcode.com/2022/day/5
+# This was a fun one - I accumulated stacks and instructions and then built the stacks from the input after parsing
+# entire file. I could not figure a way to build stacks while reading the file. Glad I didn't, as second part had to
+# start from the initial status again. I know parsing isn't the most elegant.
+# But we had regexp for the instructions!
 
 RE_INSTRUCTION = re.compile(r"move (\d+) from (\d+) to (\d+)")
 

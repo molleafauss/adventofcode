@@ -2,9 +2,8 @@ from adc import Solver
 
 
 # https://adventofcode.com/2022/day/1
-# Q1) Find the Elf carrying the most Calories. How many total Calories is that Elf carrying?
-#
-# Q2) Find the top three Elves carrying the most Calories. How many Calories are those Elves carrying in total?
+# quite simple, of course just go through it in one pass of the file.
+# both solutions can be calculated while reading the file
 class Solution(Solver):
     def __init__(self):
         self.elf = 0

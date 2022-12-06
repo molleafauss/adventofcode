@@ -2,6 +2,12 @@ from adc import Solver
 
 
 # https://adventofcode.com/2022/day/6
+# This was actually "simple" once one realises that flinging a slice into a set would create a set of the expected
+# length only if all letters were different.
+# one could actually use a single dictionary containing frequency of letters and add/remove as the sliding window moves
+# but the code would end up being more involved.
+# the `solve()` is an empty method here as the input is a single line
+
 def all_different(string):
     return len(set(string)) == len(string)
 

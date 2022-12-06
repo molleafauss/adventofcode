@@ -6,6 +6,8 @@ from adc import Solver
 # score:
 #   shape:  1 for Rock, 2 for Paper, and 3 for Scissors
 #   result: 0 if you lost, 3 if the round was a draw, and 6 if you won
+#
+# I could have calculated most of these lookup tables in code, but tbh they make the code simple enough.
 
 SCORE_CHOICE = {
     "R": 1,
@@ -25,6 +27,10 @@ SCORE_RESULT = {
     "SS": 3,
 }
 
+# basically I observed that to find what was needed to play, it was enough to "invert" SCORE_RESULT from
+# [other play][my play] => [score]
+# to
+# [other play][score] => [my play]
 PLAY_ROUND2 = {k[0] + str(v): k[1] for k,v in SCORE_RESULT.items()}
 
 OPPONENT_PLAY = {

@@ -2,6 +2,10 @@ from adc import Solver
 
 
 # https://adventofcode.com/2022/day/4
+# overlap comparisons were probably cleaner if they were placed into functions
+# the partial overlap was probably working instead calculated as inverted (= one segment ends being outside range of
+# the other segment)
+
 def inside(pos, range):
     return range[0] <= pos <= range[1]
 

@@ -1,9 +1,15 @@
 from adc import Solver
 
 # https://adventofcode.com/2022/day/3
-# score of uppercase letter: ord(ch) - 'A' + 27
+# the first half of the line was put in a set only for helping with the second part of the puzzle where set.intersection
+# was practically the solution to the puzzle.
+# The first part was probably fine using "letter in line"; with the size of inputs, lookup in a set vs going through
+# a sequence would have no perceivable difference in performance.
+#
+# score formulas for the letters according to the puzzle.
+# uppercase letter: ord(ch) - 'A' + 27
 UPPER = 27 - ord('A')
-# score of uppercase letter: ord(ch) - 'a' + 1
+# uppercase letter: ord(ch) - 'a' + 1
 LOWER = 1 - ord('a')
 
 
