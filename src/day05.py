@@ -1,17 +1,32 @@
 import re
-from utils import Parser, loader
+from adc import Solver
 
 # https://adventofcode.com/2022/day/5
 
 RE_INSTRUCTION = re.compile(r"move (\d+) from (\d+) to (\d+)")
 
 
-class Day05(Parser):
+class Solution(Solver):
     def __init__(self):
         self.stack_defs = []
         self.stacks = []
         self.instructions = []
         self.parse_instructions = False
+
+    def file_name(self):
+        return "../files/day05-crates.txt"
+
+    def test_data(self):
+        return """    [D]    
+[N] [C]    
+[Z] [M] [P]
+ 1   2   3 
+
+move 1 from 2 to 1
+move 3 from 1 to 3
+move 2 from 2 to 1
+move 1 from 1 to 2
+"""
 
     def parse(self, line: str):
         if not line:
@@ -70,6 +85,3 @@ class Day05(Parser):
                 self.stacks[i["to"] - 1].append(self.stacks[i["from"] - 1][-i["num"] + k])
             del self.stacks[i["from"] - 1][-i["num"]:]
 
-
-if __name__ == '__main__':
-    loader("../files/day05-crates.txt", Day05())

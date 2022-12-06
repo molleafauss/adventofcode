@@ -1,8 +1,8 @@
 from typing import Protocol
 
 
-# Parser "interface" used by the loader
-class Parser(Protocol):
+# Parser "interface" used by the solver classes
+class Solver(Protocol):
     def parse(self, line: str):
         ...
 
@@ -28,7 +28,7 @@ class Parser(Protocol):
 
 
 # reads a file line by line, passes each line to the parser and then call solve on the parser
-def loader(filename: str, parser: Parser):
+def loader(filename: str, parser: Solver):
     with open(filename) as f:
         for l in f:
             parser.parse(l.rstrip())

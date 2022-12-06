@@ -1,4 +1,4 @@
-from utils import Parser, loader
+from adc import Solver
 
 
 # https://adventofcode.com/2022/day/6
@@ -6,7 +6,7 @@ def all_different(string):
     return len(set(string)) == len(string)
 
 
-class Day06(Parser):
+class Solution(Solver):
 
     def parse(self, line: str):
         start_of_packet = False
@@ -37,8 +37,3 @@ bvwbjplbgvbhsrlpgdmjqwftvncz
 nppdvjthqldpwncqszvftbrmjlhg
 nznrnfrfntjfmvfwmzdfjlvtqnbhcprsg
 zcfzfwzzqfrljwzlrfnpqdbhtmscgvjw"""
-
-
-if __name__ == '__main__':
-    Day06().run_test()
-    Day06().run()

@@ -1,4 +1,4 @@
-from utils import Parser, loader
+from adc import Solver
 
 # https://adventofcode.com/2022/day/2
 # 1st: A for Rock, B for Paper, and C for Scissors
@@ -46,10 +46,18 @@ SCORE_ROUND2 = {
 }
 
 
-class Day02(Parser):
+class Solution(Solver):
     def __init__(self):
         self.score1 = 0
         self.score2 = 0
+
+    def file_name(self):
+        return "../files/day02-strategy.txt"
+
+    def test_data(self):
+        return """A Y
+B X
+C Z"""
 
     def parse(self, line: str):
         (a, b) = line.split(" ")
@@ -62,7 +70,3 @@ class Day02(Parser):
     def solve(self):
         print(f"Resulting score (part 1): {self.score1}")
         print(f"Resulting score (part 2): {self.score2}")
-
-
-if __name__ == '__main__':
-    loader("../files/day02-strategy.txt", Day02())

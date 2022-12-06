@@ -1,15 +1,26 @@
-from utils import Parser, loader
+from adc import Solver
+
 
 # https://adventofcode.com/2022/day/4
-
 def inside(pos, range):
     return range[0] <= pos <= range[1]
 
 
-class Day04(Parser):
+class Solution(Solver):
     def __init__(self):
         self.full_overlaps = 0
         self.partial_overlaps = 0
+
+    def file_name(self):
+        return "../files/day04-cleanup.txt"
+
+    def test_data(self):
+        return """2-4,6-8
+2-3,4-5
+5-7,7-9
+2-8,3-7
+6-6,4-6
+2-6,4-8"""
 
     def parse(self, line: str):
         pairs = line.split(",")
@@ -28,7 +39,3 @@ class Day04(Parser):
     def solve(self):
         print(f"Fully overlapping sections: {self.full_overlaps}")
         print(f"Partially overlapping sections: {self.partial_overlaps}")
-
-
-if __name__ == '__main__':
-    loader("../files/day04-cleanup.txt", Day04())

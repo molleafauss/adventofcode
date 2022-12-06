@@ -1,4 +1,4 @@
-from utils import Parser, loader
+from adc import Solver
 
 # https://adventofcode.com/2022/day/3
 # score of uppercase letter: ord(ch) - 'A' + 27
@@ -7,12 +7,23 @@ UPPER = 27 - ord('A')
 LOWER = 1 - ord('a')
 
 
-class Day03(Parser):
+class Solution(Solver):
     def __init__(self):
         self.count = 0
         self.count2 = 0
         self.possible_badges = None
         self.row = 0
+
+    def file_name(self):
+        return "../files/day03-rucksacks.txt"
+
+    def test_data(self):
+        return """vJrwpWtwJgWrhcsFMMfFFhFp
+jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL
+PmmdzqPrVvPwwTWBwg
+wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn
+ttgJtRGJQctTZtZT
+CrZsJsPPZsGzwwsLwLmpwMDw"""
 
     def parse(self, line):
         self.row += 1
@@ -38,7 +49,3 @@ class Day03(Parser):
     def solve(self):
         print(f"[1] Priority of item in both compartments {self.count}")
         print(f"[2] Overall priority of badges {self.count2}")
-
-
-if __name__ == '__main__':
-    loader("../files/day03-rucksacks.txt", Day03())
