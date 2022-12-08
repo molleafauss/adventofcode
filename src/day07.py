@@ -3,10 +3,14 @@ from adc import Solver
 
 # https://adventofcode.com/2022/day/7
 
+LIMIT = 100000
+
 class Solution(Solver):
     def __init__(self):
         self.tree = {"name": "", "entries": {}}
         self.dirstack = [self.tree]
+        # total size of dirs smaller than limit
+        self.total_size = 0
 
     def parse(self, line: str):
         if line.startswith("$ "):
@@ -15,7 +19,24 @@ class Solution(Solver):
             self.record_entry(line)
 
     def solve(self):
-        pass
+        # lovely tree walk
+        def dir_size(dir):
+            my_size = 0
+            subdirs = []
+            for e in dir["entries"].values():
+                if e["dir"]:
+                    my_size += dir_size(e)
+                else:
+                    my_size += e["size"]
+            if my_size < LIMIT:
+                self.total_size += my_size
+            return my_size
+
+        size = dir_size(self.tree)
+        if size < LIMIT:
+            self.total_size += size
+        print(f"Found size for root: {size}")
+        print(f"[1] Found small dir sizes: {self.total_size}")
 
     def file_name(self):
         return "../files/day07-dirs.txt"
@@ -61,4 +82,9 @@ $ ls
             raise Exception(f"unknown command {command}")
 
     def record_entry(self, entry):
-        pass
+        (size, name) = entry.split(" ", maxsplit=2)
+        if size == "dir":
+            entry = {"name": name, "dir": True, "entries": {}}
+        else:
+            entry = {"name": name, "dir": False, "size": int(size)}
+        self.dirstack[-1]["entries"][name] = entry
