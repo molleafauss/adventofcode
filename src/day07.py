@@ -4,6 +4,8 @@ from adc import Solver
 # https://adventofcode.com/2022/day/7
 
 LIMIT = 100000
+DISK_SIZE = 70000000
+MIN_FREE = 30000000
 
 class Solution(Solver):
     def __init__(self):
@@ -11,6 +13,7 @@ class Solution(Solver):
         self.dirstack = [self.tree]
         # total size of dirs smaller than limit
         self.total_size = 0
+        self.all_dirs = []
 
     def parse(self, line: str):
         if line.startswith("$ "):
@@ -21,8 +24,8 @@ class Solution(Solver):
     def solve(self):
         # lovely tree walk
         def dir_size(dir):
+            self.all_dirs.append(dir)
             my_size = 0
-            subdirs = []
             for e in dir["entries"].values():
                 if e["dir"]:
                     my_size += dir_size(e)
@@ -30,13 +33,19 @@ class Solution(Solver):
                     my_size += e["size"]
             if my_size < LIMIT:
                 self.total_size += my_size
+            dir["size"] = my_size
             return my_size
 
-        size = dir_size(self.tree)
-        if size < LIMIT:
-            self.total_size += size
-        print(f"Found size for root: {size}")
+        used = dir_size(self.tree)
         print(f"[1] Found small dir sizes: {self.total_size}")
+        print(f"Found size for root: {used}")
+        if DISK_SIZE - used > MIN_FREE:
+            print("[2] enough space free: used {used} / free {DISK_SIZE - used}")
+            return
+        size_to_free = MIN_FREE - (DISK_SIZE - used)
+        big_dirs = [d for d in self.all_dirs if d["size"] > size_to_free]
+        big_dirs = sorted(big_dirs, key=lambda d: d["size"])
+        print(f"[2] min space to delete = {big_dirs[0]['size']}")
 
     def file_name(self):
         return "../files/day07-dirs.txt"
