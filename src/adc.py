@@ -10,7 +10,7 @@ class Solver(Protocol):
         ...
 
     def file_name(self):
-        return ""
+        return None
 
     def test_data(self):
         return ""
@@ -21,7 +21,10 @@ class Solver(Protocol):
         self.solve()
 
     def run(self):
-        with open(self.file_name()) as f:
+        file_name = self.file_name()
+        if not file_name:
+            return
+        with open(file_name) as f:
             for l in f:
                 self.parse(l.rstrip())
         self.solve()

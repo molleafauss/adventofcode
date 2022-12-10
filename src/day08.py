@@ -2,6 +2,7 @@ from adc import Solver
 
 
 # https://adventofcode.com/2022/day/8
+# quite verbose. There's a lot of "factorizable" code. And I also enjoyed debugging a minefield of off-by-one errors
 
 class Solution(Solver):
     def __init__(self):
