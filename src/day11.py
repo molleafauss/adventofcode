@@ -1,10 +1,11 @@
-from decimal import Decimal
 import math
 
 from adc import Solver
 import re
 
 # https://adventofcode.com/2022/day/11
+# ok I had no clue about how to reduce the math - the use modulo of all "divisible by" was a hint that lead to the right
+# solution
 RE_MONKEY = re.compile(r"Monkey (\d+):")
 RE_ITEMS = re.compile("Starting items: (.*)")
 RE_OPERATION = re.compile("Operation: new = (.*)")
@@ -37,20 +38,20 @@ class Monkey:
         self.test[1 if result else 2] = int(monkey)
 
     def add_item(self, item):
-        self.initial_items.append(item)
+        self.items.append(item)
 
     def start(self):
         self.items = self.initial_items.copy()
+        self.inspected = 0
 
-    def act(self, reduce_worry):
+    def act(self, reduce_worry, reducer):
         throws = []
-        reduce = Decimal(reduce_worry)
-        while self.initial_items:
+        while self.items:
             self.inspected += 1
-            worry = self.initial_items.pop(0)
+            worry = self.items.pop(0)
             # this is "cheating", but, well, it works.
-            worry = eval(self.operation, {}, {"old": worry})
-            worry = math.floor(Decimal(worry) / reduce)
+            worry = eval(self.operation, {}, {"old": worry}) % reducer
+            worry = int(worry / reduce_worry)
             if (worry % self.test[0]) == 0:
                 throws.append([self.test[1], worry])
             else:
@@ -81,10 +82,13 @@ class Solution(Solver):
             raise ValueError(f"Invalid line: {line}")
 
     def solve(self):
-        map(lambda m: m.start(), self.monkeys)
+        reducer = math.prod([m.test[0] for m in self.monkeys])
+        print(f"reducer: {reducer}")
+        for m in self.monkeys:
+            m.start()
         for i in range(20):
             for m in self.monkeys:
-                for (id, item) in m.act(3):
+                for (id, item) in m.act(3, reducer):
                     self.monkeys[id].add_item(item)
 
         # sort by most inspected, take first twos
@@ -92,11 +96,14 @@ class Solution(Solver):
         print(f"[1] Most active: {most_active[0].id} => {most_active[0].inspected}, {most_active[1].id} => {most_active[1].inspected}: {most_active[0].inspected * most_active[1].inspected}")
 
         # reset
-        map(lambda m: m.start(), self.monkeys)
+        for m in self.monkeys:
+            m.start()
         for i in range(10000):
             for m in self.monkeys:
-                for (id, item) in m.act(1):
+                for (id, item) in m.act(1, reducer):
                     self.monkeys[id].add_item(item)
+            if i % 1000 == 0:
+                print("[%s] %s" % (i, [m.inspected for m in self.monkeys]))
 
         # sort by most inspected, take first twos
         most_active = sorted(self.monkeys, reverse=True, key=lambda m: m.inspected)
