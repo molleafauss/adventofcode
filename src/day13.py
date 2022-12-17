@@ -3,6 +3,8 @@ from functools import cmp_to_key
 from adc import Solver
 
 # https://adventofcode.com/2022/day/13
+# blessed be `eval`. Parsing the input would have been a nightmare
+# Good thing I implemented basically a "cmp" function returning -1, 0, or 1 - the part 2 was a breeze to do.
 
 
 class Solution(Solver):
