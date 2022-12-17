@@ -1,48 +1,18 @@
 from adc import Solver
-import re
 
 # https://adventofcode.com/2022/day/12
-# --- Day 12: Hill Climbing Algorithm ---
-#
-# You try contacting the Elves using your handheld device, but the river you`re following must be too low to get a decent signal.
-#
-# You ask the device for a heightmap of the surrounding area (your puzzle input). The heightmap shows the local area from
-# above broken into a grid; the elevation of each square of the grid is given by a single lowercase letter, where a is the
-# lowest elevation, b is the next-lowest, and so on up to the highest elevation, z.
-#
-# Also included on the heightmap are marks for your current position (S) and the location that should get the best signal #
-# (E). Your current position (S) has elevation a, and the location that should get the best signal (E) has elevation z.
-#
-# You'd like to reach E, but to save energy, you should do it in as few steps as possible. During each step, you can move
-# exactly one square up, down, left, or right. To avoid needing to get out your climbing gear, the elevation of the
-# destination square can be at most one higher than the elevation of your current square; that is, if your current
-# elevation is m, you could step to elevation n, but not to elevation o. (This also means that the elevation of the
-# destination square can be much lower than the elevation of your current square.)
-#
-# For example:
-#
-# Sabqponm
-# abcryxxl
-# accszExk
-# acctuvwj
-# abdefghi
-#
-# Here, you start in the top-left corner; your goal is near the middle. You could start by moving down or right, but
-# eventually you'll need to head toward the e at the bottom. From there, you can spiral around to the goal:
-#
-# v..v<<<<
-# >v.vv<<^
-# .>vv>E^^
-# ..v>>>^^
-# ..>>>>>^
-#
-# In the above diagram, the symbols indicate whether the path exits each square moving up (^), down (v), left (<),
-# or right (>). The location that should get the best signal is still E, and . marks unvisited squares.
-#
-# This path reaches the goal in 31 steps, the fewest possible.
-#
-# What is the fewest steps required to move from your current position to the location that should get the best signal?
-
+# this was a bloody fun ride. For some reason I started some "Dynamic Programming" shenanigans which - of course - led
+# me nowhere. Then I managed to get someone suggesting Djikstra. Of course, it was the right suggestion, but took me
+# quite a while to nail it.
+# The reality is that the first idea I had was on the good track - I needed to track the visited places and make sure I
+# never circled back to my steps.
+# The Djikstra here doesn't build the Vertex-edges matrix, but builds it "dynamically" by using the neighbouring rule,
+# adding the fact that the neighbour can be visited only if it hasn't alread (removing from the cost matrix does exactly
+# that - we visited the position, added cost to all neighbours thus no other step can come back.
+# Fun part the second one: I didn't notice there were (of course) spots which could not reach the top (predictable,
+# though); initializing the cost to an impossible value made me add an extra condition to signal that.
+# The current result is slow, as walk is called once per starting point. Once I have a set of parents, though, ideally
+# I can start finding paths for every element in the possible_starts and remove them if found.
 
 class Solution(Solver):
     def __init__(self):
@@ -75,40 +45,61 @@ class Solution(Solver):
 
     def solve(self):
         assert self.start and self.end
-        print(f"Finding path {self.start} => {self.end}")
 
-        def walk():
+        def walk(start):
+            print(f"=== Finding path {start} => {self.end}")
             costs = {}
             max = self.width * self.height + 1
             for row in range(self.height):
                 for col in range(self.width):
-                    costs[(row, col)] = max
-            costs[self.start] = 0
+                    costs[(row, col)] = 0 if (row, col) == start else max
             parents = {}
-            next_node = self.start
+            next_node = start
+            visited = 0
             while next_node != self.end:
-                print(f"Visiting: {next_node}")
+                visited += 1
                 for neighbor, _ in self.neighbours(next_node, costs):
                     if costs[next_node] + 1 < costs[neighbor]:
                         costs[neighbor] = costs[next_node] + 1
                         parents[neighbor] = next_node
+                    else:
+                        assert neighbor in parents
                 del costs[next_node]
-                next_node = min(costs, key=costs.get)
-            assert next_node == self.end
+                to_visit = min(costs, key=costs.get)
+                if costs[to_visit] == max:
+                    # no path to end - bail
+                    return []
+                next_node = to_visit
+            print(f"Found end, visited {visited}")
             return parents
 
-        def walk_back(parents):
+        def walk_back(parents, start):
+            print(f"backtracking {self.end} => {start}: {len(parents)}")
             path = []
+            if self.end not in parents:
+                return path
             n = self.end
-            while n != self.start:
+            while n != start:
                 path.insert(0, (n, self.map[n]))
                 n = parents[n]
             return path
 
-        parents = walk()
-        path = walk_back(parents)
+        parents = walk(self.start)
+        path = walk_back(parents, self.start)
+        print(f"[1] Min length found: {len(path)}: {path}")
 
-        print(f"Min length found: {len(path)}: {path}")
+        # now try to walk from all 'a'
+        possible_starts = [pos for pos in self.map if self.map[pos] == 'a']
+        min_length = len(path)
+        min_start = self.start
+        for start in possible_starts:
+            path = walk_back(walk(start), start)
+            if not path:
+                continue
+            if len(path) < min_length:
+                min_length = len(path)
+                min_start = start
+        print(f"[2] Shortest path from {min_start}: {min_length}")
 
     def neighbours(self, node, costs):
         cur_height = self.map[node]
@@ -119,7 +110,7 @@ class Solution(Solver):
             return pos in self.map and pos in costs and ord(self.map[pos]) - ord(cur_height) <= 1
 
         steps = [(s, self.map[s]) for s in pos if valid(s)]
-        print(f"{node}:{self.map[node]} => {steps}")
+        # print(f"{node}:{self.map[node]} => {steps}")
         return steps
 
     def file_name(self):
