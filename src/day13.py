@@ -1,6 +1,6 @@
 from functools import cmp_to_key
 
-from adc import Solver
+from advent import Solver
 
 # https://adventofcode.com/2022/day/13
 # blessed be `eval`. Parsing the input would have been a nightmare

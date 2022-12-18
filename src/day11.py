@@ -1,6 +1,6 @@
 import math
 
-from adc import Solver
+from advent import Solver
 import re
 
 # https://adventofcode.com/2022/day/11

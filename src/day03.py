@@ -1,4 +1,4 @@
-from adc import Solver
+from advent import Solver
 
 # https://adventofcode.com/2022/day/3
 # the first half of the line was put in a set only for helping with the second part of the puzzle where set.intersection

@@ -1,4 +1,4 @@
-from adc import Solver
+from advent import Solver
 
 
 # https://adventofcode.com/2022/day/1

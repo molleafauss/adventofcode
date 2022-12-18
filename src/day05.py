@@ -1,5 +1,5 @@
 import re
-from adc import Solver
+from advent import Solver
 
 # https://adventofcode.com/2022/day/5
 # This was a fun one - I accumulated stacks and instructions and then built the stacks from the input after parsing
