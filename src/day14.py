@@ -2,14 +2,13 @@ from adc import Solver
 
 # https://adventofcode.com/2022/day/14
 
-START = [500, 0]
+START = (500, 0)
 
 
 class Solution(Solver):
     def __init__(self):
         self.scan = {}
         self.max_y = 0
-        self.sand = 0
 
     def parse(self, line: str):
         if not line:
@@ -36,6 +35,7 @@ class Solution(Solver):
     def solve(self):
         print(f"Max y: {self.max_y}")
         keep_dripping = True
+        sand = 0
         while keep_dripping:
             x, y = START
             while y <= self.max_y:
@@ -51,16 +51,52 @@ class Solution(Solver):
                     x += 1
                     continue
                 else:
-                    print(f"Sand found resting place in {(x, y)}: {self.sand}")
-                    self.sand += 1
+                    print(f"Sand found resting place in {(x, y)}: {sand}")
+                    sand += 1
                     self.scan[(x, y)] = 'o'
                     break
             # reached the abyss - stop
             keep_dripping = y <= self.max_y
-        print(f"[1] Sand resting: {self.sand}")
+        print(f"[1] Sand resting: {sand}")
+
+        # remove all 'o' from the scan
+        self.scan = {pos: val for pos, val in self.scan.items() if val == '#'}
+
+        # part 2 - should be trying to refactor
+        self.max_y += 2
+        keep_dripping = True
+        sand = 0
+        while keep_dripping:
+            x, y = START
+            while y <= self.max_y - 1:
+                if (x, y + 1) not in self.scan and y + 1 < self.max_y:
+                    y += 1
+                    continue
+                elif (x - 1, y + 1) not in self.scan and y + 1 < self.max_y:
+                    y += 1
+                    x -= 1
+                    continue
+                elif (x + 1, y + 1) not in self.scan and y + 1 < self.max_y:
+                    y += 1
+                    x += 1
+                    continue
+                elif y + 1 == self.max_y:
+                    print(f"Sand found resting place in {(x, y)}: {sand}")
+                    sand += 1
+                    self.scan[(x, y)] = 'o'
+                    break
+                else:
+                    print(f"Sand found resting place in {(x, y)}: {sand}")
+                    sand += 1
+                    self.scan[(x, y)] = 'o'
+                    break
+            # if obstructs the start, will block
+            keep_dripping = START not in self.scan
+
+        print(f"[2] Sand resting: {sand}")
 
     def file_name(self):
-        super().file_name()
+        return "../files/day14-sand.txt"
 
     def test_data(self):
         return """498,4 -> 498,6 -> 496,6
