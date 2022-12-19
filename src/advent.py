@@ -1,4 +1,11 @@
 from typing import Protocol
+from dataclasses import dataclass
+
+
+@dataclass
+class Point:
+    x: int
+    y: int
 
 
 # Parser "interface" used by the solver classes
