@@ -5,8 +5,10 @@ import time
 
 # https://adventofcode.com/2022/day/15
 # The "very bovine" first method was slow for solving the 1st part but not working at all for the second due to the
-# numbers involved.
-# Also, test input had different constraints - hence the extra lines to override the values needed for it
+# large numbers involved.
+# In the end is still an iterative method, but solves the problem in a reasonable amount of time (~25 sec).
+#
+# Test input had different constraints - hence the extra parse lines to override them.
 #
 # bonus: I discovered python dataclasses. I will have to refactor everything
 
