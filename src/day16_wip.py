@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from advent import Solver
 import re
 
+# https://adventofcode.com/2022/day/15
 RE_VALVE = re.compile(r"Valve (\S+) has flow rate=(\d+); tunnels? leads? to valves? (.*)")
 
 
