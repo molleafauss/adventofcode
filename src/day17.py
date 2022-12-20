@@ -6,9 +6,9 @@ from advent import Solver
 # being strict on coordinates: 0 <= x <= 7; y starts at 0 and grows "up"; pieces height and width are 1-based.
 # piece x,y is the bottom-left spot
 # so, for part 2 I had to find some hint - seems if I can find a cycle. A tuple made of:
-# (wind index, piece falling, relative position to the top height of the columns in the chamber) is the simplest
-# this allows us to magically find the final solution directly just with some math on what will happen at every
-# rock that falls
+# (wind index, piece falling, relative position to the top height of the columns in the chamber) is the simplest I could
+# come up with.
+# This allows us to magically find the final solution as soon as we get a cycle just with some basic math.
 
 
 # pieces blocks in rows from top to bottom
@@ -185,6 +185,8 @@ class Solution(Solver):
                 max_height = self.max_height + num_cycles * height_diff
                 if rocks < target:
                     delta = target - rocks
+                    # find the entry for the entry we loop back + the missing rocks to reach the goal - add the extra
+                    # height to the result
                     _, delta_height = next(filter(lambda val: val[0] == old_rocks + delta, self.status.values()))
                     rocks += delta
                     assert rocks == target
