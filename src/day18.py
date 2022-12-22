@@ -5,7 +5,7 @@ from advent import Solver
 # https://adventofcode.com/2022/day/17
 
 EMPTY = 0
-VOXEL = 1
+LAVA = 1
 AIR = 2
 
 @dataclass
@@ -50,14 +50,14 @@ class Solution(Solver):
     def parse(self, line: str):
         x, y, z = [int(i) for i in line.strip().split(",")]
         pos = (x, y, z)
-        assert self.voxels.get(pos, AIR) != VOXEL
+        assert self.voxels.get(pos, AIR) != LAVA
         visible = 6
         # find voxel neighbours
         for pos in neighbours(pos):
             if pos in self.voxels:
                 self.faces -= 1
                 visible -= 1
-        self.voxels[(x, y, z)] = VOXEL
+        self.voxels[(x, y, z)] = LAVA
         self.ranges.add_voxel(x, y, z)
         self.faces += visible
         self.cubes += 1
@@ -66,6 +66,44 @@ class Solution(Solver):
         print(f"[1] {len(self.voxels)} cubes: {self.faces} visible")
 
         print(f"Ranges: {self.ranges}")
+        # add AIR all in the layer around and then grow it until it touches the lava. Count the faces this way
+        # top layer
+        self.add_air(range(self.ranges.x[0] - 1, self.ranges.x[1] + 1), range(self.ranges.y[0] - 1, self.ranges.y[1] + 1), range(self.ranges.z[0] - 1, self.ranges.z[0]))
+        self.add_air(range(self.ranges.x[0] - 1, self.ranges.x[1] + 1), range(self.ranges.y[0] - 1, self.ranges.y[1] + 1), range(self.ranges.z[1] + 1, self.ranges.z[1] + 2))
+        self.add_air(range(self.ranges.x[0] - 1, self.ranges.x[1] + 1), range(self.ranges.y[0] - 1, self.ranges.y[0]), range(self.ranges.z[0] - 1, self.ranges.z[1] + 1))
+        self.add_air(range(self.ranges.x[0] - 1, self.ranges.x[1] + 1), range(self.ranges.y[1] + 1, self.ranges.y[1] + 2), range(self.ranges.z[0] - 1, self.ranges.z[1] + 1))
+        self.add_air(range(self.ranges.x[0] - 1, self.ranges.x[0]), range(self.ranges.y[0] - 1, self.ranges.y[1] + 1), range(self.ranges.z[0] - 1, self.ranges.z[1] + 1))
+        self.add_air(range(self.ranges.x[1] + 1, self.ranges.x[1] + 2), range(self.ranges.y[0] - 1, self.ranges.y[1] + 1), range(self.ranges.z[0] - 1, self.ranges.z[1] + 1))
+
+        # expand air and count faces touched
+        faces = set()
+        air = [pos for pos, _ in filter(lambda v: v[1] == AIR, self.voxels.items())]
+        for pos in air:
+            self.voxels[pos] = AIR
+            for n in neighbours(pos):
+                if not self.ranges.contains(n):
+                    continue
+                if n not in self.voxels:
+                    air.append(n)
+                elif self.voxels[n] == LAVA:
+                    # add the position of the voxel and the direction of the face touched
+                    faces.add(self.face(pos, n))
+
+        print(f"[2] Found {len(faces)} outside facing faces")
+
+    def add_air(self, xrange, yrange, zrange):
+        print(f"Add air: {xrange}, {yrange}, {zrange}")
+        for x in xrange:
+            for y in yrange:
+                for z in zrange:
+                    self.voxels[(x, y, z)] = AIR
+
+    def face(self, pos, air):
+        x, y, z = pos
+        dx = pos[0] - air[0]
+        dy = pos[1] - air[1]
+        dz = pos[2] - air[2]
+        return (x, y, z, dx, dy, dz)
 
     def file_name(self):
         return "../files/day18-cubes.txt"
