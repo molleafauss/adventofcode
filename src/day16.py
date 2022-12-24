@@ -3,7 +3,13 @@ from dataclasses import dataclass
 from advent import Solver
 import re
 
-# https://adventofcode.com/2022/day/15
+# https://adventofcode.com/2022/day/16
+# TODO: INCOMPLETE
+# this doesn't give me the result I was expecting; I was looking to open a valve that would give me the highest flow
+# from where I started, but I believe I am missing the fact that while moving I may meet other valves to open.
+# Need to rethink the algorithm not as the "shortest" path, but the "longest" and from every node.
+
+
 RE_VALVE = re.compile(r"Valve (\S+) has flow rate=(\d+); tunnels? leads? to valves? (.*)")
 
 
