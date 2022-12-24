@@ -1,6 +1,6 @@
 from advent import Solver
 
-# https://adventofcode.com/2022/day/18
+# https://adventofcode.com/2022/day/20
 # "easy" when you just remember to use the modulo list size (-1) when moving items. Handling the encryption key could
 # probably also have used some modul-ing but python can handle those integers
 FINAL = [1000, 2000, 3000]

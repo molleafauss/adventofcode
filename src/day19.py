@@ -1,7 +1,7 @@
 from advent import Solver
 import re
 
-# https://adventofcode.com/2022/day/18
+# https://adventofcode.com/2022/day/19
 # TODO: INCOMPLETE
 # Am currently blocked in finding the right algorithm. The idea is somehow starting from finding how to "produce"
 # a geode robot in the least possible steps, which probably will - based on required material - feed into producing
