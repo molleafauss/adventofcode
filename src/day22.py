@@ -15,6 +15,7 @@ DIRS = [
     [0, -1],
     [-1, 0]
 ]
+DIR_TEXT = ['>', 'v', '<', '^']
 
 
 def parse_path(text):
@@ -162,14 +163,13 @@ class Solution(Solver):
 
         print("==> Cube Walk")
         pos = [0, self.map[0].find("."), 0]
-        print(f"Starting position: {pos}")
+        print(f"Starting position: {pos[0] + 1, pos[1] + 1, DIR_TEXT[pos[2]]}")
         for walk, turn in self.path:
             pos = self.walk(pos, walk, True)
             pos = self.turn(pos, turn)
-            # print(f"** {walk}, {turn} => {pos}")
-            pass
+            print(f"==> {walk} {turn} => {pos[0] + 1, pos[1] + 1, DIR_TEXT[pos[2]]}")
         password = (pos[0] + 1) * 1000 + (pos[1] + 1) * 4 + pos[2]
-        print(f"[2] final position: {pos} => password {password}")
+        print(f"[2] Password is: {password}")
 
     def walk(self, pos, walk, cube_walk=False):
         w = walk
@@ -240,13 +240,13 @@ class Solution(Solver):
         # select expected adjacent based on direction
         adj = face.facing[dir]
         if adj[1] is None:
-            print(f"Crossing face {face.id} / {adj[0]}: ({r0}, {c0}, {dir}) => ({adj[1]}) => ({r}, {c}, {dir})")
+            print(f"Crossing face {face.id} / {adj[0]}: {r0 + 1, c0 + 1, DIR_TEXT[dir]} => {r + 1, c + 1, DIR_TEXT[dir]}")
             return r, c, dir
         fadj = self.cube_faces[adj[0] - 1]
         # cross into new face based on old position
         pos = fadj.cross(face.relative(r0, c0), dir, adj[1])
         assert fadj.contains(pos[0], pos[1])
-        print(f"Crossing face {face.id} / {fadj.id}: ({r0}, {c0}, {dir}) => ({adj[1]}) => {pos}")
+        print(f"Crossing face {face.id} / {fadj.id}: {r0 + 1, c0 + 1, DIR_TEXT[dir]} => {pos[0] + 1, pos[1] + 1, DIR_TEXT[pos[2]]}")
         return pos
 
     def in_face(self, row, col):
