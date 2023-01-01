@@ -94,7 +94,7 @@ class Face:
             case 3, 'L':
                 # crossing from the top to the left border
                 dir = (dir - 1) % len(DIRS)
-                return self.row + pos[1], self.col, dir
+                return self.row + pos[1], self.col + self.size, dir
             case 3, 'U':
                 # crossing from the top to the top border
                 dir = (dir + 2) % len(DIRS)
