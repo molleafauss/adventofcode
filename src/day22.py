@@ -3,11 +3,13 @@ from dataclasses import dataclass
 from advent import Solver
 
 # https://adventofcode.com/2022/day/21
-# TODO - INCOMPLETE
 # part 1 was approachable. Part 2 ... tough. Test input and real input had a different cube shape; I was unable to
 # find a way to calculate faces, adjacency and resulting rotation between them all in code, so I added some
 # pre-calculation to the input.
-# seems the result should be between 55k and 100k but atm the result is way lower. Stumped where the issue is
+# Took me ages to get to the bottom of wrong results - most errors were in the end a bad data in the adjacency data I
+# added.
+# Also: this code is hacky af - I should have used some better structure for the various concepts involved (cube, faces,
+# position, adjacency, ...)
 
 DIRS = [
     [0, 1],
