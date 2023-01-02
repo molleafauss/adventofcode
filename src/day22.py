@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 from advent import Solver
 
-# https://adventofcode.com/2022/day/21
+# https://adventofcode.com/2022/day/22
 # part 1 was approachable. Part 2 ... tough. Test input and real input had a different cube shape; I was unable to
 # find a way to calculate faces, adjacency and resulting rotation between them all in code, so I added some
 # pre-calculation to the input.
