@@ -5,7 +5,7 @@ from grid import GridPos, dir_from_char, DIR_N, DIR_E, DIR_S, DIR_W, char_from_d
 
 
 # https://adventofcode.com/2022/day/24
-
+# once the first was done, it was a matter of refactoring it to do the back and forth
 
 @dataclass
 class Blizzard:
@@ -46,17 +46,21 @@ class Solution(Solver):
 
     def solve(self):
         print(f"Tracing path from {self.entry} => {self.exit}")
-        exit_reached = False
-        steps = [(self.entry, 0)]
-        visited = set()
         self.blizzards_at_time(0)
+        t = self.find_path(self.entry, self.exit, 0)
+        print(f"[1] Found exit in: {t}")
+        t = self.find_path(self.exit, self.entry, t)
+        t = self.find_path(self.entry, self.exit, t)
+        print(f"[2] Total time: {t}")
+
+    def find_path(self, entry, exit, t):
+        exit_reached = False
+        steps = [(entry, t)]
+        visited = set()
         while not exit_reached:
             pos, t = steps.pop(0)
-            if t > self.width * self.height:
-                raise RuntimeError(f"Too many iterations: {t}")
-            if pos == self.exit:
-                print(f"[1] Found exit in {t} ({pos})")
-                break
+            if pos == exit:
+                return t
             if (pos, t) in visited:
                 continue
             visited.add((pos, t))
@@ -70,11 +74,11 @@ class Solution(Solver):
                 valid |= (0 < new_pos.row < self.height - 1) and (0 < new_pos.col < self.width - 1)
                 if not valid:
                     continue
-                print(f"{pos}, {t} -> {new_pos}")
+                # print(f"{pos}, {t} -> {new_pos}")
                 steps.append([new_pos, t + 1])
             if pos not in blizzards:
                 steps.append([pos, t + 1])
-                print(f"{pos}, {t} -> {pos} [wait]")
+                # print(f"{pos}, {t} -> {pos} [wait]")
 
     def blizzards_at_time(self, t):
         if t < len(self.bliz_time):
