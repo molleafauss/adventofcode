@@ -1,11 +1,10 @@
 from dataclasses import dataclass
 
 from advent import Solver
-from grid import GridPos, pos_from_char
+from grid import GridPos, dir_from_char, DIR_N, DIR_E, DIR_S, DIR_W, char_from_dir
+
 
 # https://adventofcode.com/2022/day/24
-# TODO - INCOMPLETE
-# this is interesting - I've no idea how to solve it...
 
 
 @dataclass
@@ -14,31 +13,92 @@ class Blizzard:
     dir: GridPos
 
 
+def move_wrap(val, move, bounds):
+    val += move
+    w = bounds[1] - bounds[0] + 1
+    while val < bounds[0]:
+        val += w
+    while val > bounds[1]:
+        val -= w
+    return val
+
+
 class Solution(Solver):
     def __init__(self):
-        self.map = []
         self.blizzards = []
         self.height = 0
         self.width = 0
+        self.entry = GridPos(0, 0)
+        self.exit = GridPos(0, 0)
+        self.bliz_time = []
 
     def parse(self, line: str):
-        if not self.width:
+        if self.height == 0:
             self.width = len(line)
-        row = list(line)
-        for col in range(len(row)):
-            if row[col] != '.' and row[col] != '#':
-                self.blizzards.append(Blizzard(GridPos(self.height, col), pos_from_char(row[col])))
-        self.map.append(row)
+            self.entry = GridPos(0, line.find("."))
+            assert 0 < self.entry.col < self.width
+        for col in range(self.width):
+            if line[col] != '.' and line[col] != '#':
+                self.blizzards.append(Blizzard(GridPos(self.height, col), dir_from_char(line[col])))
+        # get first available space in current line - will be the exit on last line
+        self.exit = GridPos(self.height, line.find("."))
         self.height += 1
 
     def solve(self):
-        e = [i for i in range(self.width) if self.map[0][i] == '.']
-        assert len(e) == 1
-        entry = GridPos(0, e[0])
-        e = [i for i in range(self.width) if self.map[-1][i] == '.']
-        assert len(e) == 1
-        out = GridPos(self.height - 1, e[0])
-        print(f"Tracing path from {entry} => {out}")
+        print(f"Tracing path from {self.entry} => {self.exit}")
+        exit_reached = False
+        steps = [(self.entry, 0)]
+        visited = set()
+        self.blizzards_at_time(0)
+        while not exit_reached:
+            pos, t = steps.pop(0)
+            if t > self.width * self.height:
+                raise RuntimeError(f"Too many iterations: {t}")
+            if pos == self.exit:
+                print(f"[1] Found exit in {t} ({pos})")
+                break
+            if (pos, t) in visited:
+                continue
+            visited.add((pos, t))
+            blizzards = self.blizzards_at_time(t + 1)
+            # try all direction, or stay
+            for dir in [DIR_N, DIR_E, DIR_S, DIR_W]:
+                new_pos = pos + dir
+                if new_pos in blizzards:
+                    continue
+                valid = new_pos == self.entry or new_pos == self.exit
+                valid |= (0 < new_pos.row < self.height - 1) and (0 < new_pos.col < self.width - 1)
+                if not valid:
+                    continue
+                print(f"{pos}, {t} -> {new_pos}")
+                steps.append([new_pos, t + 1])
+            if pos not in blizzards:
+                steps.append([pos, t + 1])
+                print(f"{pos}, {t} -> {pos} [wait]")
+
+    def blizzards_at_time(self, t):
+        if t < len(self.bliz_time):
+            return self.bliz_time[t]
+        assert t == len(self.bliz_time)
+        bliz_pos = set()
+        for b in self.blizzards:
+            row = move_wrap(b.pos.row, (b.dir.row * t), [1, self.height - 2])
+            col = move_wrap(b.pos.col, (b.dir.col * t), [1, self.width - 2])
+            bliz_pos.add(GridPos(row, col))
+        self.bliz_time.append(bliz_pos)
+        return bliz_pos
+
+    def print_blizzards(self, t):
+        blizzards = self.blizzards_at_time(t)
+        grid = [['.'] * self.width for _ in range(self.height)]
+        for b in blizzards:
+            rc = b[0]
+            grid[rc.row][rc.col] = char_from_dir(b[1])
+        for row in grid:
+            print("".join(row))
+
+    def file_name(self):
+        return "../files/day24-blizzards.txt"
 
     def test_data(self):
         return """#.######
@@ -47,3 +107,13 @@ class Solution(Solver):
 #>v.><>#
 #<^v^^>#
 ######.#"""
+
+
+if __name__ == '__main__':
+    d = Solution()
+    for l in d.test_data().split("\n"):
+        d.parse(l.rstrip())
+
+    for t in range(10):
+        print(f"Time {t}")
+        d.print_blizzards(t)
