@@ -11,27 +11,26 @@ import re
 
 
 RE_VALVE = re.compile(r"Valve (\S+) has flow rate=(\d+); tunnels? leads? to valves? (.*)")
-
+MAX_MINUTES = 30
 
 @dataclass
 class Valve:
     name: str
     flow: int
-    open: bool
     connections: list[str]
-    times: dict
 
 
-def backtrack(source, target, parents):
-    node = target
-    backpath = [target]
-    path = []
-    while node != source:
-        backpath.append(parents[node])
-        node = parents[node]
-    for i in range(len(backpath)):
-        path.append(backpath[-i - 1])
-    return path
+@dataclass
+class Cave:
+    name: str
+    opened: bool
+
+@dataclass
+class Path:
+    visited: list[Cave]
+    remaining_valves: set[str]
+    elapsed: int
+    total_flow: int
 
 
 class Solution(Solver):
@@ -46,65 +45,67 @@ class Solution(Solver):
         if not mo:
             raise ValueError("Line doesn't match? " + line)
         connections = [n.strip() for n in mo.group(3).split(",")]
-        valve = Valve(mo.group(1), int(mo.group(2)), False, connections, {})
+        valve = Valve(mo.group(1), int(mo.group(2)), connections)
         self.valves[valve.name] = valve
 
     def solve(self):
         print(f"Found {len(self.valves)} valves to open in {self.minutes} minutes")
-        # idea: calculate all the paths from each node to every other one, so that we have the number of steps/minutes
-        # to move everywhere else.
-        # Hello again djikstra ;)
-        for source in self.valves.values():
-            for dest in self.valves:
-                if source.name == dest:
-                    continue
-                time = 1 if dest in source.connections else self.find_path(source.name, dest)
-                source.times[dest] = time
-
-        # ok, now let's try to move through the tunnels, maximizing at every step what I can open
         start = 'AA'
-        total_flow = 0
-        while self.minutes >= 0:
-            cur_cavern = self.valves[start]
-            if cur_cavern.flow > 0 and not cur_cavern.open:
-                self.minutes -= 1
-                total_flow += cur_cavern.flow * self.minutes
-                cur_cavern.open = True
-                print(f"{self.minutes}' Opening valve at {start}: {cur_cavern.flow * self.minutes} => {total_flow}")
-            next_step = None
-            max_flow = 0
-            for dest, time in cur_cavern.times.items():
-                if time + 1 >= self.minutes:
+        valves_with_flow = {v.name for v in self.valves.values() if v.flow > 0}
+        best_path = Path([Cave("", True)], set(), MAX_MINUTES, 0)
+        paths = [Path([Cave(start, False), Cave(v, False)], valves_with_flow.copy(), 1, 0) for v in self.valves[start].connections]
+        cycles = 0
+        while paths:
+            path = paths.pop(0)
+            cycles += 1
+            if (cycles % 100000) == 0:
+                print(f"{cycles} paths checked, {len(paths)} remaining")
+            if path.elapsed >= MAX_MINUTES:
+                # can't move further
+                best_path = self.check_best(path, best_path, paths)
+                continue
+            # don't move further if there's no way to beat the best (= sum flow as if you opened everything left now)
+            max_flow = sum([self.valves[v].flow * (MAX_MINUTES - path.elapsed) for v in path.remaining_valves])
+            if path.total_flow + max_flow < best_path.total_flow:
+                continue
+            # current cave
+            valve = path.visited[-1]
+            # previous caves visited after latest valve was opened, don't go back there again
+            previous = set()
+            i = len(path.visited) - 1
+            while i >= 0 and not path.visited[i].opened:
+                previous.add(path.visited[i].name)
+                i -= 1
+            # even if there's a valve to open, ignore and pass through, ignoring where you came from (avoid cycles)
+            for v in self.valves[valve.name].connections:
+                if v in previous:
                     continue
-                if self.valves[dest].open:
-                    continue
-                flow = self.valves[dest].flow * (self.minutes - 1 - time)
-                print(f"opening {dest} would flow {flow}")
-                if flow > max_flow:
-                    next_step = dest
-                    max_flow = flow
-            if not next_step:
-                break
-            self.minutes -= cur_cavern.times[next_step]
-            start = next_step
+                paths.append(Path(path.visited + [Cave(v, False)], path.remaining_valves.copy(), path.elapsed + 1, path.total_flow))
+            # no valve to open - visit next path
+            if valve.name not in path.remaining_valves:
+                continue
+            # there's a valve to open
+            path.remaining_valves.remove(valve.name)
+            # stay 1 minute to open valve
+            path.visited.append(Cave(valve.name, True))
+            path.elapsed += 1
+            path.total_flow += self.valves[valve.name].flow * (MAX_MINUTES - path.elapsed)
+            # If all valves are open, stop and check if this is the best path so far
+            if not path.remaining_valves:
+                best_path = self.check_best(path, best_path, paths)
+            else:
+                # else add one new path per every outgoing path from this node, including where you came from
+                for v in self.valves[valve.name].connections:
+                    paths.append(Path(path.visited + [Cave(v, False)], path.remaining_valves.copy(), path.elapsed + 1, path.total_flow))
 
-        print(f"Found max flow is {total_flow}")
+        print(f"[1] Found max flow is {best_path.total_flow}: {best_path.visited}")
 
-    def find_path(self, source, target):
-        graph = {src.name: {dest: 1 for dest in src.connections} for src in self.valves.values()}
-        costs = {valve: len(self.valves) + 1 for valve in self.valves}
-        costs[source] = 0
-        parents = {}
-        next_node = source
-        while next_node != target:
-            for neighbor in graph[next_node]:
-                if graph[next_node][neighbor] + costs[next_node] < costs[neighbor]:
-                    costs[neighbor] = graph[next_node][neighbor] + costs[next_node]
-                    parents[neighbor] = next_node
-                del graph[neighbor][next_node]
-            del costs[next_node]
-            next_node = min(costs, key=costs.get)
-        return len(backtrack(source, target, parents))
+    def check_best(self, path, best_path, paths):
+        # check if it is bigger than best path
+        if path.total_flow > best_path.total_flow:
+            print(f"Found a better path: {path.total_flow} > {best_path.total_flow} {path.visited} (remaining: {len(paths)})")
+            return path
+        return best_path
 
     def test_data(self):
         return """Valve AA has flow rate=0; tunnels lead to valves DD, II, BB
@@ -118,4 +119,9 @@ Valve HH has flow rate=22; tunnel leads to valve GG
 Valve II has flow rate=0; tunnels lead to valves AA, JJ
 Valve JJ has flow rate=21; tunnel leads to valve II
 """
+
+    def file_name(self):
+        super().file_name()
+
+
 
