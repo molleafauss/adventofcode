@@ -1,3 +1,4 @@
+import time
 from dataclasses import dataclass
 
 from advent import Solver
@@ -68,17 +69,21 @@ class Solution(Solver):
         # find distances between all valves with a flow, plus the starting valve (which can have flow also)
         self.calculate_distances({start} | valves_with_flow)
 
+        t0 = time.time()
         best_path = self.find_path(Path(["AA"], valves_with_flow, 0, 0))
-        print(f"[1] Found max flow is {best_path.total_flow}: {best_path.visited} ({self.cache_hits} cache hits)")
+        t1 = time.time()
+        print(f"[1] Found max flow is {best_path.total_flow}: {best_path.visited} ({self.cache_hits} cache hits) [{t1 - t0:10.3}sec]")
 
         self.cache_hits = 0
         self.cache = {}
+        t0 = time.time()
         best_path = self.two_paths(BiPath(Pos(['AA'], 0), Pos(['AA'], 0), valves_with_flow, 0, 0))
-        print(f"[2] Found max flow is {best_path.total_flow}: {best_path.human} / {best_path.elephant} ({self.cache_hits} cache hits)")
+        t1 = time.time()
+        print(f"[2] Found max flow is {best_path.total_flow}: {best_path.human} / {best_path.elephant} ({self.cache_hits} cache hits) [{t1 - t0:10.3}sec]")
 
     def find_path(self, path):
         cave = path.visited[-1]
-        cache_key = (cave, path.elapsed, tuple(sorted(path.remaining_valves)))
+        cache_key = (cave, path.elapsed, path.mask)
         if cache_key in self.cache:
             self.cache_hits += 1
             cached = self.cache[cache_key]
@@ -89,13 +94,14 @@ class Solution(Solver):
                         path.total_flow + cached.total_flow)
 
         best_path = path
-        for valve in path.remaining_valves:
-            distance = self.distances[cave][valve]
+        for valve_name in path.remaining_valves:
+            distance = self.distances[cave][valve_name]
             elapsed = path.elapsed + distance + 1
             if elapsed >= PART1_MINUTES:
                 # would not be able to do anything in time
                 continue
-            flow = (PART1_MINUTES - elapsed) * self.valves[valve].flow
+            valve = self.valves[valve_name]
+            flow = (PART1_MINUTES - elapsed) * valve.flow
             sub_best = self.find_path(
                 Path(path.visited + [valve], path.remaining_valves ^ {valve}, elapsed, path.total_flow + flow),
                 )
@@ -116,7 +122,13 @@ class Solution(Solver):
         ele_pos = path.elephant.visited[-1]
 
         # check cache
-        cache_key = (man_pos, path.human.time, ele_pos, path.elephant.time, tuple(sorted(path.remaining_valves)))
+        cache_key = (
+            tuple(path.human.visited),
+            path.human.time,
+            tuple(path.elephant.visited),
+            path.elephant.time,
+            tuple(sorted(path.remaining_valves))
+        )
         if cache_key in self.cache:
             self.cache_hits += 1
             cached = self.cache[cache_key]
@@ -135,6 +147,7 @@ class Solution(Solver):
             distance = self.distances[man_pos][valve]
             elapsed = path.human.time + distance + 1
             if elapsed < PART2_MINUTES:
+                # if the human can make it and open this valve in time, do it
                 flow = (PART2_MINUTES - elapsed) * self.valves[valve].flow
                 sub_best = self.two_paths(
                     BiPath(
