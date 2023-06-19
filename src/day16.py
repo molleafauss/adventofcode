@@ -83,7 +83,7 @@ class Solution(Solver):
 
     def find_path(self, path):
         cave = path.visited[-1]
-        cache_key = (cave, path.elapsed, path.mask)
+        cache_key = (cave, path.elapsed, tuple(sorted(path.remaining_valves)))
         if cache_key in self.cache:
             self.cache_hits += 1
             cached = self.cache[cache_key]
@@ -103,7 +103,7 @@ class Solution(Solver):
             valve = self.valves[valve_name]
             flow = (PART1_MINUTES - elapsed) * valve.flow
             sub_best = self.find_path(
-                Path(path.visited + [valve], path.remaining_valves ^ {valve}, elapsed, path.total_flow + flow),
+                Path(path.visited + [valve_name], path.remaining_valves ^ {valve_name}, elapsed, path.total_flow + flow),
                 )
             if sub_best.total_flow > best_path.total_flow:
                 best_path = sub_best
