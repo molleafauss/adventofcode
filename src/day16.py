@@ -41,7 +41,7 @@ class Pos:
 class BiPath:
     human: Pos
     elephant: Pos
-    remaining_valves: set[str]
+    open_valves: int
     elapsed: int
     total_flow: int
 
@@ -81,10 +81,10 @@ class Solution(Solver):
 
         self.cache_hits = 0
         self.cache = {}
-        # t0 = time.time()
-        # best_path = self.two_paths(BiPath(Pos(['AA'], 0), Pos(['AA'], 0), valves_with_flow, 0, 0))
-        # t1 = time.time()
-        # print(f"[2] Found max flow is {best_path.total_flow}: {best_path.human} / {best_path.elephant} ({self.cache_hits} cache hits) [{t1 - t0:10.3}sec]")
+        t0 = time.time()
+        best_path = self.two_paths(BiPath(Pos(['AA'], 0), Pos(['AA'], 0), 0, 0, 0))
+        t1 = time.time()
+        print(f"[2] Found max flow is {best_path.total_flow}: {best_path.human} / {best_path.elephant} ({self.cache_hits} cache hits) [{t1 - t0:10.3}sec]")
 
     def find_path(self, path):
         cave = path.visited[-1]
@@ -129,11 +129,11 @@ class Solution(Solver):
 
         # check cache
         cache_key = (
-            tuple(path.human.visited),
+            man_pos,
             path.human.time,
-            tuple(path.elephant.visited),
+            ele_pos,
             path.elephant.time,
-            tuple(sorted(path.remaining_valves))
+            path.open_valves
         )
         if cache_key in self.cache:
             self.cache_hits += 1
@@ -142,24 +142,26 @@ class Solution(Solver):
             return BiPath(
                 Pos(path.human.visited + cached.human.visited, path.human.time + cached.human.time),
                 Pos(path.elephant.visited + cached.elephant.visited, path.elephant.time + cached.elephant.time),
-                cached.remaining_valves,
+                cached.open_valves,
                 path.elapsed + cached.elapsed,
                 path.total_flow + cached.total_flow
             )
 
         best_path = path
-        for valve in path.remaining_valves:
+        for valve in self.valves_with_flow:
+            if path.open_valves & valve.mask:
+                continue
             # try to move both human and elephant towards the next valve
-            distance = self.distances[man_pos][valve]
+            distance = self.distances[man_pos][valve.name]
             elapsed = path.human.time + distance + 1
             if elapsed < PART2_MINUTES:
                 # if the human can make it and open this valve in time, do it
-                flow = (PART2_MINUTES - elapsed) * self.valves[valve].flow
+                flow = (PART2_MINUTES - elapsed) * valve.flow
                 sub_best = self.two_paths(
                     BiPath(
-                        Pos(path.human.visited + [valve], elapsed),
+                        Pos(path.human.visited + [valve.name], elapsed),
                         path.elephant,
-                        path.remaining_valves ^ {valve},
+                        path.open_valves | valve.mask,
                         max(elapsed, path.elephant.time),
                         path.total_flow + flow
                     )
@@ -167,15 +169,15 @@ class Solution(Solver):
                 if sub_best.total_flow > best_path.total_flow:
                     best_path = sub_best
 
-            distance = self.distances[ele_pos][valve]
+            distance = self.distances[ele_pos][valve.name]
             elapsed = path.elephant.time + distance + 1
             if elapsed < PART2_MINUTES:
-                flow = (PART2_MINUTES - elapsed) * self.valves[valve].flow
+                flow = (PART2_MINUTES - elapsed) * valve.flow
                 sub_best = self.two_paths(
                     BiPath(
                         path.human,
-                        Pos(path.elephant.visited + [valve], elapsed),
-                        path.remaining_valves ^ {valve},
+                        Pos(path.elephant.visited + [valve.name], elapsed),
+                        path.open_valves | valve.mask,
                         max(elapsed, path.elephant.time),
                         path.total_flow + flow
                     )
@@ -187,7 +189,7 @@ class Solution(Solver):
         self.cache[cache_key] = BiPath(
             Pos(best_path.human.visited[len(path.human.visited):], best_path.human.time - path.human.time),
             Pos(best_path.elephant.visited[len(path.elephant.visited):], best_path.elephant.time - path.elephant.time),
-            best_path.remaining_valves,
+            best_path.open_valves,
             best_path.elapsed - path.elapsed,
             best_path.total_flow - path.total_flow
         )
