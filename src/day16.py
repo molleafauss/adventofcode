@@ -8,6 +8,7 @@ import math
 # https://adventofcode.com/2022/day/16
 # this needed a lot of looking at other solutions. Of course this is the usual "dynamic programming" (quotes needed)
 # problem, where you have to remember your previous steps
+# for part 2 I ended up to have to optimize, as the algorithm was right, but too costly
 
 RE_VALVE = re.compile(r"Valve (\S+) has flow rate=(\d+); tunnels? leads? to valves? (.*)")
 PART1_MINUTES = 30
@@ -18,13 +19,14 @@ PART2_MINUTES = 26
 class Valve:
     name: str
     flow: int
+    mask: int
     connections: list[str]
 
 
 @dataclass
 class Path:
     visited: list[str]
-    remaining_valves: set[str]
+    open_valves: int
     elapsed: int
     total_flow: int
 
@@ -49,6 +51,7 @@ class Solution(Solver):
         self.valves = {}
         self.cache = {}
         self.distances = {}
+        self.valves_with_flow = []
         self.cache_hits = 0
 
     def parse(self, line: str):
@@ -58,52 +61,55 @@ class Solution(Solver):
         if not mo:
             raise ValueError("Line doesn't match? " + line)
         connections = [n.strip() for n in mo.group(3).split(",")]
-        valve = Valve(mo.group(1), int(mo.group(2)), connections)
+        valve = Valve(mo.group(1), int(mo.group(2)), 0, connections)
         self.valves[valve.name] = valve
+        if valve.flow > 0:
+            self.valves_with_flow.append(valve)
+            valve.mask = 1 << len(self.valves_with_flow)
 
     def solve(self):
         print(f"Found {len(self.valves)} valves to open in {PART1_MINUTES} minutes")
         start = 'AA'
-        valves_with_flow = {v.name for v in self.valves.values() if v.flow > 0}
-        print(f"Valves with flow: {len(valves_with_flow)} => {math.factorial(len(valves_with_flow))} possible paths")
+        print(f"Valves with flow: {len(self.valves_with_flow)} => {math.factorial(len(self.valves_with_flow))} possible paths")
         # find distances between all valves with a flow, plus the starting valve (which can have flow also)
-        self.calculate_distances({start} | valves_with_flow)
+        self.calculate_distances([start] + [valve.name for valve in self.valves_with_flow])
 
         t0 = time.time()
-        best_path = self.find_path(Path(["AA"], valves_with_flow, 0, 0))
+        best_path = self.find_path(Path(["AA"], 0, 0, 0))
         t1 = time.time()
         print(f"[1] Found max flow is {best_path.total_flow}: {best_path.visited} ({self.cache_hits} cache hits) [{t1 - t0:10.3}sec]")
 
         self.cache_hits = 0
         self.cache = {}
-        t0 = time.time()
-        best_path = self.two_paths(BiPath(Pos(['AA'], 0), Pos(['AA'], 0), valves_with_flow, 0, 0))
-        t1 = time.time()
-        print(f"[2] Found max flow is {best_path.total_flow}: {best_path.human} / {best_path.elephant} ({self.cache_hits} cache hits) [{t1 - t0:10.3}sec]")
+        # t0 = time.time()
+        # best_path = self.two_paths(BiPath(Pos(['AA'], 0), Pos(['AA'], 0), valves_with_flow, 0, 0))
+        # t1 = time.time()
+        # print(f"[2] Found max flow is {best_path.total_flow}: {best_path.human} / {best_path.elephant} ({self.cache_hits} cache hits) [{t1 - t0:10.3}sec]")
 
     def find_path(self, path):
         cave = path.visited[-1]
-        cache_key = (cave, path.elapsed, tuple(sorted(path.remaining_valves)))
+        cache_key = (cave, path.elapsed, path.open_valves)
         if cache_key in self.cache:
             self.cache_hits += 1
             cached = self.cache[cache_key]
             # add the cached delta to the current status
             return Path(path.visited + cached.visited,
-                        cached.remaining_valves,
+                        path.open_valves,
                         path.elapsed + cached.elapsed,
                         path.total_flow + cached.total_flow)
 
         best_path = path
-        for valve_name in path.remaining_valves:
-            distance = self.distances[cave][valve_name]
+        for valve in self.valves_with_flow:
+            if path.open_valves & valve.mask:
+                continue
+            distance = self.distances[cave][valve.name]
             elapsed = path.elapsed + distance + 1
             if elapsed >= PART1_MINUTES:
                 # would not be able to do anything in time
                 continue
-            valve = self.valves[valve_name]
             flow = (PART1_MINUTES - elapsed) * valve.flow
             sub_best = self.find_path(
-                Path(path.visited + [valve_name], path.remaining_valves ^ {valve_name}, elapsed, path.total_flow + flow),
+                Path(path.visited + [valve.name], path.open_valves | valve.mask, elapsed, path.total_flow + flow),
                 )
             if sub_best.total_flow > best_path.total_flow:
                 best_path = sub_best
@@ -111,7 +117,7 @@ class Solution(Solver):
         # I need to cache the "delta" from here to the end
         self.cache[cache_key] = Path(
             best_path.visited[len(path.visited):],
-            best_path.remaining_valves,
+            best_path.open_valves,
             best_path.elapsed - path.elapsed,
             best_path.total_flow - path.total_flow
         )
