@@ -10,25 +10,6 @@ class Solution(Solver):
         self.elf_calories = 0
         self.calories = []
 
-    def file_name(self):
-        return "../inputs/day01-calories.txt"
-
-    def test_data(self):
-        return """1000
-2000
-3000
-
-4000
-
-5000
-6000
-
-7000
-8000
-9000
-
-10000"""
-
     def parse(self, line: str):
         if not line:
             # print(f"Elf n. {self.elf} holding {self.elf_calories} calories")

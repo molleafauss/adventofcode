@@ -112,13 +112,3 @@ class Solution(Solver):
         steps = [(s, self.map[s]) for s in pos if valid(s)]
         # print(f"{node}:{self.map[node]} => {steps}")
         return steps
-
-    def file_name(self):
-        return "../inputs/day12-map.txt"
-
-    def test_data(self):
-        return """Sabqponm
-abcryxxl
-accszExk
-acctuvwj
-abdefghi"""

@@ -17,21 +17,6 @@ class Solution(Solver):
         self.instructions = []
         self.parse_instructions = False
 
-    def file_name(self):
-        return "../inputs/day05-crates.txt"
-
-    def test_data(self):
-        return """    [D]    
-[N] [C]    
-[Z] [M] [P]
- 1   2   3 
-
-move 1 from 2 to 1
-move 3 from 1 to 3
-move 2 from 2 to 1
-move 1 from 1 to 2
-"""
-
     def parse(self, line: str):
         if not line:
             self.parse_instructions = True

@@ -15,17 +15,6 @@ class Solution(Solver):
         self.full_overlaps = 0
         self.partial_overlaps = 0
 
-    def file_name(self):
-        return "../inputs/day04-cleanup.txt"
-
-    def test_data(self):
-        return """2-4,6-8
-2-3,4-5
-5-7,7-9
-2-8,3-7
-6-6,4-6
-2-6,4-8"""
-
     def parse(self, line: str):
         pairs = line.split(",")
         assert len(pairs) == 2

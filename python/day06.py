@@ -33,13 +33,3 @@ class Solution(Solver):
 
     def solve(self):
         pass
-
-    def file_name(self):
-        return "../inputs/day06-signal.txt"
-
-    def test_data(self):
-        return """mjqjpqmgbljsphdztnvjfqwrcgsmlb
-bvwbjplbgvbhsrlpgdmjqwftvncz
-nppdvjthqldpwncqszvftbrmjlhg
-nznrnfrfntjfmvfwmzdfjlvtqnbhcprsg
-zcfzfwzzqfrljwzlrfnpqdbhtmscgvjw"""

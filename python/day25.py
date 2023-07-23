@@ -71,23 +71,3 @@ class Solution(Solver):
     def solve(self):
         fuel_base5 = int_to_snafu(self.fuel)
         print(f"{self.fuel} => to base 5 {fuel_base5}")
-
-    def file_name(self):
-        return "../inputs/day25-fuel.txt"
-
-    def test_data(self):
-        return """1=-0-2
-12111
-2=0=
-21
-2=01
-111
-20012
-112
-1=-1=
-1-12
-12
-1=
-122"""
-
-

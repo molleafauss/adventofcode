@@ -49,34 +49,6 @@ class Solution(Solver):
         big_dirs = sorted(big_dirs, key=lambda d: d["size"])
         print(f"[2] min space to delete = {big_dirs[0]['size']}")
 
-    def file_name(self):
-        return "../inputs/day07-dirs.txt"
-
-    def test_data(self):
-        return """$ cd /
-$ ls
-dir a
-14848514 b.txt
-8504156 c.dat
-dir d
-$ cd a
-$ ls
-dir e
-29116 f
-2557 g
-62596 h.lst
-$ cd e
-$ ls
-584 i
-$ cd ..
-$ cd ..
-$ cd d
-$ ls
-4060174 j
-8033020 d.log
-5626152 d.ext
-7214296 k"""
-
     def handle_command(self, command):
         if command == "cd /":
             self.dirstack = [self.tree]

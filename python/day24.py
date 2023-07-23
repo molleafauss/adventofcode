@@ -100,24 +100,3 @@ class Solution(Solver):
             grid[rc.row][rc.col] = char_from_dir(b[1])
         for row in grid:
             print("".join(row))
-
-    def file_name(self):
-        return "../inputs/day24-blizzards.txt"
-
-    def test_data(self):
-        return """#.######
-#>>.<^<#
-#.<..<<#
-#>v.><>#
-#<^v^^>#
-######.#"""
-
-
-if __name__ == '__main__':
-    d = Solution()
-    for l in d.test_data().split("\n"):
-        d.parse(l.rstrip())
-
-    for t in range(10):
-        print(f"Time {t}")
-        d.print_blizzards(t)

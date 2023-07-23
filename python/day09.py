@@ -83,16 +83,3 @@ class Solution(Solver):
             tail[1] += 1 if delta_y > 0 else -1
         else:
             raise Exception("WTF?")
-
-    def file_name(self):
-        return "../inputs/day09-rope.txt"
-
-    def test_data(self):
-        return """R 4
-U 4
-L 3
-D 1
-R 4
-D 1
-L 5
-R 2"""
