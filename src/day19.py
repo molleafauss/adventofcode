@@ -1,16 +1,14 @@
+import sys
 import time
-from dataclasses import dataclass
 
 from advent import Solver
 import re
 
 # https://adventofcode.com/2022/day/19
-# TODO: INCOMPLETE
-# Am currently blocked in finding the right algorithm. The idea is somehow starting from finding how to "produce"
-# a geode robot in the least possible steps, which probably will - based on required material - feed into producing
-# the other previous robots et cetera.
-# 1199 P1 answer
-# git@github.com:hyper-neutrino/advent-of-code.git
+# I had to use a lot of help here to find the result. Tbh I actually had kinda the right algorithm implemented, but I
+# ended introducing a lot of bugs that were causing the iterations to never end.
+# I tried a non-recursive solution and then landed on the recursive as it's "cleaner".
+# Thanks to hyper-neutrino I also discovered the for ... else construct in python which I didn't know before.
 
 
 ORE = 0
@@ -41,7 +39,11 @@ def parse_type(text):
 class Blueprint:
     def __init__(self, line: str):
         self.id = None
+        self.iterations = 0
+        self.cache = {}
+        self.cache_hits = 0
         self.recipes = [None, None, None, None]
+        self.max_materials = [0, 0, 0, 0]
         self._parse(line)
 
     def _parse(self, line: str):
@@ -64,75 +66,10 @@ class Blueprint:
                 num = int(mo.group(2))
                 comp = parse_type(mo.group(3))
                 comps[comp] = num
+                self.max_materials[comp] = max(self.max_materials[comp], num)
                 idx = mo.end()
             self.recipes[recipe] = comps
             idx += 2
-
-
-@dataclass(frozen=True)
-class State:
-    time: int
-    robots: tuple[int, int, int, int]
-    material: tuple[int, int, int, int]
-
-
-MAX_MINUTES = 24
-
-
-def find_max_geodes(bp: Blueprint):
-    # "exploratory" algorithm: calculate a state and the find any further states that can be reached, where state is
-    # given by the new robot that can be built without exceeding the maximum time available, and a new state is when
-    # a new robot is being built, provided that the available robots can collect the material needed
-    robots = (1, 0, 0, 0)
-    material = (0, 0, 0, 0)
-    cycles = 0
-    memo_hit = 0
-    memo = set()
-    states = [State(0, robots, material)]
-    max_geodes = 0
-    t0 = time.time()
-    while states:
-        cycles += 1
-        state = states.pop(0)
-        if state in memo:
-            memo_hit += 1
-            continue
-        memo.add(state)
-        for material in MATERIALS:
-            recipe = bp.recipes[material]
-            if not recipe:
-                continue
-            # if I lack robots for any of the required materials, ignore this recipe
-            if any(map(lambda required, robot: required != 0 and robot == 0, recipe, state.robots)):
-                continue
-            # evaluate how many minutes I will need to build next robot
-            time_needed = max(map(
-                lambda available, robots, required: (required - available) // robots if robots > 0 else 0,
-                state.material,
-                state.robots,
-                recipe))
-            if state.time + time_needed > MAX_MINUTES:
-                # evaluate how many geodes at MAX_MINUTES
-                geodes = state.material[GEODE] + state.robots[GEODE] * (MAX_MINUTES - state.time)
-                if geodes > max_geodes:
-                    max_geodes = geodes
-                continue
-            # calculate next state and put it in queue
-            # XXX: probably better make this explicit instead of using list iterator and tuple?
-            new_robots = tuple([state.robots[i] + (1 if i == material else 0) for i in MATERIALS])
-            new_material = tuple([
-                state.material[i] + (state.robots[i] * time_needed) - recipe[i] for i in MATERIALS
-            ])
-            states.append(State(
-                state.time + time_needed,
-                new_robots,
-                new_material
-            ))
-            # print(f"[{cycles}] {state} => {time_needed} => [{states[-1]}]")
-
-    t1 = time.time()
-    print(f"Blueprint {bp.id} => {max_geodes} [{cycles} cycles - {memo_hit} memo hits - {t1 - t0:10.3f}sec]")
-    return max_geodes
 
 
 class Solution(Solver):
@@ -143,12 +80,82 @@ class Solution(Solver):
         self.blueprints.append(Blueprint(line))
 
     def solve(self):
-        total = 0
+        total1 = 0
+        total2 = 1
+        part2 = 0
         for bp in self.blueprints:
             print(f"Finding max geodes for blueprint {bp.id} => {bp.recipes}")
-            m = find_max_geodes(bp)
-            total += m * bp.id
+            robots = [1, 0, 0, 0]
+            material = [0, 0, 0, 0]
+            t0 = time.time()
+            max_geodes = self.find_max_geodes(bp, 24, robots, material)
+            total1 += max_geodes * bp.id
+            t1 = time.time()
+            print(f"[part 1] Blueprint {bp.id} => {max_geodes} ({total1}) [{t1 - t0:10.3f}sec {bp.iterations} total calls / {1000000 * (t1 - t0)/bp.iterations:10.3f} us/call / {bp.cache_hits} cache hits]")
+
+            if part2 < 3:
+                part2 += 1
+                t0 = time.time()
+                bp.iterations = 0
+                bp.cache_hits = 0
+                max_geodes = self.find_max_geodes(bp, 32, robots, material)
+                total2 *= max_geodes
+                t1 = time.time()
+                print(f"[part 2] Blueprint {bp.id} => {max_geodes} ({total2}) [{t1 - t0:10.3f}sec {bp.iterations} total calls / {1000000 * (t1 - t0)/bp.iterations:10.3f} us/call / {bp.cache_hits} cache hits]")
+        print(f"[1] result is {total1}")
+        print(f"[2] result is {total2}")
+
+    def find_max_geodes(self, bp: Blueprint, minutes_left, robots, materials):
+        bp.iterations += 1
+        if (bp.iterations % 500000) == 0:
+            print(f"{bp.iterations} hits {bp.cache_hits} ...")
+        assert minutes_left >= 0
+        # if we're at time, just return what we have
+        if minutes_left == 0:
+            return materials[GEODE]
+        # have we seen this?
+        cache_key = (minutes_left, tuple(robots), (
+            # if I have already more material (except GEODES) than how much I can spend in the remaining time,
+            # will use the maximum that can be spent as cache key
+            min(materials[ORE], bp.max_materials[ORE] * minutes_left),
+            min(materials[CLAY], bp.max_materials[CLAY] * minutes_left),
+            min(materials[OBSIDIAN], bp.max_materials[OBSIDIAN] * minutes_left),
+            materials[GEODE]
+        ))
+        if cache_key in bp.cache:
+            bp.cache_hits += 1
+            return bp.cache[cache_key]
+        # start with maximum that can be produced by the current status
+        max_geodes = materials[GEODE] + (robots[GEODE] * minutes_left)
+        for bot_type, recipe in enumerate(bp.recipes):
+            if not recipe:
+                continue
+            if bot_type != GEODE and robots[bot_type] >= bp.max_materials[bot_type]:
+                # culling - building robots of a type over the maximum consumption of a material is not necessary
+                continue
+            time_needed = 1
+            for mat, required in enumerate(recipe):
+                # if I lack robots for any of the required materials, ignore this recipe
+                if robots[mat] == 0 and recipe[mat] > 0:
+                    break
+                # how many minutes to produce enough material for this robot type
+                if recipe[mat] > 0:
+                    time_needed = max(time_needed, -((materials[mat] - recipe[mat]) // robots[mat]) + 1)
+            else:
+                if minutes_left - time_needed <= 0:
+                    # will exhaust the time - won't be able to add anything more to the max already calculated
+                    continue
+                new_robots = robots.copy()
+                new_robots[bot_type] += 1
+                new_materials = [materials[i] + (robots[i] * time_needed) - recipe[i] for i in MATERIALS]
+                max_geodes = max(max_geodes, self.find_max_geodes(bp, minutes_left - time_needed, new_robots, new_materials))
+
+        bp.cache[cache_key] = max_geodes
+        return max_geodes
 
     def test_data(self):
         return """Blueprint 1: Each ore robot costs 4 ore. Each clay robot costs 2 ore. Each obsidian robot costs 3 ore and 14 clay. Each geode robot costs 2 ore and 7 obsidian.
 Blueprint 2: Each ore robot costs 2 ore. Each clay robot costs 3 ore. Each obsidian robot costs 3 ore and 8 clay. Each geode robot costs 3 ore and 12 obsidian."""
+
+    def file_name(self):
+        return "../files/day19-blueprints.txt"
