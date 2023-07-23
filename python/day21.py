@@ -101,7 +101,7 @@ class Solution(Solver):
                 raise ValueError(f"Invalid operation: {monkey.operation}")
 
     def file_name(self):
-        return "../files/day21-monkeys.txt"
+        return "../inputs/day21-monkeys.txt"
 
     def test_data(self):
         return """root: pppw + sjmn

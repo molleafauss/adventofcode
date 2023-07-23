@@ -56,7 +56,7 @@ class Solution(Solver):
         print(f"[1] Signal strength found: {self.signal_strength}")
 
     def file_name(self):
-        return "../files/day10-signal.txt"
+        return "../inputs/day10-signal.txt"
 
     def test_data(self):
         return """addx 15

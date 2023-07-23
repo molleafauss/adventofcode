@@ -58,7 +58,7 @@ class Solution(Solver):
         self.score2 = 0
 
     def file_name(self):
-        return "../files/day02-strategy.txt"
+        return "../inputs/day02-strategy.txt"
 
     def test_data(self):
         return """A Y

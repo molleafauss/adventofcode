@@ -73,7 +73,7 @@ class Solution(Solver):
         raise ValueError(f"{idx} not found in list?")
 
     def file_name(self):
-        return "../files/day20-encrypted.txt"
+        return "../inputs/day20-encrypted.txt"
 
     def test_data(self):
         return """1

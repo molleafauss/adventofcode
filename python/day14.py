@@ -99,7 +99,7 @@ class Solution(Solver):
         print(f"[2] Sand resting: {sand}")
 
     def file_name(self):
-        return "../files/day14-sand.txt"
+        return "../inputs/day14-sand.txt"
 
     def test_data(self):
         return """498,4 -> 498,6 -> 496,6

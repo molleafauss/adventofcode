@@ -110,7 +110,7 @@ class Solution(Solver):
         print(f"[1] Most active: {most_active[0].id} => {most_active[0].inspected}, {most_active[1].id} => {most_active[1].inspected}: {most_active[0].inspected * most_active[1].inspected}")
 
     def file_name(self):
-        return "../files/day11-monkeys.txt"
+        return "../inputs/day11-monkeys.txt"
 
     def test_data(self):
         return """Monkey 0:

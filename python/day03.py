@@ -21,7 +21,7 @@ class Solution(Solver):
         self.row = 0
 
     def file_name(self):
-        return "../files/day03-rucksacks.txt"
+        return "../inputs/day03-rucksacks.txt"
 
     def test_data(self):
         return """vJrwpWtwJgWrhcsFMMfFFhFp

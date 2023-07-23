@@ -107,7 +107,7 @@ class Solution(Solver):
         return (x, y, z, dx, dy, dz)
 
     def file_name(self):
-        return "../files/day18-cubes.txt"
+        return "../inputs/day18-cubes.txt"
 
     def test_data(self):
         return """2,2,2

@@ -114,7 +114,7 @@ class Solution(Solver):
         return steps
 
     def file_name(self):
-        return "../files/day12-map.txt"
+        return "../inputs/day12-map.txt"
 
     def test_data(self):
         return """Sabqponm

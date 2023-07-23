@@ -18,7 +18,7 @@ class Solution(Solver):
         self.parse_instructions = False
 
     def file_name(self):
-        return "../files/day05-crates.txt"
+        return "../inputs/day05-crates.txt"
 
     def test_data(self):
         return """    [D]    

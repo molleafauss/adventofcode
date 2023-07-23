@@ -67,7 +67,7 @@ class Solution(Solver):
         print(f"[2] decoder key: {decoder_key}")
 
     def file_name(self):
-        return "../files/day13-signals.txt"
+        return "../inputs/day13-signals.txt"
 
     def test_data(self):
         return """[1,1,3,1,1]

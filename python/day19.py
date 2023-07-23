@@ -158,4 +158,4 @@ class Solution(Solver):
 Blueprint 2: Each ore robot costs 2 ore. Each clay robot costs 3 ore. Each obsidian robot costs 3 ore and 8 clay. Each geode robot costs 3 ore and 12 obsidian."""
 
     def file_name(self):
-        return "../files/day19-blueprints.txt"
+        return "../inputs/day19-blueprints.txt"

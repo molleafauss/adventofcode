@@ -16,7 +16,7 @@ class Solution(Solver):
         self.partial_overlaps = 0
 
     def file_name(self):
-        return "../files/day04-cleanup.txt"
+        return "../inputs/day04-cleanup.txt"
 
     def test_data(self):
         return """2-4,6-8

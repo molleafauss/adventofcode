@@ -102,7 +102,7 @@ class Solution(Solver):
             print("".join(row))
 
     def file_name(self):
-        return "../files/day24-blizzards.txt"
+        return "../inputs/day24-blizzards.txt"
 
     def test_data(self):
         return """#.######

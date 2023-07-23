@@ -277,7 +277,7 @@ class Solution(Solver):
         return pos
 
     def file_name(self):
-        return "../files/day22-path.txt"
+        return "../inputs/day22-path.txt"
 
     def test_data(self):
         return """        ...#

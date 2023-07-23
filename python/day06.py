@@ -35,7 +35,7 @@ class Solution(Solver):
         pass
 
     def file_name(self):
-        return "../files/day06-signal.txt"
+        return "../inputs/day06-signal.txt"
 
     def test_data(self):
         return """mjqjpqmgbljsphdztnvjfqwrcgsmlb
