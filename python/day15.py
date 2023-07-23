@@ -133,7 +133,7 @@ class Solution(Solver):
         return segments, beacons
 
     def file_name(self):
-        return "../files/day15-sensors.txt"
+        return "../inputs/day15-sensors.txt"
 
     def test_data(self):
         return """Sensor at x=2, y=18: closest beacon is at x=-2, y=15

@@ -133,7 +133,7 @@ class Solution(Solver):
         print("---------")
 
     def file_name(self):
-        return "../files/day23-elves.txt"
+        return "../inputs/day23-elves.txt"
 
     def test_data(self):
         return """....#..

@@ -197,4 +197,4 @@ class Solution(Solver):
         return """>>><<><>><<<>><>>><<<>>><<<><<<>><>><<>>"""
 
     def file_name(self):
-        return "../files/day17-wind.txt"
+        return "../inputs/day17-wind.txt"

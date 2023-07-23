@@ -50,7 +50,7 @@ class Solution(Solver):
         print(f"[2] min space to delete = {big_dirs[0]['size']}")
 
     def file_name(self):
-        return "../files/day07-dirs.txt"
+        return "../inputs/day07-dirs.txt"
 
     def test_data(self):
         return """$ cd /

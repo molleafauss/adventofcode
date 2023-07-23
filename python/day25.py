@@ -73,7 +73,7 @@ class Solution(Solver):
         print(f"{self.fuel} => to base 5 {fuel_base5}")
 
     def file_name(self):
-        return "../files/day25-fuel.txt"
+        return "../inputs/day25-fuel.txt"
 
     def test_data(self):
         return """1=-0-2

@@ -11,7 +11,7 @@ class Solution(Solver):
         self.calories = []
 
     def file_name(self):
-        return "../files/day01-calories.txt"
+        return "../inputs/day01-calories.txt"
 
     def test_data(self):
         return """1000

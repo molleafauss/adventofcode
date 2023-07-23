@@ -85,7 +85,7 @@ class Solution(Solver):
             raise Exception("WTF?")
 
     def file_name(self):
-        return "../files/day09-rope.txt"
+        return "../inputs/day09-rope.txt"
 
     def test_data(self):
         return """R 4

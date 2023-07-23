@@ -227,7 +227,7 @@ Valve JJ has flow rate=21; tunnel leads to valve II
 """
 
     def file_name(self):
-        return "../files/day16-caves.txt"
+        return "../inputs/day16-caves.txt"
         # return None
 
 

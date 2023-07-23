@@ -110,7 +110,7 @@ class Solution(Solver):
         return score
 
     def file_name(self):
-        return "../files/day08-trees.txt"
+        return "../inputs/day08-trees.txt"
 
     def test_data(self):
         return """30373
