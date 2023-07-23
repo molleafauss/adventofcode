@@ -6,8 +6,8 @@ import re
 
 # https://adventofcode.com/2022/day/19
 # I had to use a lot of help here to find the result. Tbh I actually had kinda the right algorithm implemented, but I
-# ended introducing a lot of bugs that were causing the iterations to never end.
-# I tried a non-recursive solution and then landed on the recursive as it's "cleaner".
+# ended introducing a lot of bugs and missed optimizations that were causing the iterations to never end.
+# I tried a non-recursive solution first, and then landed on the recursive as it's "cleaner".
 # Thanks to hyper-neutrino I also discovered the for ... else construct in python which I didn't know before.
 
 
