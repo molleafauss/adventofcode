@@ -71,15 +71,3 @@ class Solution(Solver):
             if data[i][1] == idx:
                 return i
         raise ValueError(f"{idx} not found in list?")
-
-    def file_name(self):
-        return "../inputs/day20-encrypted.txt"
-
-    def test_data(self):
-        return """1
-2
--3
-3
--2
-0
-4"""

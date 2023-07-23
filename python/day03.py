@@ -20,17 +20,6 @@ class Solution(Solver):
         self.possible_badges = None
         self.row = 0
 
-    def file_name(self):
-        return "../inputs/day03-rucksacks.txt"
-
-    def test_data(self):
-        return """vJrwpWtwJgWrhcsFMMfFFhFp
-jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL
-PmmdzqPrVvPwwTWBwg
-wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn
-ttgJtRGJQctTZtZT
-CrZsJsPPZsGzwwsLwLmpwMDw"""
-
     def parse(self, line):
         self.row += 1
         # assuming this is even

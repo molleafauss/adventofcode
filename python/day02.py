@@ -57,14 +57,6 @@ class Solution(Solver):
         self.score1 = 0
         self.score2 = 0
 
-    def file_name(self):
-        return "../inputs/day02-strategy.txt"
-
-    def test_data(self):
-        return """A Y
-B X
-C Z"""
-
     def parse(self, line: str):
         (a, b) = line.split(" ")
         opponent = OPPONENT_PLAY[a]

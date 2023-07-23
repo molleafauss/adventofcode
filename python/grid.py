@@ -1,6 +1,12 @@
 from dataclasses import dataclass
 
 
+@dataclass
+class Point:
+    x: int
+    y: int
+
+
 @dataclass(frozen=True)
 class GridPos:
     row: int

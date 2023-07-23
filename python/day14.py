@@ -97,11 +97,3 @@ class Solution(Solver):
             keep_dripping = START not in self.scan
 
         print(f"[2] Sand resting: {sand}")
-
-    def file_name(self):
-        return "../inputs/day14-sand.txt"
-
-    def test_data(self):
-        return """498,4 -> 498,6 -> 496,6
-503,4 -> 502,4 -> 502,9 -> 494,9
-"""

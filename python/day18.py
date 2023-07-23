@@ -105,21 +105,3 @@ class Solution(Solver):
         dy = pos[1] - air[1]
         dz = pos[2] - air[2]
         return (x, y, z, dx, dy, dz)
-
-    def file_name(self):
-        return "../inputs/day18-cubes.txt"
-
-    def test_data(self):
-        return """2,2,2
-1,2,2
-3,2,2
-2,1,2
-2,3,2
-2,2,1
-2,2,3
-2,2,4
-2,2,6
-1,2,5
-3,2,5
-2,1,5
-2,3,5"""

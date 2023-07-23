@@ -108,35 +108,3 @@ class Solution(Solver):
         # sort by most inspected, take first twos
         most_active = sorted(self.monkeys, reverse=True, key=lambda m: m.inspected)
         print(f"[1] Most active: {most_active[0].id} => {most_active[0].inspected}, {most_active[1].id} => {most_active[1].inspected}: {most_active[0].inspected * most_active[1].inspected}")
-
-    def file_name(self):
-        return "../inputs/day11-monkeys.txt"
-
-    def test_data(self):
-        return """Monkey 0:
-  Starting items: 79, 98
-  Operation: new = old * 19
-  Test: divisible by 23
-    If true: throw to monkey 2
-    If false: throw to monkey 3
-
-Monkey 1:
-  Starting items: 54, 65, 75, 74
-  Operation: new = old + 6
-  Test: divisible by 19
-    If true: throw to monkey 2
-    If false: throw to monkey 0
-
-Monkey 2:
-  Starting items: 79, 60, 97
-  Operation: new = old * old
-  Test: divisible by 13
-    If true: throw to monkey 1
-    If false: throw to monkey 3
-
-Monkey 3:
-  Starting items: 74
-  Operation: new = old + 3
-  Test: divisible by 17
-    If true: throw to monkey 0
-    If false: throw to monkey 1"""

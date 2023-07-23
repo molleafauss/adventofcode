@@ -192,9 +192,3 @@ class Solution(Solver):
                     assert rocks == target
                     max_height += delta_height - old_height
                 self.results[target] = max_height
-
-    def test_data(self):
-        return """>>><<><>><<<>><>>><<<>>><<<><<<>><>><<>>"""
-
-    def file_name(self):
-        return "../inputs/day17-wind.txt"

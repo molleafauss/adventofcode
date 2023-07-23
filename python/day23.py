@@ -131,15 +131,3 @@ class Solution(Solver):
             print("".join(row))
 
         print("---------")
-
-    def file_name(self):
-        return "../inputs/day23-elves.txt"
-
-    def test_data(self):
-        return """....#..
-..###.#
-#...#.#
-.#...##
-#.###..
-##.#.##
-.#..#.."""
