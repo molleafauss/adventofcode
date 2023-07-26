@@ -14,14 +14,12 @@ if __name__ == '__main__':
     if len(sys.argv) < 2:
         raise Exception("Please specify a day to resolve like 'day03'")
     day = sys.argv[1]
-    for i in range(25):
-        day = f"day{i+1:02d}"
-        print(f"== Solving {day} ==")
-        module = __import__(day)
-        # test input
-        test_data = pathlib.Path(__file__).parent / f"../inputs/{day}/test.txt"
-        solve(test_data, module.Solution())
-        # real input
-        input_data = pathlib.Path(__file__).parent / f"../inputs/{day}/input.txt"
-        solve(input_data, module.Solution())
+    print(f"== Solving {day} ==")
+    module = __import__(day)
+    # test input
+    test_data = pathlib.Path(__file__).parent / f"../inputs/{day}/test.txt"
+    solve(test_data, module.Solution())
+    # real input
+    input_data = pathlib.Path(__file__).parent / f"../inputs/{day}/input.txt"
+    solve(input_data, module.Solution())
 
