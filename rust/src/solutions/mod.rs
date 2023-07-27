@@ -1,4 +1,5 @@
 mod day01;
+mod day02;
 
 /// A solver for a AOC puzzle
 pub(crate) trait Solver {
@@ -8,9 +9,10 @@ pub(crate) trait Solver {
     fn solve(&mut self);
 }
 
-pub(crate) fn solver_for(day: &str) -> impl Solver {
+pub(crate) fn solver_for(day: &str) -> Box<dyn Solver> {
     match day {
-        "day01" => day01::Solution::new(),
+        "day01" => Box::new(day01::Solution::new()),
+        "day02" => Box::new(day02::Solution::new()),
         _ => panic!("Unsupported puzzle {day}"),
     }
 }

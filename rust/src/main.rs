@@ -1,3 +1,5 @@
+extern crate core;
+
 mod solutions;
 
 use std::env;
@@ -8,7 +10,7 @@ use std::process::exit;
 use solutions::Solver;
 use solutions::solver_for;
 
-fn solve(filename: &str, mut parser: impl Solver) {
+fn solve(filename: &str, mut parser: Box<dyn Solver>) {
     for line in fs::read_to_string(filename).unwrap().lines() {
         parser.parse(line);
     }
