@@ -1,10 +1,10 @@
+use std::collections::HashSet;
 use crate::Solver;
 
 pub struct Solution {
     part1: u32,
     part2: u32,
-    // this contains one slot for each possible item, and then
-    badges: Vec<u8>,
+    badges: HashSet<char>,
     row: u32,
 }
 
@@ -13,7 +13,8 @@ impl Solution {
         Solution {
             part1: 0,
             part2: 0,
-            badges: vec![0, 52],
+            // the possible items are 52
+            badges: HashSet::with_capacity(52),
             row: 0,
         }
     }
@@ -37,11 +38,31 @@ impl Solver for Solution {
         for b in second_half.as_bytes() {
             let ch = char::from(*b);
             if first_half.find(ch) != None {
-                // let i : u32 = ch.into();
-                // let val = ;
                 self.part1 += value(ch.into());
                 break;
             }
+        }
+
+        // which elf of the triplet we seeing?
+        let elf = self.row % 3;
+        if elf == 1 {
+            // first elf - clear current possible badges and add all letters from current line
+            line.chars().for_each(|ch| { self.badges.insert(ch); });
+        } else if elf == 2 {
+            // remove from self.badges all chars which are not in the current line
+            let not_found : Vec<char> = self.badges.iter().copied()
+                .filter(|ch| line.find(*ch).is_none())
+                .collect();
+            not_found.iter().for_each(|ch| { self.badges.remove(ch); });
+        } else {
+            // remove from self.badges all chars which are not in the current line
+            let not_found : Vec<char> = self.badges.iter().copied()
+                .filter(|ch| line.find(*ch).is_none())
+                .collect();
+            not_found.iter().for_each(|ch| { self.badges.remove(ch); });
+            // this should contain 1 item
+            // this should run only once and we should be left with an empty (reussable) HashSet
+            self.badges.drain().for_each(|ch| self.part2 += value(ch.into()));
         }
     }
 
