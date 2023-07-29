@@ -50,19 +50,27 @@ impl Solver for Solution {
             line.chars().for_each(|ch| { self.badges.insert(ch); });
         } else if elf == 2 {
             // remove from self.badges all chars which are not in the current line
-            let not_found : Vec<char> = self.badges.iter().copied()
-                .filter(|ch| line.find(*ch).is_none())
-                .collect();
-            not_found.iter().for_each(|ch| { self.badges.remove(ch); });
+            self.badges.iter()
+                .copied()
+                .for_each(|ch| {
+                    if line.find(*ch).is_none() {
+                        self.badges.remove(ch)
+                    }
+                });
         } else {
             // remove from self.badges all chars which are not in the current line
-            let not_found : Vec<char> = self.badges.iter().copied()
-                .filter(|ch| line.find(*ch).is_none())
-                .collect();
-            not_found.iter().for_each(|ch| { self.badges.remove(ch); });
-            // this should contain 1 item
-            // this should run only once and we should be left with an empty (reussable) HashSet
-            self.badges.drain().for_each(|ch| self.part2 += value(ch.into()));
+            self.badges.iter()
+                .copied()
+                .for_each(|ch| {
+                    if line.find(*ch).is_none() {
+                        self.badges.remove(ch)
+                    }
+                });
+            // badges should now contain only 1 item
+            assert_eq!(self.badges.len(), 1, "Found more than 1 possible badge: {}", self.badges.len());
+            // meaning this should run only once, and after we should be left with an empty (reusable) HashSet
+            self.badges.drain()
+                .for_each(|ch| self.part2 += value(ch.into()));
         }
     }
 
