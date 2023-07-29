@@ -9,6 +9,19 @@ pub struct Solution {
 }
 
 impl Solution {
+    fn remove_missing(&mut self, line: &str) {
+        // remove from self.badges all chars which are not in the current line
+        self.badges.iter()
+            .copied()
+            .for_each(|ch| {
+                if line.find(*ch).is_none() {
+                    self.badges.remove(ch)
+                }
+            });
+    }
+}
+
+impl Solution {
     pub(crate) fn new() -> Solution {
         Solution {
             part1: 0,
@@ -49,23 +62,9 @@ impl Solver for Solution {
             // first elf - clear current possible badges and add all letters from current line
             line.chars().for_each(|ch| { self.badges.insert(ch); });
         } else if elf == 2 {
-            // remove from self.badges all chars which are not in the current line
-            self.badges.iter()
-                .copied()
-                .for_each(|ch| {
-                    if line.find(*ch).is_none() {
-                        self.badges.remove(ch)
-                    }
-                });
+            self.remove_missing(line);
         } else {
-            // remove from self.badges all chars which are not in the current line
-            self.badges.iter()
-                .copied()
-                .for_each(|ch| {
-                    if line.find(*ch).is_none() {
-                        self.badges.remove(ch)
-                    }
-                });
+            self.remove_missing(line);
             // badges should now contain only 1 item
             assert_eq!(self.badges.len(), 1, "Found more than 1 possible badge: {}", self.badges.len());
             // meaning this should run only once, and after we should be left with an empty (reusable) HashSet
