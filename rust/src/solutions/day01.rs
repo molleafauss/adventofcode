@@ -1,13 +1,16 @@
+// What did I learn?
+// Vec basic APIs and a bit of functional/iterator constructs.
+
 use std::str::FromStr;
 use crate::solutions::Solver;
 
 struct Elf {
-    calories: i32,
+    calories: u32,
 }
 
 pub struct Solution {
-    elf: i32,
-    elf_calories: i32,
+    elf: u32,
+    elf_calories: u32,
     calories: Vec<Elf>,
 }
 
@@ -28,7 +31,7 @@ impl Solver for Solution {
             self.elf += 1;
             self.elf_calories = 0;
         } else {
-            self.elf_calories += i32::from_str(line).unwrap();
+            self.elf_calories += u32::from_str(line).unwrap();
         }
     }
 
@@ -38,7 +41,7 @@ impl Solver for Solution {
         self.calories.sort_by_key(|elf| elf.calories);
         self.calories.reverse();
         println!("[1] Saw {} elves: maximum: {}", self.calories.len(), self.calories[0].calories);
-        let top3: i32 = self.calories.iter().take(3).map(|elf| elf.calories).sum();
+        let top3 = self.calories.iter().take(3).map(|elf| elf.calories).sum();
         println!("[2] First 3 elves: {top3}");
     }
 }
