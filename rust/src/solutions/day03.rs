@@ -1,3 +1,8 @@
+// What did I learn?
+// How to manipulate content of an hashset while exploring its contents.
+// The copied() helped - because it contains primitive types.
+// That may be more complex with collections containing structs.
+
 use std::collections::HashSet;
 use crate::Solver;
 
