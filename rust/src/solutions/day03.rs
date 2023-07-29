@@ -1,7 +1,6 @@
 // What did I learn?
-// How to manipulate content of an hashset while exploring its contents.
-// The copied() helped - because it contains primitive types.
-// That may be more complex with collections containing structs.
+// How to manipulate content of an hashset while exploring its contents, where I needed to build a
+// separate structure to hold the changes - as modifying while in-flight seems not possible...
 
 use std::collections::HashSet;
 use crate::Solver;
@@ -16,13 +15,11 @@ pub struct Solution {
 impl Solution {
     fn remove_missing(&mut self, line: &str) {
         // remove from self.badges all chars which are not in the current line
-        self.badges.iter()
+        let removed: Vec<char> = self.badges.iter()
             .copied()
-            .for_each(|ch| {
-                if line.find(*ch).is_none() {
-                    self.badges.remove(ch)
-                }
-            });
+            .filter(|ch| line.find(*ch).is_none())
+            .collect();
+        removed.iter().for_each(|ch| { self.badges.remove(ch); })
     }
 }
 
