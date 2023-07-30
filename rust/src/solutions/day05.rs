@@ -1,5 +1,9 @@
 // What did I learn?
-// using the regex create, some fun with finding Strings/chars.
+// using the regex create, some fun with manipulating chars (should have I used u8 directly?)
+// still have to get decent sensibility on wether is better to use chars or directly u8 from a &str...
+// learned get_mut() on Vec to mutate internal elements.
+// attention to mutability borrow when you have both source and destination to change in the multiple moves
+// (need to pick what will change first and then apply it)
 
 use std::cmp::max;
 use std::str::FromStr;
