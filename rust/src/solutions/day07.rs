@@ -1,3 +1,11 @@
+// What did I learn?
+// I was planning to replicate 1:1 the python structure, but a using a dict like in python indexed
+// on the _reference_ to the name of the entry, apparently is not a good thing (ie map[entry.name] = entry
+// is bad. Unsurprisingly, as you need to hold a reference alive and the value isn't guaranteed to
+// be the owning struct of the key. To implement in a similar way, someone on the Rust Discord suggested
+// using an HashSet and implementing hash only for the name.
+// But this implementation is actually simpler.
+
 use std::str::FromStr;
 use crate::Solver;
 
@@ -83,7 +91,7 @@ impl Solver for Solution {
         while self.dirstack.len() > 1 {
             // pop all remaining dirs and save them
             let dir = self.dirstack.pop().unwrap();
-            self.dirstack.last_mut().unwrap().size += dir.size.clone();
+            self.dirstack.last_mut().unwrap().size += dir.size;
             self.alldirs.push(dir);
         }
         // now verify we saw them all

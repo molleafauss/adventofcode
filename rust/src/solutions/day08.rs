@@ -1,3 +1,8 @@
+// What did I learn?
+// I ended up using a one-dimension vector to store the matrix, as the two dimensional was a bit more
+// complex to handle ownerships and mutability.
+// As in the python solution, the code could reuse some factoring...
+
 use crate::Solver;
 
 pub(crate) struct Solution {
