@@ -122,18 +122,18 @@ impl Rope {
 
         let mut tail_move = GridPos::of(0, 0);
         if delta_x == 0 {
-            move_y = if delta_y > 0  { 1 } else { -1 };
+            tail_move.y = if delta_y > 0  { 1 } else { -1 };
         } else if delta_y == 0 {
-            move_x = if delta_x > 0  { 1 } else { -1 };
+            tail_move.x = if delta_x > 0  { 1 } else { -1 };
         } else if delta_x.abs() == 2 && delta_y.abs() == 2 {
-            move_x = if delta_x > 0  { 1 } else { -1 };
-            move_y = if delta_y > 0  { 1 } else { -1 };
+            tail_move.x = if delta_x > 0  { 1 } else { -1 };
+            tail_move.y = if delta_y > 0  { 1 } else { -1 };
         } else if delta_x.abs() > delta_y.abs() {
-            move_x = if delta_x > 0  { 1 } else { -1 };
-            move_y = delta_y;
+            tail_move.x = if delta_x > 0  { 1 } else { -1 };
+            tail_move.y = delta_y;
         } else if delta_y.abs() > delta_x.abs() {
-            move_x = delta_x;
-            move_y = if delta_y > 0  { 1 } else { -1 };
+            tail_move.x = delta_x;
+            tail_move.y = if delta_y > 0  { 1 } else { -1 };
         } else {
             panic!("Invalid head-tail distance: {} => {} : ({delta_x}, {delta_y})", head, tail);
         }
