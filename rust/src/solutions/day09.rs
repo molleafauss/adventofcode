@@ -111,9 +111,9 @@ impl Rope {
     }
 
     fn adjust_rope(&mut self, pos: usize) {
-        let head = self.knots.get(pos).unwrap();
+        let head = &self.knots[pos];
         // can't get tail as mutable or head.distance(tail) will fail due to two different borrows
-        let tail = self.knots.get(pos + 1).unwrap();
+        let tail = &self.knots[pos + 1];
         let (delta_x, delta_y) = head.distance(tail);
         if delta_x.abs() <= 1 && delta_y.abs() <= 1 {
             // within range - nothing to do
@@ -138,6 +138,6 @@ impl Rope {
             panic!("Invalid head-tail distance: {} => {} : ({delta_x}, {delta_y})", head, tail);
         }
         // now get again tail and mutate it
-        self.knots.get_mut(pos + 1).unwrap().move_by(&tail_move);
+        self.knots[pos + 1].move_by(&tail_move);
     }
 }
