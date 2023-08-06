@@ -50,7 +50,7 @@ impl Solution {
         while i < self.stack_defs.len() {
             i += 1;
             let row = self.stack_defs.len() - &i;
-            let line = self.stack_defs.get(row).unwrap();
+            let line = &self.stack_defs[row];
             let mut chars = line.chars();
             // consume first character
             for i in 0..num_stacks {
@@ -58,7 +58,7 @@ impl Solution {
                 let idx = if i == 0 { 1 } else { 3 };
                 let val = chars.nth( idx).unwrap().into();
                 if val != ' ' {
-                    stacks.get_mut(i).unwrap().push(val);
+                    stacks[i].push(val);
                 }
             }
         }
@@ -70,9 +70,9 @@ impl Solution {
         for action in self.instructions.iter() {
             let mut moves = action.amount.clone();
             while moves > 0 {
-                let source = stacks.get_mut(action.from - 1).unwrap().pop();
+                let source = stacks[action.from - 1].pop();
                 if source.is_some() {
-                    stacks.get_mut(action.to - 1).unwrap().push(source.unwrap());
+                    stacks[action.to - 1].push(source.unwrap());
                 }
                 moves -= 1;
             }
@@ -86,7 +86,7 @@ impl Solution {
 
     fn move_multiples(&mut self, mut stacks: Vec<Vec<char>>) -> String {
         for action in self.instructions.iter() {
-            let source = stacks.get_mut(action.from - 1).unwrap();
+            let source = &mut stacks[action.from - 1];
             let mut moved: Vec<char> = Vec::new();
             // find how many items to remove from source. Don't remove any if you don't have enough
             let pos = source.len() as i32 - action.amount as i32;
@@ -96,7 +96,7 @@ impl Solution {
                 moved.push(source.remove(remove_idx));
                 items -= 1;
             }
-            let dest = stacks.get_mut(action.to - 1).unwrap();
+            let dest = &mut stacks[action.to - 1];
             moved.drain(0..).for_each(|item| dest.push(item.clone()));
         }
 

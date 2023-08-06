@@ -14,7 +14,7 @@ impl Solution {
 fn all_different(buf: &[u8], start: usize, length: usize) -> bool {
     let end = start + length;
     for i in start..end - 1 {
-        let x = buf.get(i).unwrap();
+        let x = &buf[i];
         let found = buf[i + 1..end].contains(x);
         if found {
             return false;

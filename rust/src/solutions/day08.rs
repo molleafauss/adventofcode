@@ -22,7 +22,7 @@ impl Solution {
 
     fn tree_at(&mut self, row: usize, col: usize) -> &mut Tree {
         let pos = row * self.width + col;
-        self.matrix.get_mut(pos).unwrap()
+        &mut self.matrix[pos]
     }
 
     fn check_column(&mut self, col: usize) -> usize {
