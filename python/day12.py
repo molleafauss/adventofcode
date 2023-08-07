@@ -7,12 +7,13 @@ from advent import Solver
 # The reality is that the first idea I had was on the good track - I needed to track the visited places and make sure I
 # never circled back to my steps.
 # The Djikstra here doesn't build the Vertex-edges matrix, but builds it "dynamically" by using the neighbouring rule,
-# adding the fact that the neighbour can be visited only if it hasn't alread (removing from the cost matrix does exactly
-# that - we visited the position, added cost to all neighbours thus no other step can come back.
+# adding the fact that the neighbour can be visited only if it hasn't been already (removing from the cost matrix does
+# exactly that - we visited the position, added cost to all neighbours thus no other step can come back.
 # Fun part the second one: I didn't notice there were (of course) spots which could not reach the top (predictable,
 # though); initializing the cost to an impossible value made me add an extra condition to signal that.
 # The current result is slow, as walk is called once per starting point. Once I have a set of parents, though, ideally
 # I can start finding paths for every element in the possible_starts and remove them if found.
+
 
 class Solution(Solver):
     def __init__(self):
