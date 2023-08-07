@@ -4,7 +4,7 @@
 use std::collections::HashSet;
 use std::str::FromStr;
 use crate::Solver;
-use crate::grid::GridPos;
+use crate::grid::{GridPos, MOVE_D, MOVE_L, MOVE_R, MOVE_U};
 
 pub(crate) struct Solution {
     movements: Vec<Movement>,
@@ -54,11 +54,6 @@ struct Movement {
     dir: char,
     moves: u32,
 }
-
-const MOVE_U : GridPos = GridPos { x: 0, y: 1 };
-const MOVE_D : GridPos = GridPos { x: 0, y: -1 };
-const MOVE_R : GridPos = GridPos { x: 1, y: 0 };
-const MOVE_L : GridPos = GridPos { x: -1, y: 0 };
 
 struct Rope {
     knots: Vec<GridPos>
