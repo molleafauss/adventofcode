@@ -8,7 +8,7 @@ from advent import Solver
 # never circled back to my steps.
 # The Djikstra here doesn't build the Vertex-edges matrix, but builds it "dynamically" by using the neighbouring rule,
 # adding the fact that the neighbour can be visited only if it hasn't been already (removing from the cost matrix does
-# exactly that - we visited the position, added cost to all neighbours thus no other step can come back.
+# exactly that - we visited the position, added cost to all neighbours thus no other step can come back).
 # Fun part the second one: I didn't notice there were (of course) spots which could not reach the top (predictable,
 # though); initializing the cost to an impossible value made me add an extra condition to signal that.
 # The current result is slow, as walk is called once per starting point. Once I have a set of parents, though, ideally
@@ -71,11 +71,9 @@ class Solution(Solver):
                     # no path to end - bail
                     return []
                 next_node = to_visit
-            print(f"Found end, visited {visited}")
             return parents
 
         def walk_back(parents, start):
-            print(f"backtracking {self.end} => {start}: {len(parents)}")
             path = []
             if self.end not in parents:
                 return path
