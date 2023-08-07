@@ -4,6 +4,7 @@ use std::env;
 use std::fs;
 use std::path::Path;
 use std::process::exit;
+use std::time::SystemTime;
 
 use solutions::Solver;
 use solutions::solver_for;
@@ -12,7 +13,10 @@ fn solve(filename: &str, mut parser: Box<dyn Solver>) {
     for line in fs::read_to_string(filename).unwrap().lines() {
         parser.parse(line);
     }
-    parser.solve()
+    let t0 = SystemTime::now();
+    parser.solve();
+    let t1 = SystemTime::now();
+    println!("File {filename}: {:.3}sec", t1.duration_since(t0).unwrap().as_secs_f32());
 }
 
 fn main() {
