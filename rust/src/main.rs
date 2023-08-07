@@ -1,4 +1,5 @@
 mod solutions;
+mod grid;
 
 use std::env;
 use std::fs;
