@@ -2,9 +2,9 @@
 // incapsulate some of the actions into structs, implementing Display, using a HashSet with int structs
 
 use std::collections::HashSet;
-use std::fmt::{Display, Formatter};
 use std::str::FromStr;
 use crate::Solver;
+use crate::grid::GridPos;
 
 pub(crate) struct Solution {
     movements: Vec<Movement>,
@@ -53,33 +53,6 @@ impl Solver for Solution {
 struct Movement {
     dir: char,
     moves: u32,
-}
-
-#[derive(Eq, PartialEq, Hash, Clone)]
-struct GridPos {
-    x: i32,
-    y: i32,
-}
-
-impl GridPos {
-    fn of(x: i32, y: i32) -> GridPos {
-        GridPos {x, y}
-    }
-
-    fn distance(&self, other: &GridPos) -> (i32, i32) {
-        (self.x - other.x, self.y - other.y)
-    }
-
-    fn move_by(&mut self, other: &GridPos) {
-        self.x += other.x;
-        self.y += other.y;
-    }
-}
-
-impl Display for GridPos {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f, "({}, {})", self.x, self.y)
-    }
 }
 
 const MOVE_U : GridPos = GridPos { x: 0, y: 1 };
