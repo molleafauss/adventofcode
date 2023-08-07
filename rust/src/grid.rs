@@ -30,10 +30,7 @@ impl GridPos {
 
     /// creates another GridPos shifted by the given GridPos
     pub(crate) fn add(&self, delta: &GridPos) -> GridPos {
-        GridPos::of(
-            x: self.x + delta.x,
-            y: self.y + delta.y,
-        )
+        GridPos::of(self.x + delta.x, self.y + delta.y)
     }
 }
 
