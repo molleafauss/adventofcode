@@ -1,3 +1,8 @@
+// What did I learn?
+// Had to implement the operation but was _reasonably_ simple (and indeed frigging faster than python eval)
+// math needed to be done in u64 to avoid overflowing
+// still not clear if there's a idiomatic/library function tp print values from a Vec...
+
 use std::str::FromStr;
 use std::usize;
 use once_cell::sync::Lazy;
@@ -18,6 +23,7 @@ impl Solution {
     fn run_loops(&mut self, iterations: u32, reduce_worry: u64, reducer: u64) -> u64 {
         self.monkeys.iter_mut().for_each(|m| m.start());
         (0..iterations).for_each(|i| {
+            // not clear if I can use an iter here
             (0..self.monkeys.len()).for_each(|i| {
                 self.monkeys[i].act(reduce_worry, reducer)
                     .iter()
@@ -120,7 +126,7 @@ impl Monkey {
 
     fn set_result(&mut self, result: &str, destination: &str) {
         match result {
-            "true" => self.test.1 = usize::from_str(destination).unwrap(),
+            "true"  => self.test.1 = usize::from_str(destination).unwrap(),
             "false" => self.test.2 = usize::from_str(destination).unwrap(),
             _ => panic!("Invalid result: {result}"),
         }
