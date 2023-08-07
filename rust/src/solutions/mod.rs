@@ -9,6 +9,7 @@ mod day08;
 mod day09;
 mod day10;
 mod day11;
+mod day12;
 
 /// A solver for a AOC puzzle
 pub(crate) trait Solver {
@@ -31,6 +32,7 @@ pub(crate) fn solver_for(day: &str) -> Box<dyn Solver> {
         "day09" => Box::new(day09::Solution::new()),
         "day10" => Box::new(day10::Solution::new()),
         "day11" => Box::new(day11::Solution::new()),
+        "day12" => Box::new(day12::Solution::new()),
         _ => panic!("Unsupported puzzle {day}"),
     }
 }
