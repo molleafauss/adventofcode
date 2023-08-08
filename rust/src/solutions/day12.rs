@@ -35,20 +35,23 @@ impl Solution {
         println!("=== Finding path {start} => {end} [costs: {}]", costs.len());
         let mut parents = HashMap::new();
         let mut next_node = start.clone();
-        let mut visited = 0;
         while next_node != *end {
-            visited += 1;
             self.neighbours(&next_node, &costs).into_iter().for_each(|n| {
                 if costs[&next_node] + 1 < costs[&n] {
                     costs.insert(n.clone(), costs[&next_node] + 1);
                     parents.insert(n.clone(), next_node.clone());
                 } else {
-                    assert!(parents.contains_key(&n));
+                    assert!(parents.contains_key(&n),
+                            "No parent for {} ({next_node}) // {} // {}", n, costs[&next_node], costs[&n]);
                 }
             });
             costs.remove(&next_node);
             // find the next to visit
             let to_visit = costs.iter().min_by_key(|e| e.1).unwrap();
+            if to_visit.1 == &max_cost {
+                parents.clear();
+                break;
+            }
             next_node = to_visit.0.clone();
         }
         parents
@@ -75,6 +78,7 @@ impl Solution {
         [node.add(&MOVE_U), node.add(&MOVE_D), node.add(&MOVE_L), node.add(&MOVE_R)]
             .into_iter()
             .filter(|pos| {
+                // not out of bounds && not visited && acceptable height (less than current + 1)
                 self.map.contains_key(pos) && costs.contains_key(pos) && self.map[pos] <= max_height
             })
             .collect()
@@ -83,7 +87,8 @@ impl Solution {
 
 const START: u8 = 'S' as u8;
 const END: u8 = 'E' as u8;
-
+const LOWEST: u8 = 'a' as u8;
+const HIGHEST: u8 = 'z' as u8;
 
 impl Solver for Solution {
     fn parse(&mut self, line: &str) {
@@ -98,10 +103,10 @@ impl Solver for Solution {
             let mut letter = bytes.get(i).unwrap();
             if *letter == START {
                 self.start = Some(GridPos::of(i as i32, self.height as i32));
-                letter = &('a' as u8);
+                letter = &LOWEST;
             } else if *letter == END {
                 self.end = Some(GridPos::of(i as i32, self.height as i32));
-                letter = &('z' as u8);
+                letter = &HIGHEST;
             }
             self.map.insert(GridPos::of(i as i32, self.height as i32), *letter);
         });
@@ -113,6 +118,21 @@ impl Solver for Solution {
 
         let parents = self.walk(&self.start.as_ref().unwrap());
         let path = self.walk_back(parents, &self.start.as_ref().unwrap());
-        println!("[1] Min length found: {}", path.len())
+        let mut min_length = path.len();
+        println!("[1] Min length found: {min_length}");
+
+        // finding shortest
+        let mut min_start = self.start.as_ref().unwrap();
+        self.map.iter()
+            .filter(|e| e.1 == &LOWEST)
+            .map(|e| e.0)
+            .for_each(|start| {
+                let path = self.walk_back(self.walk(start), start);
+                if path.len() > 0 && path.len() < min_length {
+                    min_start = start;
+                    min_length = path.len();
+                }
+            });
+        println!("[2] Shortest path from {min_start}: {min_length}")
     }
 }
