@@ -1,3 +1,8 @@
+// What did I learn?
+// HashMap implementing Indexed (but only for reading), refactored GridPos already, iter().min_by_key,
+// -> interesting it's slower than python by far and large (220sec vs 150sec) -> something wrong.
+
+
 use std::collections::HashMap;
 use crate::Solver;
 use crate::grid::{GridPos, MOVE_D, MOVE_L, MOVE_R, MOVE_U};
