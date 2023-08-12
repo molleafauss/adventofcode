@@ -60,18 +60,20 @@ enum Packet {
 
 impl Packet {
     fn parse(line: &str) -> Packet {
-        println!("Parsing {}", line);
         assert!(line.starts_with("[") && line.ends_with("]"), "Line not a list? {line}");
+        println!("Parsing {}", line);
         // packet is always at least an empty list
         let mut stack = vec![Packet::List(Vec::new())];
         // skip start and end and iterate on chars
+        let mut last = ' ';
         line[1..line.len() - 1].chars().enumerate().for_each(|(i, ch)| {
             if ch == '[' {
                 // create a new list, add it to the stack
                 stack.push(Packet::List(Vec::new()));
                 // println!("Found [ => {}", stack.len());
-            } else if ch == ']' {
+            } else if ch == ']' && last != '[' {
                 // pop the last element (should be a list) and add it to the parent
+                // if there's an empty list [] don't do this
                 let el = stack.pop().unwrap();
                 let Packet::List(prev) = stack.last_mut().unwrap() else {
                     panic!("Unable to push items in Packet - not a List? At char {i}");
@@ -97,6 +99,8 @@ impl Packet {
                     // println!("Found digit, added new value {}", ch);
                 }
             }
+            // println!("Parsed: {} - last {}", ch, last);
+            last = ch;
         });
 
         if stack.len() == 2 {
