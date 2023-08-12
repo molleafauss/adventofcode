@@ -54,7 +54,7 @@ class Solution(Solver):
                     x += 1
                     continue
                 else:
-                    print(f"Sand found resting place in {(x, y)}: {sand}")
+                    # print(f"Sand found resting place in {(x, y)}: {sand}")
                     sand += 1
                     self.scan[(x, y)] = 'o'
                     break
@@ -84,12 +84,12 @@ class Solution(Solver):
                     x += 1
                     continue
                 elif y + 1 == self.max_y:
-                    print(f"Sand found resting place in {(x, y)}: {sand}")
+                    # print(f"Sand found resting place in {(x, y)}: {sand}")
                     sand += 1
                     self.scan[(x, y)] = 'o'
                     break
                 else:
-                    print(f"Sand found resting place in {(x, y)}: {sand}")
+                    # print(f"Sand found resting place in {(x, y)}: {sand}")
                     sand += 1
                     self.scan[(x, y)] = 'o'
                     break
