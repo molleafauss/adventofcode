@@ -1,3 +1,7 @@
+// What did I learn?
+// seems (u32, u32) doesn't implement hash "correctly" (by value and not by reference) so I had to
+// resort to using GridPos which has a #derive(Hash) that works - \o/ yay for code reuse
+
 use std::cmp::max;
 use std::collections::HashMap;
 use std::i32;

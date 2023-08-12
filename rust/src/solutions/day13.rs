@@ -1,3 +1,8 @@
+// What did I learn?
+// Implementing Ordering and all the equality traits.
+// Parsing the lines is probably not the most efficient code. Wasn't something I had to do in python
+// but was a nice learning experience.
+
 use std::cmp::Ordering;
 use crate::Solver;
 
