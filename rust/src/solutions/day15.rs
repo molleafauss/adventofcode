@@ -1,5 +1,6 @@
 // What did I learn?
 // arranging mutable/immutable borrow to not overlap. Destructuring structs.
+// resulting time: 3.5 sec vs 166 (\o/ expected)
 
 use std::cmp::max;
 use std::collections::HashSet;
