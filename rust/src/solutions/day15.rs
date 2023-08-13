@@ -72,7 +72,7 @@ impl Solver for Solution {
             );
             let distance = m_distance(&position, &beacon);
             self.sensors.push(Sensor {
-                id: self.sensors.len() + 1,
+                _id: self.sensors.len() + 1,
                 position,
                 beacon,
                 distance,
@@ -155,7 +155,7 @@ struct Segment {
 }
 
 struct Sensor {
-    id: usize,
+    _id: usize,
     position: GridPos,
     beacon: GridPos,
     distance: i32,
