@@ -2,6 +2,7 @@
 // using a Vec instead of a HashSet for storing the valves, considering the valves are "few", is
 // O(N) on string search faster than calculating a hash?
 
+use std::cmp::max;
 use std::collections::{HashMap, HashSet};
 use std::str::FromStr;
 use std::time::SystemTime;
@@ -83,13 +84,22 @@ impl Solver for Solution {
                  self.valves_with_flow.len(), self.valves_with_flow.len().factorial());
         self.calculate_distances();
 
-        // part 1 - time it
+        // part 1 - timed
         let t0 = SystemTime::now();
         let mut one_path = OnePathSolver::new();
         let best_path = one_path.find_path(&self, OnePath::new(START));
         let t1 = SystemTime::now();
         println!("[1] Found max flow is {}: {:?} ({} cache hits) [{:.3}sec]",
                  best_path.total_flow, best_path.visited, one_path.cache_hits, t1.duration_since(t0).unwrap().as_secs_f32());
+
+        // part 2
+        let t0 = SystemTime::now();
+        let mut two_path = TwoPathsSolver::new();
+        let best_path = two_path.find_path(&self, TwoPaths::new(START));
+        let t1 = SystemTime::now();
+        println!("[2] Found max flow is {}: {:?} / {:?} ({} cache hits) [{:.3}sec]",
+                 best_path.total_flow, best_path.human_path, best_path.ele_path, two_path.cache_hits,
+                 t1.duration_since(t0).unwrap().as_secs_f32());
     }
 }
 
@@ -114,8 +124,10 @@ impl Valve {
     }
 }
 
+// --- part 1 ---
+
 #[derive(Hash, Eq, PartialEq)]
-struct OnePathKey(String, i32, i32);
+struct OnePathKey(String, i32, u32);
 
 #[derive(Clone)]
 struct OnePath {
@@ -137,7 +149,7 @@ impl OnePath {
 
     fn cache_key(&self) -> OnePathKey {
         let cave = self.visited.last().unwrap();
-        OnePathKey(String::from(cave), self.elapsed, self.total_flow)
+        OnePathKey(String::from(cave), self.elapsed, self.open_valves)
     }
 
     fn merge(&self, other: &OnePath) -> OnePath {
@@ -212,6 +224,168 @@ impl OnePathSolver {
             let sub_best = self.find_path(data, next);
             if sub_best.total_flow > best_path.total_flow {
                 best_path = sub_best;
+            }
+        }
+
+        self.cache.insert(cache_key, best_path.diff(&path));
+        return best_path;
+    }
+}
+
+// --- part 2 ---
+
+#[derive(Hash, Eq, PartialEq)]
+struct TwoPathsKey(String, i32, String, i32, u32);
+
+#[derive(Clone)]
+struct TwoPaths {
+    human_path: Vec<String>,
+    human_elapsed: i32,
+    ele_path: Vec<String>,
+    ele_elapsed: i32,
+    open_valves: u32,
+    elapsed: i32,
+    total_flow: i32,
+}
+
+impl TwoPaths {
+    fn new(start: &str) -> TwoPaths {
+        TwoPaths {
+            human_path: vec![String::from(start)],
+            human_elapsed: 0,
+            ele_path: vec![String::from(start)],
+            ele_elapsed: 0,
+            open_valves: 0,
+            elapsed: 0,
+            total_flow: 0,
+        }
+    }
+
+    fn cache_key(&self) -> TwoPathsKey {
+        TwoPathsKey(
+            String::from(self.human_path.last().unwrap()),
+            self.human_elapsed,
+            String::from(self.ele_path.last().unwrap()),
+            self.ele_elapsed,
+            self.open_valves,
+        )
+    }
+
+    fn merge(&self, other: &TwoPaths) -> TwoPaths {
+        let mut human_path = self.human_path.clone();
+        human_path.extend_from_slice(&other.human_path[..]);
+        let mut ele_path = self.ele_path.clone();
+        ele_path.extend_from_slice(&other.ele_path[..]);
+        TwoPaths {
+            human_path,
+            human_elapsed: self.human_elapsed + other.human_elapsed,
+            ele_path,
+            ele_elapsed: self.ele_elapsed + other.ele_elapsed,
+            open_valves: self.open_valves,
+            elapsed: self.elapsed + other.elapsed,
+            total_flow: self.total_flow + other.total_flow,
+        }
+    }
+
+    fn next_human(&self, valve: &Valve, distance: i32) -> TwoPaths {
+        let mut human_path = self.human_path.clone();
+        human_path.push(valve.name.clone());
+        let ele_path = self.ele_path.clone();
+        let elapsed = self.human_elapsed + distance + 1;
+        let flow = (PART2_MINUTES - elapsed) * valve.flow;
+        TwoPaths {
+            human_path,
+            human_elapsed: elapsed,
+            ele_path,
+            ele_elapsed: self.ele_elapsed,
+            open_valves: self.open_valves | valve.mask,
+            elapsed: max(elapsed, self.ele_elapsed),
+            total_flow: self.total_flow + flow
+        }
+    }
+
+    fn next_elephant(&self, valve: &Valve, distance: i32) -> TwoPaths {
+        let human_path = self.human_path.clone();
+        let mut ele_path = self.ele_path.clone();
+        ele_path.push(valve.name.clone());
+        let elapsed = self.ele_elapsed + distance + 1;
+        let flow = (PART2_MINUTES - elapsed) * valve.flow;
+        TwoPaths {
+            human_path,
+            human_elapsed: self.human_elapsed,
+            ele_path,
+            ele_elapsed: elapsed,
+            open_valves: self.open_valves | valve.mask,
+            elapsed: max(elapsed, self.human_elapsed),
+            total_flow: self.total_flow + flow
+        }
+    }
+
+    fn diff(&self, start: &TwoPaths) -> TwoPaths {
+        let human_path = self.human_path.split_at(start.human_path.len()).1.iter().cloned().collect();
+        let ele_path = self.ele_path.split_at(start.ele_path.len()).1.iter().cloned().collect();
+        TwoPaths {
+            human_path,
+            human_elapsed: self.human_elapsed - start.human_elapsed,
+            ele_path,
+            ele_elapsed: self.ele_elapsed - start.ele_elapsed,
+            open_valves: self.open_valves,
+            elapsed: self.elapsed - start.elapsed,
+            total_flow: self.total_flow - start.total_flow,
+        }
+    }
+}
+
+struct TwoPathsSolver {
+    cache: HashMap<TwoPathsKey, TwoPaths>,
+    cache_hits: u32,
+}
+
+impl TwoPathsSolver {
+    fn new() -> TwoPathsSolver {
+        TwoPathsSolver {
+            cache: HashMap::new(),
+            cache_hits: 0,
+        }
+    }
+
+    fn find_path(&mut self, data: &Solution, path: TwoPaths) -> TwoPaths {
+        let man_pos = path.human_path.last().unwrap();
+        let ele_pos = path.ele_path.last().unwrap();
+        let cache_key = path.cache_key();
+
+        if self.cache.contains_key(&cache_key) {
+            self.cache_hits += 1;
+            let cached = &self.cache[&cache_key];
+            return path.merge(cached);
+        }
+
+        let mut best_path = path.clone();
+        for i in 0..data.valves_with_flow.len() {
+            let name = &data.valves_with_flow[i];
+            let valve = data.get_valve(name);
+            // try to move both human and elephant towards the next valve
+            if path.open_valves & valve.mask != 0 {
+                continue;
+            }
+            // move human
+            let distance = data.distances[man_pos][name];
+            let next = path.next_human(valve, distance);
+            if next.elapsed < PART2_MINUTES {
+                let sub_best = self.find_path(data, next);
+                if sub_best.total_flow > best_path.total_flow {
+                    best_path = sub_best;
+                }
+            }
+
+            // move elephant
+            let distance = data.distances[ele_pos][name];
+            let next = path.next_elephant(valve, distance);
+            if next.elapsed < PART2_MINUTES {
+                let sub_best = self.find_path(data, next);
+                if sub_best.total_flow > best_path.total_flow {
+                    best_path = sub_best;
+                }
             }
         }
 
