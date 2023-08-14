@@ -14,7 +14,7 @@ pub(crate) struct Solution {
     valves: Vec<Valve>,
     valves_with_flow: Vec<String>,
     distances: HashMap<String, HashMap<String, i32>>,
-    cache: HashMap<CacheKey, Path>,
+    cache: HashMap<OnePathKey, OnePath>,
     cache_hits: u32,
 }
 
@@ -64,41 +64,6 @@ impl Solution {
     fn get_valve(&self, name: &str) -> &Valve {
         self.valves.iter().find(|v| v.name == name).unwrap()
     }
-
-    fn get_distance(&self, from: &String, to: &String) -> i32 {
-        self.distances[from][to]
-    }
-
-    fn find_path(&mut self, path: Path) -> Path {
-        let cave = path.visited.last().unwrap();
-        let cache_key = CacheKey::new(cave, &path);
-        if self.cache.contains_key(&cache_key) {
-            self.cache_hits += 1;
-            let cached = &self.cache[&cache_key];
-            return path.merge(cached);
-        }
-
-        let mut best_path = path.clone();
-        let explore = self.valves_with_flow.clone();
-        for name in &explore {
-            let valve = self.get_valve(name);
-            if path.open_valves & valve.mask != 0 {
-                continue;
-            }
-            let distance = self.get_distance(cave, name);
-            let next = path.next(valve, distance);
-            if next.elapsed >= PART1_MINUTES {
-                continue;
-            }
-            let sub_best = self.find_path(next);
-            if sub_best.total_flow > best_path.total_flow {
-                best_path = sub_best;
-            }
-        }
-
-        self.cache.insert(cache_key, best_path.diff(&path));
-        return best_path;
-    }
 }
 
 impl Solver for Solution {
@@ -124,22 +89,14 @@ impl Solver for Solution {
 
         // part 1 - time it
         let t0 = SystemTime::now();
-        let best_path = self.find_path(Path::new(START));
+        let mut one_path = OnePathSolver::new();
+        let best_path = one_path.find_path(&self, OnePath::new(START));
         let t1 = SystemTime::now();
         println!("[1] Found max flow is {}: {:?} ({} cache hits) [{:.3}sec]",
-                 best_path.total_flow, best_path.visited, self.cache_hits, t1.duration_since(t0).unwrap().as_secs_f32());
+                 best_path.total_flow, best_path.visited, one_path.cache_hits, t1.duration_since(t0).unwrap().as_secs_f32());
 
         self.cache_hits = 0;
         self.cache.clear();
-    }
-}
-
-#[derive(Hash, Eq, PartialEq)]
-struct CacheKey (String, i32, i32);
-
-impl CacheKey {
-    fn new(cave: &str, path: &Path) -> CacheKey {
-        CacheKey(String::from(cave), path.elapsed, path.total_flow)
     }
 }
 
@@ -164,19 +121,36 @@ impl Valve {
     }
 }
 
+#[derive(Hash, Eq, PartialEq)]
+struct OnePathKey(String, i32, i32);
+
 #[derive(Clone)]
-struct Path {
+struct OnePath {
     visited: Vec<String>,
     open_valves: u32,
     elapsed: i32,
     total_flow: i32,
 }
 
-impl Path {
-    fn merge(&self, other: &Path) -> Path {
+impl OnePath {
+    fn new(start: &str) -> OnePath {
+        OnePath {
+            visited: vec![String::from(start)],
+            open_valves: 0,
+            elapsed: 0,
+            total_flow: 0,
+        }
+    }
+
+    fn cache_key(&self) -> OnePathKey {
+        let cave = self.visited.last().unwrap();
+        OnePathKey(String::from(cave), self.elapsed, self.total_flow)
+    }
+
+    fn merge(&self, other: &OnePath) -> OnePath {
         let mut visited = self.visited.clone();
         visited.extend_from_slice(&other.visited[..]);
-        Path {
+        OnePath {
             visited,
             open_valves: self.open_valves,
             elapsed: self.elapsed + other.elapsed,
@@ -184,12 +158,12 @@ impl Path {
         }
     }
 
-    fn next(&self, valve: &Valve, distance: i32) -> Path {
+    fn next(&self, valve: &Valve, distance: i32) -> OnePath {
         let mut visited = self.visited.clone();
         visited.push(valve.name.clone());
         let elapsed = self.elapsed + distance + 1;
         let flow = (PART1_MINUTES - elapsed) * valve.flow;
-        Path {
+        OnePath {
             visited,
             open_valves: self.open_valves | valve.mask,
             elapsed,
@@ -197,9 +171,9 @@ impl Path {
         }
     }
 
-    fn diff(&self, start: &Path) -> Path {
+    fn diff(&self, start: &OnePath) -> OnePath {
         let visited = self.visited.split_at(start.visited.len()).1.iter().cloned().collect();
-        Path {
+        OnePath {
             visited,
             open_valves: self.open_valves,
             elapsed: self.elapsed - start.elapsed,
@@ -208,13 +182,47 @@ impl Path {
     }
 }
 
-impl Path {
-    fn new(start: &str) -> Path {
-        Path {
-            visited: vec![String::from(start)],
-            open_valves: 0,
-            elapsed: 0,
-            total_flow: 0,
+struct OnePathSolver {
+    cache: HashMap<OnePathKey, OnePath>,
+    cache_hits: u32,
+}
+
+impl OnePathSolver {
+    fn new() -> OnePathSolver {
+        OnePathSolver {
+            cache: HashMap::new(),
+            cache_hits: 0,
         }
+    }
+
+    fn find_path(&mut self, data: &Solution, path: OnePath) -> OnePath {
+        let cave = path.visited.last().unwrap();
+        let cache_key = path.cache_key();
+        if self.cache.contains_key(&cache_key) {
+            self.cache_hits += 1;
+            let cached = &self.cache[&cache_key];
+            return path.merge(cached);
+        }
+
+        let mut best_path = path.clone();
+        for i in 0..data.valves_with_flow.len() {
+            let name = &data.valves_with_flow[i];
+            let valve = data.get_valve(name);
+            if path.open_valves & valve.mask != 0 {
+                continue;
+            }
+            let distance = data.distances[cave][name];
+            let next = path.next(valve, distance);
+            if next.elapsed >= PART1_MINUTES {
+                continue;
+            }
+            let sub_best = self.find_path(data, next);
+            if sub_best.total_flow > best_path.total_flow {
+                best_path = sub_best;
+            }
+        }
+
+        self.cache.insert(cache_key, best_path.diff(&path));
+        return best_path;
     }
 }
