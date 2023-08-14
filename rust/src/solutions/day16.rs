@@ -14,8 +14,6 @@ pub(crate) struct Solution {
     valves: Vec<Valve>,
     valves_with_flow: Vec<String>,
     distances: HashMap<String, HashMap<String, i32>>,
-    cache: HashMap<OnePathKey, OnePath>,
-    cache_hits: u32,
 }
 
 static RE_VALVE: Lazy<Regex> = Lazy::new(|| Regex::new(r"Valve (\S+) has flow rate=(\d+); tunnels? leads? to valves? (.*)").unwrap());
@@ -29,8 +27,6 @@ impl Solution {
             valves: Vec::new(),
             valves_with_flow: Vec::new(),
             distances: HashMap::new(),
-            cache: HashMap::new(),
-            cache_hits: 0
         }
     }
 
@@ -94,9 +90,6 @@ impl Solver for Solution {
         let t1 = SystemTime::now();
         println!("[1] Found max flow is {}: {:?} ({} cache hits) [{:.3}sec]",
                  best_path.total_flow, best_path.visited, one_path.cache_hits, t1.duration_since(t0).unwrap().as_secs_f32());
-
-        self.cache_hits = 0;
-        self.cache.clear();
     }
 }
 
