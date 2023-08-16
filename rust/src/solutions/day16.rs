@@ -3,6 +3,9 @@
 // O(N) on string search faster than calculating a hash - need to see difference (maybe store ids/position
 // in vector)
 // Had to split the implementation in two structs as the cache_key is different.
+// Part 2 time - 9min vs 30ish (python)
+// TODO - Possible optimization: index valves/distances into a Vec by position, search always
+// directly by index (should save some
 
 use std::cmp::max;
 use std::collections::{HashMap, HashSet};
