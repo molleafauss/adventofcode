@@ -14,8 +14,8 @@ use crate::Solver;
 
 pub(crate) struct Solution {
     sensors: Vec<Sensor>,
-    y: i32,
-    area: i32,
+    y: i64,
+    area: i64,
 }
 
 static RE_SENSOR: Lazy<Regex> = Lazy::new(|| Regex::new(r"Sensor at x=(-?\d+), y=(-?\d+): closest beacon is at x=(-?\d+), y=(-?\d+)").unwrap());
@@ -29,7 +29,7 @@ impl Solution {
         }
     }
 
-    fn check_line(&self, y: i32) -> (Vec<Segment>, HashSet<i32>) {
+    fn check_line(&self, y: i64) -> (Vec<Segment>, HashSet<i64>) {
         let mut segments = Vec::new();
         let mut beacons = HashSet::new();
         // find all invalid segment in line y
@@ -54,21 +54,21 @@ impl Solver for Solution {
             return;
         }
         if line.starts_with("part 1: ") {
-            self.y = i32::from_str(&line[8..]).unwrap();
+            self.y = i64::from_str(&line[8..]).unwrap();
             return;
         }
         if line.starts_with("part 2: ") {
-            self.area = i32::from_str(&line[8..]).unwrap();
+            self.area = i64::from_str(&line[8..]).unwrap();
             return;
         }
         if let Some(captures) = RE_SENSOR.captures(line) {
             let position = GridPos::of(
-                i32::from_str(&captures[1]).unwrap(),
-                i32::from_str(&captures[2]).unwrap(),
+                i64::from_str(&captures[1]).unwrap(),
+                i64::from_str(&captures[2]).unwrap(),
             );
             let beacon = GridPos::of(
-                i32::from_str(&captures[3]).unwrap(),
-                i32::from_str(&captures[4]).unwrap(),
+                i64::from_str(&captures[3]).unwrap(),
+                i64::from_str(&captures[4]).unwrap(),
             );
             let distance = m_distance(&position, &beacon);
             self.sensors.push(Sensor {
@@ -86,7 +86,7 @@ impl Solver for Solution {
         println!("We have {} sensors", self.sensors.len());
         println!("part 1 - finding invalid beacon positions at line {}", self.y);
         let (segments, beacons) = self.check_line(self.y);
-        let segment_size = segment_length(&segments) - beacons.len() as i32;
+        let segment_size = segment_length(&segments) - beacons.len() as i64;
         println!("[1] invalid set contains {segment_size} elements");
 
         println!("Finding possible real beacon positions in area 0-{}", self.area);
@@ -113,15 +113,15 @@ impl Solver for Solution {
 
 const FREQ_MULT: i64 = 4000000;
 
-fn m_distance(from: &GridPos, to: &GridPos) -> i32 {
+fn m_distance(from: &GridPos, to: &GridPos) -> i64 {
     (from.x - to.x).abs() + (from.y - to.y).abs()
 }
 
-fn segment_length(segments: &Vec<Segment>) -> i32 {
+fn segment_length(segments: &Vec<Segment>) -> i64 {
     segments.iter().map(|seg| seg.end - seg.start + 1).sum()
 }
 
-fn merge(segments: &mut Vec<Segment>, x_start: i32, x_end: i32) {
+fn merge(segments: &mut Vec<Segment>, x_start: i64, x_end: i64) {
     assert!(x_start <= x_end);
     let mut i = 0;
     // insert segment
@@ -150,13 +150,13 @@ fn merge(segments: &mut Vec<Segment>, x_start: i32, x_end: i32) {
 }
 
 struct Segment {
-    start: i32,
-    end: i32,
+    start: i64,
+    end: i64,
 }
 
 struct Sensor {
     _id: usize,
     position: GridPos,
     beacon: GridPos,
-    distance: i32,
+    distance: i64,
 }
