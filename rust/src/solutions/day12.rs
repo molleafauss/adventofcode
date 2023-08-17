@@ -32,7 +32,7 @@ impl Solution {
         let mut costs = HashMap::new();
         (0..self.width).for_each(|x| {
             (0..self.height).for_each(|y| {
-                let pos = GridPos::of(x as i32, y as i32);
+                let pos = GridPos::of(x as i64, y as i64);
                 let v = if &pos == start { 0 } else { max_cost };
                 costs.insert(pos, v);
             })
@@ -107,13 +107,13 @@ impl Solver for Solution {
         (0..self.width).for_each(|i| {
             let mut letter = bytes.get(i).unwrap();
             if *letter == START {
-                self.start = Some(GridPos::of(i as i32, self.height as i32));
+                self.start = Some(GridPos::of(i as i64, self.height as i64));
                 letter = &LOWEST;
             } else if *letter == END {
-                self.end = Some(GridPos::of(i as i32, self.height as i32));
+                self.end = Some(GridPos::of(i as i64, self.height as i64));
                 letter = &HIGHEST;
             }
-            self.map.insert(GridPos::of(i as i32, self.height as i32), *letter);
+            self.map.insert(GridPos::of(i as i64, self.height as i64), *letter);
         });
         self.height += 1;
     }

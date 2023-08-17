@@ -2,8 +2,8 @@ use std::fmt::{Display, Formatter};
 
 #[derive(Eq, PartialEq, Hash, Clone)]
 pub(crate) struct GridPos {
-    pub(crate) x: i32,
-    pub(crate) y: i32,
+    pub(crate) x: i64,
+    pub(crate) y: i64,
 }
 
 pub(crate) const MOVE_U : GridPos = GridPos { x: 0, y: 1 };
@@ -13,12 +13,12 @@ pub(crate) const MOVE_L : GridPos = GridPos { x: -1, y: 0 };
 
 impl GridPos {
     /// Creates a position from the x/y pair given.
-    pub(crate) fn of(x: i32, y: i32) -> GridPos {
+    pub(crate) fn of(x: i64, y: i64) -> GridPos {
         GridPos {x, y}
     }
 
     /// returns the distance as tuple (dx, dy)
-    pub(crate) fn distance(&self, other: &GridPos) -> (i32, i32) {
+    pub(crate) fn distance(&self, other: &GridPos) -> (i64, i64) {
         (self.x - other.x, self.y - other.y)
     }
 

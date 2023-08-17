@@ -4,14 +4,13 @@
 
 use std::cmp::max;
 use std::collections::HashMap;
-use std::i32;
 use std::str::FromStr;
 use crate::grid::GridPos;
 use crate::Solver;
 
 pub(crate) struct Solution {
     scan: HashMap<GridPos, char>,
-    max_y: i32,
+    max_y: i64,
 }
 
 impl Solution {
@@ -23,17 +22,17 @@ impl Solution {
     }
 }
 
-const START: (i32, i32) = (500, 0);
+const START: (i64, i64) = (500, 0);
 
 impl Solver for Solution {
     fn parse(&mut self, line: &str) {
         if line.is_empty() {
             return;
         }
-        let parts: Vec<(i32, i32)> = line.split(" -> ")
+        let parts: Vec<(i64, i64)> = line.split(" -> ")
             .map(|part| {
                 let (a, b) = part.split_once(",").unwrap();
-                (i32::from_str(a).unwrap(), i32::from_str(b).unwrap())
+                (i64::from_str(a).unwrap(), i64::from_str(b).unwrap())
             }).collect();
         for i in 0..parts.len() - 1 {
             let (x0, y0) = parts[i];
