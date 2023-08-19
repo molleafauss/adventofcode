@@ -232,21 +232,21 @@ static SHAPES: Lazy<Vec<Shape>> = Lazy::new(|| {
 });
 
 struct Shape {
-    id: u8,
+    _id: u8,
     lines: Vec<Vec<u8>>,
     width: i64,
     height: i64,
 }
 
 impl Shape {
-    fn create(id: u8, parts: Vec<&str>) -> Shape {
+    fn create(_id: u8, parts: Vec<&str>) -> Shape {
         let height = parts.len() as i64;
         let width = parts[0].len() as i64;
         let lines = parts.iter()
             .map(|l| Vec::from(l.as_bytes()))
             .collect();
         Shape {
-            id,
+            _id,
             lines,
             width,
             height,
