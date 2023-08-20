@@ -8,7 +8,7 @@ from advent import Solver
 # pre-calculation to the input.
 # Took me ages to get to the bottom of wrong results - most errors were in the end a bad data in the adjacency data I
 # added.
-# Also: this code is hacky af - I should have used some better structure for the various concepts involved (cube, faces,
+# Also: this code is hacky af - I should have used some better structure for bashthe various concepts involved (cube, faces,
 # position, adjacency, ...)
 
 DIRS = [
@@ -147,7 +147,9 @@ class Solution(Solver):
         if not self.cube_faces:
             self.find_faces()
         id = int(text[0])
-        facing = eval(text[2:])
+        # parse facing into a list of pairs
+        parts = text[2:].split(",")
+        facing = [[int(parts[t * 2]), None if parts[t * 2 + 1] == "None" else parts[t * 2 + 1]] for t in range(len(parts) // 2)]
         for f in self.cube_faces:
             if f.id == id:
                 f.facing = facing
@@ -174,7 +176,6 @@ class Solution(Solver):
         print(f"[2] Password is: {password}")
 
     def walk(self, pos, walk, cube_walk=False):
-        w = walk
         # rows are ordered top->bottom: v moves down = rows + 1; ^ moves up = rows -1
         while walk > 0:
             if pos[2] == 0 or pos[2] == 2:
