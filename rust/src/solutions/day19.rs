@@ -1,4 +1,9 @@
 // What did I learn?
+// integer math with rounding - needed to find a formula to crack it (// is not supported in rust
+// and div_ceil is experimental.
+// used slices for some variables - finally got some understanding of those.
+// Interesting enough, even in debug times are quite fast (69 vs 576 sec for test input, 5 vs 42 sec
+// for challenge input => release drops times to 12 & 0.7).
 
 use std::collections::HashMap;
 use std::str::FromStr;
@@ -56,9 +61,13 @@ impl Solution {
                     time_needed = -1;
                     break;
                 }
-                if recipe[mat] > 0 {
-                    time_needed = time_needed.max(-((materials[mat] - recipe[mat]) / robots[mat]) + 1);
+                if recipe[mat] == 0 {
+                    continue;
                 }
+                // count how many more materials I need and then divide by existing robot - always rounding up
+                // int divide a/b rounding up -> (a + b - 1) / b
+                let rounds = (recipe[mat] - materials[mat] + robots[mat] - 1) / robots[mat] + 1;
+                time_needed = time_needed.max(rounds);
             }
             if time_needed > 0 && minutes_left - time_needed > 0 {
                 let mut new_robots = robots.clone();
@@ -116,6 +125,8 @@ impl Solver for Solution {
                          bp.id, diff_sec, stats.calls, iter_time, stats.cache_hits);
             }
         }
+        println!("[1] result is {total1}");
+        println!("[2] result is {total2}");
     }
 }
 
