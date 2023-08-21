@@ -113,7 +113,7 @@ class Solution(Solver):
         self.map = []
         self.path = None
         self.is_map = True
-        self.cube_size = 50
+        self.cube_size = None
         self.cube_faces = []
 
     def parse(self, line: str):
@@ -175,7 +175,7 @@ class Solution(Solver):
             pos = self.turn(pos, turn)
             # print(f"Turn {turn} => {pos}")
         password = (pos[0] + 1) * 1000 + (pos[1] + 1) * 4 + pos[2]
-        print(f"[2] Password is: {password}")
+        print(f"[2] final position: {pos} => password  {password}")
 
     def walk(self, pos, walk, cube_walk=False):
         # rows are ordered top->bottom: v moves down = rows + 1; ^ moves up = rows -1
