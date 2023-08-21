@@ -1,4 +1,7 @@
 // What did I learn?
+// quite straight-forward conversion.
+// A lot of headaches flipping between i64 and usize (as many indexing only take usize).
+// Used a slice for known-length data.
 
 use std::str::FromStr;
 use std::usize;
@@ -19,7 +22,18 @@ const DIRS: [(i64, i64); 4] = [
     (0, -1),
     (-1, 0)
 ];
+const DIR_TEXT: [char; 4] = ['>', 'v', '<', '^'];
 
+fn turn(dir: usize, val: i64) -> usize {
+    let mut v = dir as i64 + val;
+    let len = DIRS.len() as i64;
+    if v >= len {
+        v -= len;
+    } else if v < 0 {
+        v += len;
+    }
+    v as usize
+}
 
 impl Solution {
     pub(crate) fn new() -> Solution {
@@ -56,6 +70,7 @@ impl Solution {
                 next_col = 0;
             }
         }
+        println!("Found {} faces", face_id);
     }
 
     fn add_facing(&mut self, line: &str) {
@@ -72,7 +87,6 @@ impl Solution {
                 "None" => ' ',
                 _ => panic!("Unrecognized facing in {}", line),
             };
-            println!("Face {}: {}/'{}'", face_id + 1, self.faces[face_id].facing[facing_id].0, self.faces[face_id].facing[facing_id].1);
             facing_id += 1;
         }
     }
@@ -91,7 +105,7 @@ impl Solution {
         self.path.push(Move::Walk(count));
     }
 
-    fn plane_walk(&self, start: (usize, usize, usize), steps: u32) -> (usize, usize, usize) {
+    fn part1_walk(&self, start: (usize, usize, usize), steps: u32) -> (usize, usize, usize) {
         // rows are ordered top->bottom: v moves down = rows + 1; ^ moves up = rows -1
         let mut pos = start;
         let mut walk = steps;
@@ -113,13 +127,64 @@ impl Solution {
         pos
     }
 
+    fn part2_walk(&self, start: (usize, usize, usize), steps: u32) -> (usize, usize, usize) {
+        let mut pos = start;
+        let mut walk = steps;
+        while walk > 0 {
+            let new_pos = self.cube_walk(pos);
+            if self.map[new_pos.0][new_pos.1] == '#' {
+                // found a wall, stop
+                break;
+            }
+            walk -= 1;
+            pos = new_pos;
+        }
+        assert_eq!(self.map[pos.0][pos.1], '.');
+        // println!("Walk {} => [{}, {}, {}]", steps, pos.0, pos.1, pos.2);
+        pos
+    }
+
+    fn cube_walk(&self, pos: (usize, usize, usize)) -> (usize, usize, usize) {
+        // only move one step
+        let (r0, c0, dir) = pos;
+        let dr = DIRS[dir].0;
+        let dc = DIRS[dir].1;
+        let face = self.in_face(r0, c0);
+        let r = (r0 as i64 + dr) as usize;
+        let c = (c0 as i64 + dc) as usize;
+        if face.contains(r, c) {
+            return (r, c, dir);
+        }
+        let adj = &face.facing[dir];
+        if adj.1 == ' ' {
+            println!("Crossing face {} / {}: ({}, {}, {}) => ({}, {}, {})",
+                  face.id, adj.0, r0 + 1, c0 + 1, DIR_TEXT[dir], r + 1, c + 1, DIR_TEXT[dir]);
+            return (r, c, dir);
+        }
+        let fadj = &self.faces[adj.0 - 1];
+        // cross into new face based on old position
+        let pos = fadj.cross(face.relative(r0, c0), dir, adj.1);
+        assert!(fadj.contains(pos.0, pos.1));
+        println!("Crossing face {} / {}: ({}, {}, {}) => ({}, {}, {})",
+              face.id, adj.0, r0 + 1, c0 + 1, DIR_TEXT[dir], pos.0 + 1, pos.1 + 1, DIR_TEXT[pos.2]);
+        pos
+    }
+
+    fn in_face(&self, r: usize, c: usize) -> &Face {
+        let f = self.faces.iter().find(|f| f.contains(r, c));
+        if f.is_none() {
+            panic!("{r}, {c} not in any face?");
+        }
+        f.unwrap()
+    }
+
     fn in_map(&self, row: usize, col: usize) -> bool {
-        // ensure row is within boundaries
-        if row < 0 || row >= self.map.len() {
+        // ensure row is within boundaries (no need to check for <0 as usize can't be negative)
+        if row >= self.map.len() {
             return false;
         }
-        // ensure column is within boundaries of row
-        if col < 0 || col >= self.map[row].len() {
+        // ensure column is within boundaries of row (no need to check for <0 as usize can't be negative)
+        if col >= self.map[row].len() {
             return false;
         }
         // if inside borders, returns true if not void space
@@ -127,7 +192,7 @@ impl Solution {
     }
 
     fn move_col(&self, start: (usize, usize, usize)) -> (usize, usize, usize) {
-        let (mut r, mut c, mut dir) = (start.0 as i64, start.1 as i64, start.2);
+        let (r, mut c, dir) = (start.0 as i64, start.1 as i64, start.2);
         let dc = DIRS[dir].1;
         c += dc;
         let row_len = self.map[r as usize].len() as i64;
@@ -145,7 +210,7 @@ impl Solution {
     }
 
     fn move_row(&self, start: (usize, usize, usize)) -> (usize, usize, usize) {
-        let (mut r, mut c, mut dir) = (start.0 as i64, start.1 as i64, start.2);
+        let (mut r, c, dir) = (start.0 as i64, start.1 as i64, start.2);
         let dr = DIRS[dir].0;
         r += dr;
         while !self.in_map(r as usize, c as usize) {
@@ -160,10 +225,6 @@ impl Solution {
             }
         }
         (r as usize, c as usize, dir)
-    }
-
-    fn face_walk(&self, pos: (usize, usize, usize), steps: u32) -> (usize, usize, usize) {
-        pos
     }
 
     fn turn(&self, pos: (usize, usize, usize), turn: char) -> (usize, usize, usize) {
@@ -208,7 +269,7 @@ impl Solver for Solution {
         println!("Starting position: {:?}", pos);
         for act in &self.path {
             match act {
-                Move::Walk(steps) => pos = self.plane_walk(pos, *steps),
+                Move::Walk(steps) => pos = self.part1_walk(pos, *steps),
                 Move::Turn(dir) => pos = self.turn(pos, *dir),
             }
         }
@@ -219,7 +280,7 @@ impl Solver for Solution {
         println!("==> Cube walk: starting position: {:?}", pos);
         for act in &self.path {
             match act {
-                Move::Walk(steps) => pos = self.face_walk(pos, *steps),
+                Move::Walk(steps) => pos = self.part2_walk(pos, *steps),
                 Move::Turn(dir) => pos = self.turn(pos, *dir),
             }
         }
@@ -245,6 +306,49 @@ impl Face {
             col: 0,
             size: 0,
             facing: [(0, ' '); 4],
+        }
+    }
+
+    fn contains(&self, row: usize, col: usize) -> bool {
+        self.row <= row && row <= self.row + self.size && self.col <= col && col <= self.col + self.size
+    }
+
+    fn relative(&self, row: usize, col: usize) -> (usize, usize) {
+        (row - self.row, col - self.col)
+    }
+
+    fn cross(&self, pos: (usize, usize), dir: usize, rotate: char) -> (usize, usize, usize) {
+        // pos[0] is diff in rows, pos[1] is diff in columns - one should be not relevant
+        match (dir, rotate) {
+            // crossing from the right to the top border
+            (0, 'R') => (self.row, self.col + self.size - pos.0, turn(dir, 1)),
+            // crossing from the right to the bottom border
+            (0, 'L') => (self.row + self.size, self.col + pos.0, turn(dir, -1)),
+            // crossing from the right to the right border (flipping)
+            (0, 'U') => (self.row + self.size - pos.0, self.col + self.size, turn(dir, 2)),
+            // crossing from the bottom to the right border
+            (1, 'R') => (self.row + pos.1, self.col + self.size, turn(dir, 1)),
+            // crossing from the bottom to the left border
+            (1, 'L') => (self.row + pos.1, self.col, turn(dir, -1)),
+            // crossing from the bottom to the bottom border
+            (1, 'U') => (self.row + self.size, self.col + self.size - pos.1, turn(dir, 2)),
+            // bottom to top - no change in dir
+            (1, '=') => (self.row, self.col + pos.1, dir),
+            // crossing from the left to the bottom border
+            (2, 'R') => (self.row + self.size, self.col + pos.0, turn(dir, 1)),
+            // crossing from the left to the top border
+            (2, 'L') => (self.row, self.col + pos.0, turn(dir, -1)),
+            // crossing from the left to the left border
+            (2, 'U') => (self.row + self.size - pos.0, self.col, turn(dir, 2)),
+            // crossing from the top to the right border
+            (3, 'R') => (self.row + pos.1, self.col, turn(dir, 1)),
+            // crossing from the top to the left border
+            (3, 'L') => (self.row + pos.1, self.col + self.size, turn(dir, -1)),
+            // crossing from the top to the top border
+            (3, 'U') => (self.row, self.col + self.size - pos.1, turn(dir, 2)),
+            // top to bottom - no change in dir
+            (3, '=') => (self.row + self.size, self.col + pos.1, dir),
+            _ => panic!("Cannot determine where to go for {dir}, {rotate} / {:?}", pos),
         }
     }
 }
