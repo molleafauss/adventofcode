@@ -153,7 +153,6 @@ class Solution(Solver):
         for f in self.cube_faces:
             if f.id == id:
                 f.facing = facing
-                print(f"Face {id}: {facing}")
 
     def solve(self):
         print(f"Path: {len(self.path)} movements+turns")
@@ -161,7 +160,9 @@ class Solution(Solver):
         print(f"Starting position: {pos}")
         for walk, turn in self.path:
             pos = self.walk(pos, walk)
+            # print(f"Walk {walk} => {pos}")
             pos = self.turn(pos, turn)
+            # print(f"Turn {turn} => {pos}")
         password = (pos[0] + 1) * 1000 + (pos[1] + 1) * 4 + pos[2]
         print(f"[1] final position: {pos} => password {password}")
 
@@ -170,8 +171,9 @@ class Solution(Solver):
         print(f"Starting position: {pos[0] + 1, pos[1] + 1, DIR_TEXT[pos[2]]}")
         for walk, turn in self.path:
             pos = self.walk(pos, walk, True)
+            # print(f"Walk {walk} => {pos}")
             pos = self.turn(pos, turn)
-            print(f"==> {walk} {turn} => {pos[0] + 1, pos[1] + 1, DIR_TEXT[pos[2]]}")
+            # print(f"Turn {turn} => {pos}")
         password = (pos[0] + 1) * 1000 + (pos[1] + 1) * 4 + pos[2]
         print(f"[2] Password is: {password}")
 
@@ -191,7 +193,6 @@ class Solution(Solver):
             pos[1] = nc
             pos[2] = npos
         assert self.map[pos[0]][pos[1]] == '.'
-        # print(f"Walk {w} => {pos}")
         return pos
 
     def in_map(self, r, c):
@@ -274,5 +275,4 @@ class Solution(Solver):
         elif facing > 3:
             facing = 0
         pos[2] = facing
-        # print(f"Turn {turn} => {pos}")
         return pos
