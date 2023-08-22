@@ -69,16 +69,15 @@ class Solution(Solver):
                         pass
             for elf in self.elves:
                 elf.dir.append(elf.dir.pop(0))
-            if round == 10:
+            if rounds == 10:
                 # self.print_elves()
                 tl, br = self.find_grid()
                 area = (br.row - tl.row + 1) * (br.col - tl.col + 1) - len(self.elves)
-                print(f"[1] Empty area is {tl}, {br} / {len(self.elves)} => {area}")
             if moves == 0:
-                print(f"[2] Round {rounds} => no moves")
-                return
-            else:
-                print(f"[2] Round {rounds} => {moves}")
+                break
+            print(f"=> Round {rounds}: {moves} moves")
+        print(f"[1] Empty area is {tl}, {br} / {len(self.elves)} => {area}")
+        print(f"[2] Round {rounds} => no moves")
 
     def should_move(self, elf):
         # no elf in surrounding: stay put
