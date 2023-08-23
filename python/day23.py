@@ -5,17 +5,18 @@ from grid import *
 # "simple" - the final solution is brute force - not sure if there is a "mathematical" way to calculate it
 
 SURROUNDING = [DIR_N, DIR_NE, DIR_E, DIR_SE, DIR_S, DIR_SW, DIR_W, DIR_NW]
-MOVE_N = [DIR_NW, DIR_N, DIR_NE]
-MOVE_E = [DIR_NE, DIR_E, DIR_SE]
-MOVE_S = [DIR_SE, DIR_S, DIR_SW]
-MOVE_W = [DIR_SW, DIR_W, DIR_NW]
+MOVES = [
+    [DIR_NW, DIR_N, DIR_NE],
+    [DIR_SE, DIR_S, DIR_SW],
+    [DIR_SW, DIR_W, DIR_NW],
+    [DIR_NE, DIR_E, DIR_SE]
+]
 
 
 class Elf:
     def __init__(self, id, row, col):
         self.id = id
         self.pos = GridPos(row, col)
-        self.dir = [MOVE_N, MOVE_S, MOVE_W, MOVE_E]
 
     def __repr__(self):
         return f"Elf {self.id}: {self.pos}"
@@ -67,8 +68,8 @@ class Solution(Solver):
                     else:
                         # print(f"{elf} won't move: {next_pos} => {elves}")
                         pass
-            for elf in self.elves:
-                elf.dir.append(elf.dir.pop(0))
+            # rotate moves
+            MOVES.append(MOVES.pop(0))
             if rounds == 10:
                 # self.print_elves()
                 tl, br = self.find_grid()
@@ -85,7 +86,7 @@ class Solution(Solver):
             return None
 
         # which direction?
-        for move in elf.dir:
+        for move in MOVES:
             should_move = True
             for pos in move:
                 if elf.pos + pos in self.positions:
