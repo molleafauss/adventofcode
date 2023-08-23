@@ -69,7 +69,7 @@ class Solution(Solver):
                         pass
             for elf in self.elves:
                 elf.dir.append(elf.dir.pop(0))
-            if round == 10:
+            if rounds == 10:
                 # self.print_elves()
                 tl, br = self.find_grid()
                 area = (br.row - tl.row + 1) * (br.col - tl.col + 1) - len(self.elves)
