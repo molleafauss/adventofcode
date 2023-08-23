@@ -1,19 +1,23 @@
 use std::fmt::{Display, Formatter};
 
-#[derive(Eq, PartialEq, Hash, Clone)]
+#[derive(Eq, PartialEq, Hash, Clone, Debug)]
 pub(crate) struct GridPos {
     pub(crate) x: i64,
     pub(crate) y: i64,
 }
 
-pub(crate) const MOVE_U : GridPos = GridPos { x: 0, y: 1 };
-pub(crate) const MOVE_D : GridPos = GridPos { x: 0, y: -1 };
-pub(crate) const MOVE_R : GridPos = GridPos { x: 1, y: 0 };
-pub(crate) const MOVE_L : GridPos = GridPos { x: -1, y: 0 };
+pub(crate) const MOVE_U : GridPos = GridPos::of(0, 1);
+pub(crate) const MOVE_D : GridPos = GridPos::of(0, -1);
+pub(crate) const MOVE_R : GridPos = GridPos::of(1, 0);
+pub(crate) const MOVE_L : GridPos = GridPos::of(-1, 0);
+pub(crate) const MOVE_UR : GridPos = GridPos::of(1, 1);
+pub(crate) const MOVE_UL : GridPos = GridPos::of(-1, 1);
+pub(crate) const MOVE_DL : GridPos = GridPos::of(-1, -1);
+pub(crate) const MOVE_DR : GridPos = GridPos::of(1, -1);
 
 impl GridPos {
     /// Creates a position from the x/y pair given.
-    pub(crate) fn of(x: i64, y: i64) -> GridPos {
+    pub(crate) const fn of(x: i64, y: i64) -> GridPos {
         GridPos {x, y}
     }
 
