@@ -1,36 +1,45 @@
 // What did I learn?
 // small change from the original as GridPos is x,y and not row,col (oops?)
+// before I realised all elves share the same set of moves, I was trying to use a slice of references
+// for the directions to checks for moving, but it's not needed anymore.
 
 use std::collections::{HashMap, HashSet};
 
 use crate::grid::{GridPos, MOVE_D, MOVE_DL, MOVE_DR, MOVE_L, MOVE_R, MOVE_U, MOVE_UL, MOVE_UR};
 use crate::Solver;
 
-pub(crate) struct Solution<'a> {
+pub(crate) struct Solution {
     width: usize,
     height: usize,
-    elves: Vec<Elf<'a>>,
+    elves: Vec<Elf>,
+    moves: Vec<[GridPos; 3]>,
 }
 
-impl<'a> Solution<'a> {
-    pub(crate) fn new() -> Solution<'a> {
+impl Solution {
+    pub(crate) fn new() -> Solution {
         Solution {
             width: 0,
             height: 0,
             elves: Vec::new(),
+            moves: vec![MOVE_N, MOVE_S, MOVE_W, MOVE_E],
         }
     }
 
     fn should_move(&self, elf: &Elf, positions: &HashSet<GridPos>) -> Option<GridPos> {
-        println!("Checking move for Elf {} => {:?}", elf.id, elf.dir);
-        // no elf in surrounding: stay put, else if can move: which direction?
-        let can_move = elf.dir.iter()
-            .find(|dirs| !positions.contains(&elf.pos.add(dirs[0]))
-                && !positions.contains(&elf.pos.add(dirs[1]))
-                && !positions.contains(&elf.pos.add(dirs[2])));
+        // println!("Checking move for Elf {} => {:?}", elf.id, self.moves);
+        // no elf in surrounding: stay put
+        if SURROUNDING.iter().filter(|dir| positions.contains(&elf.pos.add(dir)))
+            .count() == 0 {
+            return None;
+        }
+        // else check first direction that can be moved in (all 3 spots should be empty)
+        let can_move = self.moves.iter()
+            .find(|dirs| !positions.contains(&elf.pos.add(&dirs[0]))
+                && !positions.contains(&elf.pos.add(&dirs[1]))
+                && !positions.contains(&elf.pos.add(&dirs[2])));
         match can_move {
             None => None,
-            Some(dir) => Some(elf.pos.add(dir[1]))
+            Some(dir) => Some(elf.pos.add(&dir[1]))
         }
     }
 
@@ -57,7 +66,7 @@ impl<'a> Solution<'a> {
     }
 }
 
-impl<'a> Solver for Solution<'a> {
+impl Solver for Solution {
     fn parse(&mut self, line: &str) {
         if self.width == 0 {
             self.width = line.len();
@@ -79,9 +88,9 @@ impl<'a> Solver for Solution<'a> {
         loop {
             let mut moves = 0;
             rounds += 1;
-            if rounds > 10 {
-                return;
-            }
+            // if rounds > 10 {
+            //     return;
+            // }
             let mut planned_moves: HashMap<GridPos, Vec<usize>> = HashMap::new();
             for elf in &self.elves {
                 if let Some(new_pos) = self.should_move(elf, &positions) {
@@ -104,7 +113,9 @@ impl<'a> Solver for Solution<'a> {
                 positions.insert(elf.pos.clone());
                 moves += 1;
             }
-            self.elves.iter_mut().for_each(|elf| elf.rotate_dirs());
+            // rotate dirs
+            let first = self.moves.remove(0);
+            self.moves.push(first);
             if rounds == 10 {
                 (tl, br) = self.find_grid();
                 area = (br.y - tl.y + 1) * (br.x - tl.x + 1) - self.elves.len() as i64;
@@ -120,31 +131,24 @@ impl<'a> Solver for Solution<'a> {
     }
 }
 
-const SURROUNDING: [&GridPos; 8] = [&MOVE_D, &MOVE_DR, &MOVE_R, &MOVE_UR, &MOVE_U, &MOVE_UL, &MOVE_L, &MOVE_DL];
-const MOVE_N: [&GridPos; 3] = [&MOVE_DL, &MOVE_D, &MOVE_DR];
-const MOVE_E: [&GridPos; 3] = [&MOVE_DR, &MOVE_R, &MOVE_UR];
-const MOVE_S: [&GridPos; 3] = [&MOVE_UR, &MOVE_U, &MOVE_UL];
-const MOVE_W: [&GridPos; 3] = [&MOVE_UL, &MOVE_L, &MOVE_DL];
+const SURROUNDING: [GridPos; 8] = [MOVE_D, MOVE_DR, MOVE_R, MOVE_UR, MOVE_U, MOVE_UL, MOVE_L, MOVE_DL];
+const MOVE_N: [GridPos; 3] = [MOVE_DL, MOVE_D, MOVE_DR];
+const MOVE_E: [GridPos; 3] = [MOVE_DR, MOVE_R, MOVE_UR];
+const MOVE_S: [GridPos; 3] = [MOVE_UR, MOVE_U, MOVE_UL];
+const MOVE_W: [GridPos; 3] = [MOVE_UL, MOVE_L, MOVE_DL];
 
 
-struct Elf<'a> {
+struct Elf {
     id: usize,
     pos: GridPos,
-    dir: Vec<[&'a GridPos; 3]>,
 }
 
-impl<'a> Elf<'a> {
-    fn new(id: usize, row: usize, col: usize) -> Elf<'a> {
+impl Elf {
+    fn new(id: usize, row: usize, col: usize) -> Elf {
         Elf {
             id,
             // remember row, col => y, x
             pos: GridPos::of(col as i64, row as i64),
-            dir: vec![MOVE_N, MOVE_S, MOVE_W, MOVE_E],
         }
-    }
-
-    fn rotate_dirs(&mut self) {
-        let first = self.dir.remove(0);
-        self.dir.push(first);
     }
 }
