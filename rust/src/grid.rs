@@ -18,7 +18,7 @@ pub(crate) const MOVE_DR : GridPos = GridPos::of(1, -1);
 impl GridPos {
     /// Creates a position from the x/y pair given.
     pub(crate) const fn of(col: i64, row: i64) -> GridPos {
-        GridPos { col: x, row: y }
+        GridPos { col, row }
     }
 
     /// returns the distance as tuple (dx, dy)
