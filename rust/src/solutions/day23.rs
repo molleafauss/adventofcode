@@ -50,15 +50,15 @@ impl Solution {
         let mut bottom_right = elf.pos.clone();
 
         for elf in &self.elves {
-            if elf.pos.y < top_left.y {
-                top_left.y = elf.pos.y;
-            } else if elf.pos.y > bottom_right.y {
-                bottom_right.y = elf.pos.y;
+            if elf.pos.row < top_left.row {
+                top_left.row = elf.pos.row;
+            } else if elf.pos.row > bottom_right.row {
+                bottom_right.row = elf.pos.row;
             }
-            if elf.pos.x < top_left.x {
-                top_left.x = elf.pos.x;
-            } else if elf.pos.x > bottom_right.x {
-                bottom_right.x = elf.pos.x;
+            if elf.pos.col < top_left.col {
+                top_left.col = elf.pos.col;
+            } else if elf.pos.col > bottom_right.col {
+                bottom_right.col = elf.pos.col;
             }
         }
 
@@ -118,7 +118,7 @@ impl Solver for Solution {
             self.moves.push(first);
             if rounds == 10 {
                 (tl, br) = self.find_grid();
-                area = (br.y - tl.y + 1) * (br.x - tl.x + 1) - self.elves.len() as i64;
+                area = (br.row - tl.row + 1) * (br.col - tl.col + 1) - self.elves.len() as i64;
             }
             if moves == 0 {
                 break;

@@ -34,14 +34,14 @@ impl Solution {
         let mut beacons = HashSet::new();
         // find all invalid segment in line y
         for sensor in &self.sensors {
-            if y < sensor.position.y - sensor.distance || sensor.position.y + sensor.distance < y {
+            if y < sensor.position.row - sensor.distance || sensor.position.row + sensor.distance < y {
                 // not in range
                 continue;
             }
-            let delta = sensor.distance - (y - sensor.position.y).abs();
-            merge(&mut segments, sensor.position.x - delta, sensor.position.x + delta);
-            if sensor.beacon.y == y {
-                beacons.insert(sensor.beacon.x);
+            let delta = sensor.distance - (y - sensor.position.row).abs();
+            merge(&mut segments, sensor.position.col - delta, sensor.position.col + delta);
+            if sensor.beacon.row == y {
+                beacons.insert(sensor.beacon.col);
             }
         }
         (segments, beacons)
@@ -114,7 +114,7 @@ impl Solver for Solution {
 const FREQ_MULT: i64 = 4000000;
 
 fn m_distance(from: &GridPos, to: &GridPos) -> i64 {
-    (from.x - to.x).abs() + (from.y - to.y).abs()
+    (from.col - to.col).abs() + (from.row - to.row).abs()
 }
 
 fn segment_length(segments: &Vec<Segment>) -> i64 {

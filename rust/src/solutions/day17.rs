@@ -59,30 +59,30 @@ impl Solution {
             } else if wind == RIGHT && self.clear_x(&piece, 1) {
                 dir = 1;
             }
-            piece.pos.x += dir;
+            piece.pos.col += dir;
             // move down - flag resting if it can't move down
             let down = if self.clear_y(&piece) { -1 } else { 0 };
-            piece.pos.y += down;
+            piece.pos.row += down;
             resting = down == 0;
         }
         self.place(piece);
     }
 
     fn clear_x(&self, piece: &Piece, dir: i64) -> bool {
-        if piece.pos.x + dir < 0 || piece.pos.x + piece.shape.width + dir > WIDTH {
+        if piece.pos.col + dir < 0 || piece.pos.col + piece.shape.width + dir > WIDTH {
             return false;
         }
         // check if the shape is over the resting rocks
-        if piece.pos.y > self.max_height {
+        if piece.pos.row > self.max_height {
             return true;
         }
         // check if inside the chamber the shape can move in the expected dir
         let mut h = 0;
-        while h < piece.shape.height && piece.pos.y + h < self.max_height {
-            let row = &self.chamber[(piece.pos.y + h) as usize];
+        while h < piece.shape.height && piece.pos.row + h < self.max_height {
+            let row = &self.chamber[(piece.pos.row + h) as usize];
             let blk = &piece.shape.lines[(piece.shape.height - 1 - h) as usize];
             for x in 0..piece.shape.width {
-                if blk[x as usize] == BLOCK && row[(piece.pos.x + x + dir) as usize] == BLOCK {
+                if blk[x as usize] == BLOCK && row[(piece.pos.col + x + dir) as usize] == BLOCK {
                     return false;
                 }
             }
@@ -92,19 +92,19 @@ impl Solution {
     }
 
     fn clear_y(&self, piece: &Piece) -> bool {
-        if piece.pos.y - 1 > self.max_height {
+        if piece.pos.row - 1 > self.max_height {
             return true;
         }
-        if piece.pos.y == 0 {
+        if piece.pos.row == 0 {
             return false;
         }
         // bottom row of the piece is near the bottom row of the chamber - see if there's any '#' touching
         let mut h = 0;
-        while h < piece.shape.height && piece.pos.y + h <= self.max_height {
-            let rocks_below = &self.chamber[(piece.pos.y + h - 1) as usize];
+        while h < piece.shape.height && piece.pos.row + h <= self.max_height {
+            let rocks_below = &self.chamber[(piece.pos.row + h - 1) as usize];
             let blk = &piece.shape.lines[(piece.shape.height - 1 - h) as usize];
             for w in 0..piece.shape.width {
-                if rocks_below[(piece.pos.x + w) as usize] == BLOCK && blk[w as usize] == BLOCK {
+                if rocks_below[(piece.pos.col + w) as usize] == BLOCK && blk[w as usize] == BLOCK {
                     return false;
                 }
             }
@@ -119,7 +119,7 @@ impl Solution {
         while h < piece.shape.height {
             // reverse lookup
             let blk = &piece.shape.lines[(piece.shape.height - 1 - h) as usize];
-            let r = piece.pos.y + h;
+            let r = piece.pos.row + h;
             h += 1;
             if r >= self.max_height {
                 self.max_height += 1;
@@ -128,7 +128,7 @@ impl Solution {
             let row = &mut self.chamber[r as usize];
             for c in 0..piece.shape.width {
                 if blk[c as usize] == BLOCK {
-                    row[(piece.pos.x + c) as usize] = BLOCK;
+                    row[(piece.pos.col + c) as usize] = BLOCK;
                 }
             }
         }
