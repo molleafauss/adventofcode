@@ -5,12 +5,6 @@ from grid import *
 # "simple" - the final solution is brute force - not sure if there is a "mathematical" way to calculate it
 
 SURROUNDING = [DIR_N, DIR_NE, DIR_E, DIR_SE, DIR_S, DIR_SW, DIR_W, DIR_NW]
-MOVES = [
-    [DIR_NW, DIR_N, DIR_NE],
-    [DIR_SE, DIR_S, DIR_SW],
-    [DIR_SW, DIR_W, DIR_NW],
-    [DIR_NE, DIR_E, DIR_SE]
-]
 
 
 class Elf:
@@ -28,6 +22,12 @@ class Solution(Solver):
         self.positions = set()
         self.width = 0
         self.height = 0
+        self.moves = [
+            [DIR_NW, DIR_N, DIR_NE],
+            [DIR_SE, DIR_S, DIR_SW],
+            [DIR_SW, DIR_W, DIR_NW],
+            [DIR_NE, DIR_E, DIR_SE]
+        ]
 
     def parse(self, line: str):
         if not self.width:
@@ -56,20 +56,19 @@ class Solution(Solver):
                         planned_moves[new_pos] = [elf]
                     else:
                         planned_moves[new_pos].append(elf)
+                #     print(f"Elf {elf.id} will move {(elf.pos.col, elf.pos.row)} => {(new_pos.col, new_pos.row)}")
+                # else:
+                #     print(f"Elf {elf.id} won't move => {(elf.pos.col, elf.pos.row)}")
             for next_pos, elves in planned_moves.items():
                 move = len(elves) == 1
                 for elf in elves:
                     if move:
-                        # print(f"Elf {elf.id} will move {elf.pos} => {next_pos}")
                         self.positions.remove(elf.pos)
                         elf.pos = next_pos
                         self.positions.add(elf.pos)
                         moves += 1
-                    else:
-                        # print(f"{elf} won't move: {next_pos} => {elves}")
-                        pass
             # rotate moves
-            MOVES.append(MOVES.pop(0))
+            self.moves.append(self.moves.pop(0))
             if rounds == 10:
                 # self.print_elves()
                 tl, br = self.find_grid()
@@ -86,7 +85,7 @@ class Solution(Solver):
             return None
 
         # which direction?
-        for move in MOVES:
+        for move in self.moves:
             should_move = True
             for pos in move:
                 if elf.pos + pos in self.positions:
