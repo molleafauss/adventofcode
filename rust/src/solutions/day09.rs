@@ -61,7 +61,7 @@ struct Rope {
 
 impl Rope {
     fn with_length(len: usize) -> Rope {
-        Rope { knots: vec![GridPos{x: 0, y: 0}; len] }
+        Rope { knots: vec![GridPos{ col: 0, row: 0}; len] }
     }
 
     fn tail(&self) -> &GridPos {
@@ -90,18 +90,18 @@ impl Rope {
 
         let mut tail_move = GridPos::of(0, 0);
         if delta_x == 0 {
-            tail_move.y = if delta_y > 0  { 1 } else { -1 };
+            tail_move.row = if delta_y > 0  { 1 } else { -1 };
         } else if delta_y == 0 {
-            tail_move.x = if delta_x > 0  { 1 } else { -1 };
+            tail_move.col = if delta_x > 0  { 1 } else { -1 };
         } else if delta_x.abs() == 2 && delta_y.abs() == 2 {
-            tail_move.x = if delta_x > 0  { 1 } else { -1 };
-            tail_move.y = if delta_y > 0  { 1 } else { -1 };
+            tail_move.col = if delta_x > 0  { 1 } else { -1 };
+            tail_move.row = if delta_y > 0  { 1 } else { -1 };
         } else if delta_x.abs() > delta_y.abs() {
-            tail_move.x = if delta_x > 0  { 1 } else { -1 };
-            tail_move.y = delta_y;
+            tail_move.col = if delta_x > 0  { 1 } else { -1 };
+            tail_move.row = delta_y;
         } else if delta_y.abs() > delta_x.abs() {
-            tail_move.x = delta_x;
-            tail_move.y = if delta_y > 0  { 1 } else { -1 };
+            tail_move.col = delta_x;
+            tail_move.row = if delta_y > 0  { 1 } else { -1 };
         } else {
             panic!("Invalid head-tail distance: {} => {} : ({delta_x}, {delta_y})", head, tail);
         }
