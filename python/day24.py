@@ -46,7 +46,6 @@ class Solution(Solver):
 
     def solve(self):
         print(f"Tracing path from {self.entry} => {self.exit}")
-        self.blizzards_at_time(0)
         t = self.find_path(self.entry, self.exit, 0)
         print(f"[1] Found exit in: {t}")
         t = self.find_path(self.exit, self.entry, t)
@@ -54,17 +53,18 @@ class Solution(Solver):
         print(f"[2] Total time: {t}")
 
     def find_path(self, entry, exit, t):
+        print(f"Finding path {entry} => {exit} starting at {t}")
         exit_reached = False
         steps = [(entry, t)]
         visited = set()
         while not exit_reached:
             pos, t = steps.pop(0)
             if pos == exit:
-                return t
+                return t - 1
             if (pos, t) in visited:
                 continue
             visited.add((pos, t))
-            blizzards = self.blizzards_at_time(t + 1)
+            blizzards = self.blizzards_at_time(t)
             # try all direction, or stay
             for dir in [DIR_N, DIR_E, DIR_S, DIR_W]:
                 new_pos = pos + dir
