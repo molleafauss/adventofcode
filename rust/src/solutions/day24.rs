@@ -1,4 +1,5 @@
 // What did I learn?
+// mostly smooth sailing, some clones needed to make borrow checker happy
 
 use std::collections::{HashSet, VecDeque};
 use crate::grid::{GridPos, MOVE_D, MOVE_L, MOVE_R, MOVE_U};
