@@ -8,7 +8,7 @@ from advent import Solver
 # pre-calculation to the input.
 # Took me ages to get to the bottom of wrong results - most errors were in the end a bad data in the adjacency data I
 # added.
-# Also: this code is hacky af - I should have used some better structure for bashthe various concepts involved (cube, faces,
+# Also: this code is hacky af - I should have used some better structure for the various concepts involved (cube, faces,
 # position, adjacency, ...)
 
 DIRS = [
