@@ -116,7 +116,7 @@ class Solution(Solver):
             x = segments[0].end + 1
             assert x == segments[1].start - 1
             t1 = time.time()
-            print(f"[2] Found frequency: {x * self.area + y} in {t1 - t0} sec")
+            print(f"[2] Found frequency: {x * 4000000 + y} in {t1 - t0} sec")
             break
 
     def check_line(self, y):

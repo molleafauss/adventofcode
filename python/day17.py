@@ -103,7 +103,7 @@ class Solution(Solver):
         # check if the shape is over the resting rocks
         if piece.y > self.max_height:
             return True
-        # check if inside the chamber the shape can move in the expected dir / look only one of the two shape edges
+        # check if inside the chamber the shape can move in the expected dir
         h = 0
         while h < piece.height and piece.y + h < self.max_height:
             row = self.chamber[piece.y + h]

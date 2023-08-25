@@ -5,17 +5,12 @@ from grid import *
 # "simple" - the final solution is brute force - not sure if there is a "mathematical" way to calculate it
 
 SURROUNDING = [DIR_N, DIR_NE, DIR_E, DIR_SE, DIR_S, DIR_SW, DIR_W, DIR_NW]
-MOVE_N = [DIR_NW, DIR_N, DIR_NE]
-MOVE_E = [DIR_NE, DIR_E, DIR_SE]
-MOVE_S = [DIR_SE, DIR_S, DIR_SW]
-MOVE_W = [DIR_SW, DIR_W, DIR_NW]
 
 
 class Elf:
     def __init__(self, id, row, col):
         self.id = id
         self.pos = GridPos(row, col)
-        self.dir = [MOVE_N, MOVE_S, MOVE_W, MOVE_E]
 
     def __repr__(self):
         return f"Elf {self.id}: {self.pos}"
@@ -27,6 +22,12 @@ class Solution(Solver):
         self.positions = set()
         self.width = 0
         self.height = 0
+        self.moves = [
+            [DIR_NW, DIR_N, DIR_NE],
+            [DIR_SE, DIR_S, DIR_SW],
+            [DIR_SW, DIR_W, DIR_NW],
+            [DIR_NE, DIR_E, DIR_SE]
+        ]
 
     def parse(self, line: str):
         if not self.width:
@@ -55,30 +56,28 @@ class Solution(Solver):
                         planned_moves[new_pos] = [elf]
                     else:
                         planned_moves[new_pos].append(elf)
+                #     print(f"Elf {elf.id} will move {(elf.pos.col, elf.pos.row)} => {(new_pos.col, new_pos.row)}")
+                # else:
+                #     print(f"Elf {elf.id} won't move => {(elf.pos.col, elf.pos.row)}")
             for next_pos, elves in planned_moves.items():
                 move = len(elves) == 1
                 for elf in elves:
                     if move:
-                        # print(f"Elf {elf.id} will move {elf.pos} => {next_pos}")
                         self.positions.remove(elf.pos)
                         elf.pos = next_pos
                         self.positions.add(elf.pos)
                         moves += 1
-                    else:
-                        # print(f"{elf} won't move: {next_pos} => {elves}")
-                        pass
-            for elf in self.elves:
-                elf.dir.append(elf.dir.pop(0))
+            # rotate moves
+            self.moves.append(self.moves.pop(0))
             if rounds == 10:
                 # self.print_elves()
                 tl, br = self.find_grid()
                 area = (br.row - tl.row + 1) * (br.col - tl.col + 1) - len(self.elves)
-                print(f"[1] Empty area is {tl}, {br} / {len(self.elves)} => {area}")
             if moves == 0:
-                print(f"[2] Round {rounds} => no moves")
-                return
-            else:
-                print(f"[2] Round {rounds} => {moves}")
+                break
+            print(f"=> Round {rounds}: {moves} moves")
+        print(f"[1] Empty area is {tl}, {br} / {len(self.elves)} => {area}")
+        print(f"[2] Round {rounds} => no moves")
 
     def should_move(self, elf):
         # no elf in surrounding: stay put
@@ -86,7 +85,7 @@ class Solution(Solver):
             return None
 
         # which direction?
-        for move in elf.dir:
+        for move in self.moves:
             should_move = True
             for pos in move:
                 if elf.pos + pos in self.positions:

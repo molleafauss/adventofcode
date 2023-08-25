@@ -3,11 +3,17 @@ import pathlib
 
 
 # reads a file line by line, passes each line to the parser and then call solve on the parser
+import time
+
+
 def solve(filename: pathlib.Path, parser):
     with open(filename) as f:
         for l in f:
             parser.parse(l.rstrip())
+    t0 = time.time()
     parser.solve()
+    t1 = time.time()
+    print(f"File {filename}: {t1 - t0:.3f}sec")
 
 
 if __name__ == '__main__':

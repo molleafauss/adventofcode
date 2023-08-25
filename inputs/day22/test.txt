@@ -13,9 +13,9 @@
 
 10R5L5R10L4R5L5
 CUBE SIZE 4
-CUBE FACE 1: [[6, 'U'], [4, None], [3, 'L'], [2, 'U']]
-CUBE FACE 2: [[3, None], [5, 'U'], [6, 'R'], [1, 'U']]
-CUBE FACE 3: [[4, None], [5, 'L'], [2, None], [1, 'R']]
-CUBE FACE 4: [[6, 'R'], [5, None], [3, None], [1, None]]
-CUBE FACE 5: [[6, None], [2, 'U'], [3, 'R'], [4, None]]
-CUBE FACE 6: [[1, 'U'], [2, 'U'], [5, None], [4, 'L']]
+CUBE FACE 1:6,U,4,None,3,L,2,U
+CUBE FACE 2:3,None,5,U,6,R,1,U
+CUBE FACE 3:4,None,5,L,2,None,1,R
+CUBE FACE 4:6,R,5,None,3,None,1,None
+CUBE FACE 5:6,None,2,U,3,R,4,None
+CUBE FACE 6:1,U,2,U,5,None,4,L
