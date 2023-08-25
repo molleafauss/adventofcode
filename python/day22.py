@@ -113,7 +113,7 @@ class Solution(Solver):
         self.map = []
         self.path = None
         self.is_map = True
-        self.cube_size = 50
+        self.cube_size = None
         self.cube_faces = []
 
     def parse(self, line: str):
@@ -147,11 +147,12 @@ class Solution(Solver):
         if not self.cube_faces:
             self.find_faces()
         id = int(text[0])
-        facing = eval(text[2:])
+        # parse facing into a list of pairs
+        parts = text[2:].split(",")
+        facing = [[int(parts[t * 2]), None if parts[t * 2 + 1] == "None" else parts[t * 2 + 1]] for t in range(len(parts) // 2)]
         for f in self.cube_faces:
             if f.id == id:
                 f.facing = facing
-                print(f"Face {id}: {facing}")
 
     def solve(self):
         print(f"Path: {len(self.path)} movements+turns")
@@ -159,7 +160,9 @@ class Solution(Solver):
         print(f"Starting position: {pos}")
         for walk, turn in self.path:
             pos = self.walk(pos, walk)
+            # print(f"Walk {walk} => {pos}")
             pos = self.turn(pos, turn)
+            # print(f"Turn {turn} => {pos}")
         password = (pos[0] + 1) * 1000 + (pos[1] + 1) * 4 + pos[2]
         print(f"[1] final position: {pos} => password {password}")
 
@@ -168,13 +171,13 @@ class Solution(Solver):
         print(f"Starting position: {pos[0] + 1, pos[1] + 1, DIR_TEXT[pos[2]]}")
         for walk, turn in self.path:
             pos = self.walk(pos, walk, True)
+            # print(f"Walk {walk} => {pos}")
             pos = self.turn(pos, turn)
-            print(f"==> {walk} {turn} => {pos[0] + 1, pos[1] + 1, DIR_TEXT[pos[2]]}")
+            # print(f"Turn {turn} => {pos}")
         password = (pos[0] + 1) * 1000 + (pos[1] + 1) * 4 + pos[2]
-        print(f"[2] Password is: {password}")
+        print(f"[2] final position: {pos} => password  {password}")
 
     def walk(self, pos, walk, cube_walk=False):
-        w = walk
         # rows are ordered top->bottom: v moves down = rows + 1; ^ moves up = rows -1
         while walk > 0:
             if pos[2] == 0 or pos[2] == 2:
@@ -190,7 +193,6 @@ class Solution(Solver):
             pos[1] = nc
             pos[2] = npos
         assert self.map[pos[0]][pos[1]] == '.'
-        # print(f"Walk {w} => {pos}")
         return pos
 
     def in_map(self, r, c):
@@ -273,5 +275,4 @@ class Solution(Solver):
         elif facing > 3:
             facing = 0
         pos[2] = facing
-        # print(f"Turn {turn} => {pos}")
         return pos

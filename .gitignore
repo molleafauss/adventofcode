@@ -1,2 +1,7 @@
 *.iml
 .idea/*
+
+python/__pycache__/
+
+rust/target/
+out/

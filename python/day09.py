@@ -26,28 +26,27 @@ class Solution(Solver):
         self.movements.append((parts[0], int(parts[1])))
 
     def solve(self):
-        self.move_rope(2)
-        self.move_rope(10)
+        visited = self.move_rope(2)
+        print(f"[1] Tail visited {visited} places")
+        visited = self.move_rope(10)
+        print(f"[2] Tail visited {visited} places")
 
     def move_rope(self, rope_length):
+        print(f"Moving rope with length {rope_length}")
         self.rope = [[0,0] for _ in range(rope_length)]
         visited = set()
-        moves = 0
         for m in self.movements:
             dir = m[0]
             steps = m[1]
-            print(f"{dir} {steps}")
+            # print(f"{dir} {steps}")
             while steps > 0:
-                moves += 1
                 self.move_head(dir)
                 for i in range(rope_length - 1):
                     self.adjust_rope(i)
-                    # print(f"[{moves}/{steps}/{i}] Rope status: {self.rope}")
                 tail = self.rope[-1]
                 visited.add((tail[0], tail[1]))
                 steps -= 1
-            print(f"Rope status: {self.rope}\n    visited => ({visited})")
-        print(f"Tail visited {len(visited)} places")
+        return len(visited)
 
     def move_head(self, dir):
         self.rope[0][0] += MOVES[dir][0]
@@ -58,7 +57,7 @@ class Solution(Solver):
         tail = self.rope[pos + 1]
         delta_x = head[0] - tail[0]
         delta_y = head[1] - tail[1]
-        if not (abs(delta_x) <= 2 or abs(delta_y) <= 2):
+        if abs(delta_x) > 2 or abs(delta_y) > 2:
             raise ValueError(f"Invalid head-tail distance ({pos}): {head} => {tail} : {(delta_x, delta_y)}")
 
         if abs(delta_x) <= 1 and abs(delta_y) <= 1:

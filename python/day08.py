@@ -30,7 +30,7 @@ class Solution(Solver):
                 tree = t["size"]
         # visible from bottom
         tree = self.matrix[-1][col]["size"]
-        for row in range(self.width - 1, 0, -1):
+        for row in range(self.height - 1, 0, -1):
             t = self.matrix[row][col]
             if t["size"] > tree:
                 visible += 1 if not t["visible"] else 0
@@ -51,7 +51,7 @@ class Solution(Solver):
                 tree = t["size"]
         # visible from right
         tree = self.matrix[row][-1]["size"]
-        for col in range(self.height - 1, 0, -1):
+        for col in range(self.width - 1, 0, -1):
             t = self.matrix[row][col]
             if t["size"] > tree:
                 visible += 1 if not t["visible"] else 0
@@ -72,7 +72,7 @@ class Solution(Solver):
             inside += self.check_row(row)
         # borders: 2 x (width + height) - 4 (corners, to not count them multiple times)
         borders = self.width * 2 + self.height * 2 - 4
-        print(f"[1] number of trees visible {inside + borders}")
+        print(f"[1] number of trees visible {inside}, {borders} => {inside + borders}")
 
         # part 2
         scenic_max = 0
