@@ -111,14 +111,15 @@ impl Solver for Solution {
         self.height += 1;
     }
 
-    fn solve(&mut self) {
+    fn solve(&mut self) -> Option<(String, String)> {
         println!("Tracing path from {:?} => {:?}", self.entry, self.exit);
         self.blizzards_at_time(0);
-        let mut t = self.find_path(self.entry.clone(), self.exit.clone(), 0);
-        println!("[1] Found exit in: {t}");
-        t = self.find_path(self.exit.clone(), self.entry.clone(), t);
-        t = self.find_path(self.entry.clone(), self.exit.clone(), t);
-        println!("[2] Total time: {t}");
+        let t1 = self.find_path(self.entry.clone(), self.exit.clone(), 0);
+        println!("[1] Found exit in: {t1}");
+        let mut t2 = self.find_path(self.exit.clone(), self.entry.clone(), t1);
+        t2 = self.find_path(self.entry.clone(), self.exit.clone(), t2);
+        println!("[2] Total time: {t2}");
+        Some((t1.to_string(), t2.to_string()))
     }
 }
 

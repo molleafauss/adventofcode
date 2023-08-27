@@ -78,7 +78,7 @@ impl Solver for Solution {
         self.height += 1;
     }
 
-    fn solve(&mut self) {
+    fn solve(&mut self) -> Option<(String, String)> {
         let mut positions: HashSet<GridPos> = self.elves.iter().map(|elf| elf.pos.clone()).collect();
         println!("Will move around {} elves", self.elves.len());
         let mut rounds = 0;
@@ -128,6 +128,7 @@ impl Solver for Solution {
 
         println!("[1] Empty area is {:?}, {:?}  => {area}", tl, br);
         println!("[2] Round {rounds} => no moves");
+        Some((area.to_string(), rounds.to_string()))
     }
 }
 

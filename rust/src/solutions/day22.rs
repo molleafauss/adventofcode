@@ -263,7 +263,7 @@ impl Solver for Solution {
 
     }
 
-    fn solve(&mut self) {
+    fn solve(&mut self) -> Option<(String, String)> {
         println!("Path: {} movements+turns", self.path.len());
         let mut pos = (0, self.map[0].iter().position(|ch| *ch == '.').unwrap(), 0);
         println!("Starting position: {:?}", pos);
@@ -273,8 +273,8 @@ impl Solver for Solution {
                 Move::Turn(dir) => pos = self.turn(pos, *dir),
             }
         }
-        let password = (pos.0 + 1) * 1000 + (pos.1 + 1) * 4 + pos.2;
-        println!("[1] final position: {:?} => password {password}", pos);
+        let password1 = (pos.0 + 1) * 1000 + (pos.1 + 1) * 4 + pos.2;
+        println!("[1] final position: {:?} => password {password1}", pos);
 
         let mut pos = (0, self.map[0].iter().position(|ch| *ch == '.').unwrap(), 0);
         println!("==> Cube walk: starting position: {:?}", pos);
@@ -284,8 +284,9 @@ impl Solver for Solution {
                 Move::Turn(dir) => pos = self.turn(pos, *dir),
             }
         }
-        let password = (pos.0 + 1) * 1000 + (pos.1 + 1) * 4 + pos.2;
-        println!("[2] final position: {:?} => password {password}", pos);
+        let password2 = (pos.0 + 1) * 1000 + (pos.1 + 1) * 4 + pos.2;
+        println!("[2] final position: {:?} => password {password2}", pos);
+        Some((password1.to_string(), password2.to_string()))
     }
 }
 

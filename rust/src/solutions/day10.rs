@@ -86,7 +86,8 @@ impl Solver for Solution {
         }
     }
 
-    fn solve(&mut self) {
+    fn solve(&mut self) -> Option<(String, String)> {
         println!("[1] Signal strength found: {}",self.signal_strength);
+        Some((self.signal_strength.to_string(), String::new()))
     }
 }

@@ -57,8 +57,9 @@ impl Solver for Solution {
         }
     }
 
-    fn solve(&mut self) {
+    fn solve(&mut self) -> Option<(String, String)> {
         println!("[1] Fully overlapping sections: {}", self.full_overlaps);
         println!("[2] Partially overlapping sections: {}", self.partial_overlaps);
+        Some((self.full_overlaps.to_string(), self.partial_overlaps.to_string()))
     }
 }

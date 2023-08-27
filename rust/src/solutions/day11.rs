@@ -75,15 +75,16 @@ impl Solver for Solution {
         }
     }
 
-    fn solve(&mut self) {
+    fn solve(&mut self) -> Option<(String, String)> {
         let reducer = self.monkeys.iter().map(|m| m.test.0).product();
         println!("Reducer: {reducer}");
 
-        let total_inspected = self.run_loops(20, 3, reducer);
-        println!("[1] top 2 inspected: {total_inspected}");
+        let part1_inspected = self.run_loops(20, 3, reducer);
+        println!("[1] top 2 inspected: {part1_inspected}");
 
-        let total_inspected = self.run_loops(10000, 1, reducer);
-        println!("[2] top 2 inspected: {total_inspected}");
+        let part2_inspected = self.run_loops(10000, 1, reducer);
+        println!("[2] top 2 inspected: {part2_inspected}");
+        Some((part1_inspected.to_string(), part2_inspected.to_string()))
     }
 }
 

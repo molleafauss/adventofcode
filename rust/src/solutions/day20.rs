@@ -29,19 +29,20 @@ impl Solver for Solution {
         self.size += 1;
     }
 
-    fn solve(&mut self) {
+    fn solve(&mut self) -> Option<(String, String)> {
         // part 1
         let result = self.mix(self.data.clone());
-        let mut total = self.coordinates(&result);
-        println!("[1] Final coordinates: {total}");
+        let total1 = self.coordinates(&result);
+        println!("[1] Final coordinates: {total1}");
 
         // part 2
         let mut data = self.data.iter().map(|(v, pos)| (v * ENCRYPTION_KEY, *pos)).collect();
         for _i in 0..10 {
             data = self.mix(data);
         }
-        total = self.coordinates(&data);
-        println!("[2] Final coordinates: {total}");
+        let total2 = self.coordinates(&data);
+        println!("[2] Final coordinates: {total2}");
+        Some((total1.to_string(), total2.to_string()))
     }
 }
 

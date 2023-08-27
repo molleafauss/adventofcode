@@ -97,8 +97,9 @@ impl Solver for Solution {
         self.score2 += score_played(&round2_play) + score_round2;
     }
 
-    fn solve(&mut self) {
+    fn solve(&mut self) -> Option<(String, String)> {
         println!("[1] Resulting score (part 1): {}", self.score1);
-        println!("[2] Resulting score (part 2): {}", self.score2)
+        println!("[2] Resulting score (part 2): {}", self.score2);
+        Some((self.score1.to_string(), self.score2.to_string()))
     }
 }

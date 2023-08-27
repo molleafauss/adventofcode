@@ -42,11 +42,12 @@ impl Solver for Solution {
         })
     }
 
-    fn solve(&mut self) {
+    fn solve(&mut self) -> Option<(String, String)> {
         let part1 = self.move_rope(2);
         println!("[1] Tail visited {part1} places");
         let part2 = self.move_rope(10);
         println!("[2] Tail visited {part2} places");
+        Some((part1.to_string(), part2.to_string()))
     }
 }
 

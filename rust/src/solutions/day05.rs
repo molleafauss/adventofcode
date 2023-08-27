@@ -120,13 +120,14 @@ impl Solver for Solution {
         }
     }
 
-    fn solve(&mut self) {
+    fn solve(&mut self) -> Option<(String, String)> {
         let mut stacks = self.build_stacks();
         let part1 = self.move_singles(stacks);
         println!("[1] Top stacks values: {part1}");
         stacks = self.build_stacks();
         let part2 = self.move_multiples(stacks);
         println!("[2] Top stacks values: {part2}");
+        Some((part1.to_string(), part2.to_string()))
     }
 }
 

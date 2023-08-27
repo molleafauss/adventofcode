@@ -86,7 +86,7 @@ impl Solver for Solution {
         }
     }
 
-    fn solve(&mut self) {
+    fn solve(&mut self) -> Option<(String, String)> {
         println!("[1] Found small dir sizes: {}", self.part1);
         while self.dirstack.len() > 1 {
             // pop all remaining dirs and save them
@@ -101,7 +101,7 @@ impl Solver for Solution {
         println!("Found size for root: {used}");
         if DISK_SIZE - used > MIN_FREE {
             println!("[2] enough space free: used {used} / free {}", DISK_SIZE - used);
-            return;
+            return None;
         }
         let size_to_free = MIN_FREE - (DISK_SIZE - used);
         let mut big_dirs = Vec::new();
@@ -113,6 +113,7 @@ impl Solver for Solution {
         }
         big_dirs.sort_by_key(|dir| dir.size);
         println!("[2] min space to delete = {}", big_dirs.first().unwrap().size);
+        None
     }
 }
 

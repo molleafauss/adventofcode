@@ -118,26 +118,28 @@ impl Solver for Solution {
         self.height += 1;
     }
 
-    fn solve(&mut self) {
+    fn solve(&mut self) -> Option<(String, String)> {
         assert!(self.start.is_some() && self.end.is_some(), "Start or end not found?");
 
         let parents = self.walk(&self.start.as_ref().unwrap());
         let path = self.walk_back(parents, &self.start.as_ref().unwrap());
-        let mut min_length = path.len();
-        println!("[1] Min length found: {min_length}");
+        let part1_min_length = path.len();
+        println!("[1] Min length found: {part1_min_length}");
 
         // finding shortest
         let mut min_start = self.start.as_ref().unwrap();
+        let mut part2_min_length = 0;
         self.map.iter()
             .filter(|e| e.1 == &LOWEST)
             .map(|e| e.0)
             .for_each(|start| {
                 let path = self.walk_back(self.walk(start), start);
-                if path.len() > 0 && path.len() < min_length {
+                if path.len() > 0 && path.len() < part2_min_length {
                     min_start = start;
-                    min_length = path.len();
+                    part2_min_length = path.len();
                 }
             });
-        println!("[2] Shortest path from {min_start}: {min_length}")
+        println!("[2] Shortest path from {min_start}: {part2_min_length}");
+        Some((part1_min_length.to_string(), part2_min_length.to_string()))
     }
 }

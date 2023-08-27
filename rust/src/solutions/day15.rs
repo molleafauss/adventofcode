@@ -82,7 +82,7 @@ impl Solver for Solution {
         }
     }
 
-    fn solve(&mut self) {
+    fn solve(&mut self) -> Option<(String, String)> {
         println!("We have {} sensors", self.sensors.len());
         println!("part 1 - finding invalid beacon positions at line {}", self.y);
         let (segments, beacons) = self.check_line(self.y);
@@ -90,6 +90,7 @@ impl Solver for Solution {
         println!("[1] invalid set contains {segment_size} elements");
 
         println!("Finding possible real beacon positions in area 0-{}", self.area);
+        let mut frequency = 0;
         for y in 0..self.area + 1 {
             if (y % 100000) == 0 {
                 println!("Checking line {y}");
@@ -104,10 +105,11 @@ impl Solver for Solution {
             println!("Found something at y: {y} - {}?", segments.len());
             let x = segments[0].end + 1;
             assert_eq!(x, segments[1].start - 1);
-            let frequency: i64 = x as i64 * FREQ_MULT + y as i64;
+            frequency = x as i64 * FREQ_MULT + y as i64;
             println!("[2] Found frequency: {frequency}");
             break;
         }
+        Some((segment_size.to_string(), frequency.to_string()))
     }
 }
 

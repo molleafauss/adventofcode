@@ -35,7 +35,7 @@ impl Solver for Solution {
         }
     }
 
-    fn solve(&mut self) {
+    fn solve(&mut self) -> Option<(String, String)> {
         println!("solve day01");
         self.calories.push(Elf{calories: self.elf_calories});
         self.calories.sort_by_key(|elf| elf.calories);
@@ -43,5 +43,6 @@ impl Solver for Solution {
         println!("[1] Saw {} elves: maximum: {}", self.calories.len(), self.calories[0].calories);
         let top3: u32 = self.calories.iter().take(3).map(|elf| elf.calories).sum();
         println!("[2] First 3 elves: {top3}");
+        Some((self.calories[0].calories.to_string(), top3.to_string()))
     }
 }
