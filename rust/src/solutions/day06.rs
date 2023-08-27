@@ -45,6 +45,7 @@ impl Solver for Solution {
         }
     }
 
-    fn solve(&mut self) {
+    fn solve(&mut self) -> Option<(String, String)> {
+        None
     }
 }

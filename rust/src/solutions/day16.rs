@@ -83,7 +83,7 @@ impl Solver for Solution {
         }
     }
 
-    fn solve(&mut self) {
+    fn solve(&mut self) -> Option<(String, String)> {
         println!("Found {} valves to open in {PART1_MINUTES} minutes", self.valves.len());
         println!("Valves with flow: {} => {} possible paths",
                  self.valves_with_flow.len(), self.valves_with_flow.len().factorial());
@@ -92,19 +92,20 @@ impl Solver for Solution {
         // part 1 - timed
         let t0 = SystemTime::now();
         let mut one_path = OnePathSolver::new();
-        let best_path = one_path.find_path(&self, OnePath::new(START));
+        let best_path1 = one_path.find_path(&self, OnePath::new(START));
         let t1 = SystemTime::now();
         println!("[1] Found max flow is {}: {:?} ({} cache hits) [{:.3}sec]",
-                 best_path.total_flow, best_path.visited, one_path.cache_hits, t1.duration_since(t0).unwrap().as_secs_f32());
+                 best_path1.total_flow, best_path1.visited, one_path.cache_hits, t1.duration_since(t0).unwrap().as_secs_f32());
 
         // part 2
         let t0 = SystemTime::now();
         let mut two_path = TwoPathsSolver::new();
-        let best_path = two_path.find_path(&self, TwoPaths::new(START));
+        let best_path2 = two_path.find_path(&self, TwoPaths::new(START));
         let t1 = SystemTime::now();
         println!("[2] Found max flow is {}: {:?} / {:?} ({} cache hits) [{:.3}sec]",
-                 best_path.total_flow, best_path.human_path, best_path.ele_path, two_path.cache_hits,
+                 best_path2.total_flow, best_path2.human_path, best_path2.ele_path, two_path.cache_hits,
                  t1.duration_since(t0).unwrap().as_secs_f32());
+        Some((best_path1.total_flow.to_string(), best_path2.total_flow.to_string()))
     }
 }
 

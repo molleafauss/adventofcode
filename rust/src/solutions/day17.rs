@@ -189,7 +189,7 @@ impl Solver for Solution {
         self.winds = line.as_bytes().into();
     }
 
-    fn solve(&mut self) {
+    fn solve(&mut self) -> Option<(String, String)> {
         let mut piece = 0;
         while self.height1.is_none() || self.height2.is_none() {
             self.rocks += 1;
@@ -210,6 +210,7 @@ impl Solver for Solution {
         }
         println!("[1] Chamber height: {}", self.height1.unwrap());
         println!("[2] Chamber height: {}", self.height2.unwrap());
+        Some((self.height1.unwrap().to_string(), self.height2.unwrap().to_string()))
     }
 }
 

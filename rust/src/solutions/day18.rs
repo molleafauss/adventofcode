@@ -53,7 +53,7 @@ impl Solver for Solution {
         self.cubes += 1;
     }
 
-    fn solve(&mut self) {
+    fn solve(&mut self) -> Option<(String, String)> {
         println!("[1] {} cubes: {} visible", self.voxels.len(), self.faces);
 
         println!("Ranges: {:?}", self.ranges);
@@ -94,6 +94,7 @@ impl Solver for Solution {
         }
 
         println!("[2] Found {} outside facing faces", faces.len());
+        Some((self.faces.to_string(), faces.len().to_string()))
     }
 }
 

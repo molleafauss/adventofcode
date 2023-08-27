@@ -75,8 +75,9 @@ impl Solver for Solution {
         }
     }
 
-    fn solve(&mut self) {
+    fn solve(&mut self) -> Option<(String, String)> {
         println!("[1] Priority of item in both compartments {}", self.part1);
         println!("[2] Overall priority of badges {}", self.part2);
+        Some((self.part1.to_string(), self.part2.to_string()))
     }
 }

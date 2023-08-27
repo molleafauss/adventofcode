@@ -118,7 +118,7 @@ impl Solver for Solution {
         self.height += 1;
     }
 
-    fn solve(&mut self) {
+    fn solve(&mut self) -> Option<(String, String)> {
         println!("Forest size: {}x{}", self.width, self.height);
         // part 1
         let mut inside = 0;
@@ -130,8 +130,9 @@ impl Solver for Solution {
         }
         // borders: 2 x (width + height) - 4 (corners, to not count them multiple times)
         let borders = self.width * 2 + self.height * 2 - 4;
+        let total_visible = inside + borders;
         println!("[1] number of trees visible inside: {} borders: {} => visible {}",
-                 inside, borders, inside + borders);
+                 inside, borders, total_visible);
 
 
         // part 2
@@ -145,6 +146,7 @@ impl Solver for Solution {
             })
         });
         println!("[2] max scenic score {scenic_max}");
+        Some((total_visible.to_string(), scenic_max.to_string()))
     }
 }
 

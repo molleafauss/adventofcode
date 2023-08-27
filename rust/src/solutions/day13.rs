@@ -35,7 +35,7 @@ impl Solver for Solution {
         }
     }
 
-    fn solve(&mut self) {
+    fn solve(&mut self) -> Option<(String, String)> {
         println!("[1] Right order value: {}", self.right_order);
 
         let mut decoder_key = 1;
@@ -54,6 +54,7 @@ impl Solver for Solution {
         });
         assert_eq!(divider_packets, 2, "Did not find all divider packets");
         println!("[2] decoder key: {decoder_key}");
+        Some((self.right_order.to_string(), decoder_key.to_string()))
     }
 }
 

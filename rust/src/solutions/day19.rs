@@ -94,7 +94,7 @@ impl Solver for Solution {
         self.blueprints.push(Blueprint::parse(line));
     }
 
-    fn solve(&mut self) {
+    fn solve(&mut self) -> Option<(String, String)> {
         let mut total1 = 0;
         let mut total2 = 1;
         let mut part2 = 0;
@@ -127,6 +127,7 @@ impl Solver for Solution {
         }
         println!("[1] result is {total1}");
         println!("[2] result is {total2}");
+        Some((total1.to_string(), total2.to_string()))
     }
 }
 

@@ -100,7 +100,7 @@ impl Solver for Solution {
 
     }
 
-    fn solve(&mut self) {
+    fn solve(&mut self) -> Option<(String, String)> {
         assert!(self.monkeys.contains_key(ROOT), "Missing root in monkeys?");
 
         // part 1 - must not fail
@@ -110,7 +110,7 @@ impl Solver for Solution {
         // part 2
         let value = self.balance(&self.monkeys[ROOT]);
         println!("[2] HUMN {value}");
-
+        Some((result.to_string(), value.to_string()))
     }
 }
 
