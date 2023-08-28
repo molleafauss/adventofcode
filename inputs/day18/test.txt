@@ -1,5 +1,5 @@
-result part 1: 14531
-result part 2: 11258
+result part 1: 64
+result part 2: 58
 2,2,2
 1,2,2
 3,2,2

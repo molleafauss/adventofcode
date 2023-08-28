@@ -1,5 +1,5 @@
-result part 1: 14531
-result part 2: 11258
+result part 1: 54703080378102
+result part 2: 3952673930912
 tsdr: 10
 smgn: dlzt * mdnl
 tlmc: qcff * wqzp

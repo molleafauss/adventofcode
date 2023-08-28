@@ -1,5 +1,5 @@
-result part 1: 14531
-result part 2: 11258
+result part 1: 6101
+result part 2: 21909
 [[],[10,3,10,9]]
 [[[7]],[]]
 

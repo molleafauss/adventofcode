@@ -1,5 +1,5 @@
-result part 1: 14531
-result part 2: 11258
+result part 1: 6037
+result part 2: 2485
 D 1
 U 2
 R 2
