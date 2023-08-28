@@ -1,5 +1,5 @@
-result part 1: 14531
-result part 2: 11258
+result part 1: 6032
+result part 2: 5031
         ...#
         .#..
         #...

@@ -1,5 +1,5 @@
-result part 1: 14531
-result part 2: 11258
+result part 1: 118674
+result part 2: 32333418600
 Monkey 0:
   Starting items: 85, 79, 63, 72
   Operation: new = old * 17

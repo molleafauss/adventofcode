@@ -1,5 +1,5 @@
-result part 1: 14531
-result part 2: 11258
+result part 1: 11123
+result part 2: 4248669215955
 -7050
 -7455
 -2217
