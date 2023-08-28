@@ -1,3 +1,5 @@
+result part 1: 15
+result part 2: 12
 A Y
 B X
 C Z

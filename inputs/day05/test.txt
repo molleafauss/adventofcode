@@ -1,4 +1,6 @@
-    [D]    
+result part 1: 14531
+result part 2: 11258
+    [D]
 [N] [C]    
 [Z] [M] [P]
  1   2   3 
