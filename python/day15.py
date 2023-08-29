@@ -111,7 +111,7 @@ class Solution(Solver):
         frequency = 0
         for y in range(self.area + 1):
             if (y % 100000) == 0:
-                log.debug(f"Checking line {y}")
+                print(f"Checking line {y}/{self.area}")
             segments, beacons = self.check_line(y)
             # ignore beacons - mark them as not valid
             for b in beacons:
