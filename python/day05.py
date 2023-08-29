@@ -35,11 +35,11 @@ class Solution(Solver):
         self.build_stacks()
         self.move_singles()
         result1 = "".join([st.pop() for st in self.stacks])
-        print(f"[1] Top stacks values: {result1}")
+        log.info(f"[1] Top stacks values: {result1}")
         self.build_stacks()
         self.move_multiples()
         result2 = "".join([st.pop() for st in self.stacks])
-        print(f"[2] Top stacks values: {result2}")
+        log.info(f"[2] Top stacks values: {result2}")
         return result1, result2
 
     def add_instructions(self, line):
@@ -52,7 +52,7 @@ class Solution(Solver):
         for level in self.stack_defs:
             if not num_stacks:
                 num_stacks = int(level.rsplit(" ", maxsplit=1)[-1].strip())
-                print(f"Found {num_stacks} stacks")
+                log.debug(f"Found {num_stacks} stacks")
                 self.stacks = [[] for _ in range(num_stacks)]
                 continue
 

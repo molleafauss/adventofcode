@@ -25,7 +25,7 @@ class Solution(Solver):
         for i in range(len(parts) - 1):
             x0, y0 = parts[i]
             x1, y1 = parts[i + 1]
-            print(f"Tracing line: ({x0}, {y0}) <=> ({x1}, {y1})")
+            log.debug(f"Tracing line: ({x0}, {y0}) <=> ({x1}, {y1})")
             if x0 == x1:
                 end = y1 + (1 if y1 > y0 else -1)
                 step = 1 if y1 > y0 else -1
@@ -41,7 +41,7 @@ class Solution(Solver):
             self.max_y = max(self.max_y, y0, y1)
 
     def solve(self):
-        print(f"Max y: {self.max_y}")
+        log.debug(f"Max y: {self.max_y}")
         keep_dripping = True
         sand1 = 0
         while keep_dripping:
@@ -65,7 +65,7 @@ class Solution(Solver):
                     break
             # reached the abyss - stop
             keep_dripping = y <= self.max_y
-        print(f"[1] Sand resting: {sand1}")
+        log.info(f"[1] Sand resting: {sand1}")
 
         # remove all 'o' from the scan
         self.scan = {pos: val for pos, val in self.scan.items() if val == '#'}
@@ -101,5 +101,5 @@ class Solution(Solver):
             # if obstructs the start, will block
             keep_dripping = START not in self.scan
 
-        print(f"[2] Sand resting: {sand}")
+        log.info(f"[2] Sand resting: {sand}")
         return str(sand1), str(sand)

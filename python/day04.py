@@ -35,7 +35,7 @@ class Solution(Solver):
             self.partial_overlaps += 1
 
     def solve(self):
-        print(f"Fully overlapping sections: {self.full_overlaps}")
-        print(f"Partially overlapping sections: {self.partial_overlaps}")
+        log.info(f"Fully overlapping sections: {self.full_overlaps}")
+        log.info(f"Partially overlapping sections: {self.partial_overlaps}")
         return str(self.full_overlaps), str(self.partial_overlaps)
 

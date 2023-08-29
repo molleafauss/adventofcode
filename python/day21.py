@@ -41,11 +41,11 @@ class Solution(Solver):
 
         # part 1
         result = self.calculate(self.monkeys["root"])
-        print(f"[1] Result is {result}")
+        log.info(f"[1] Result is {result}")
 
         # part 2
         value = self.balance(self.monkeys["root"])
-        print(f"[2] HUMN {value}")
+        log.info(f"[2] HUMN {value}")
         return str(result), str(value)
 
     def balance(self, monkey):
@@ -60,7 +60,7 @@ class Solution(Solver):
                 human = 0
                 value = self.calculate(self.monkeys[monkey.operation[2]], True)
             if not balance:
-                print(f"Found root branch value: {value}")
+                log.debug(f"Found root branch value: {value}")
                 balance = value
             else:
                 balance = self.invert_op(monkey, balance, value, human == 0)
@@ -68,7 +68,7 @@ class Solution(Solver):
         return int(balance)
 
     def invert_op(self, monkey, balance, value, first):
-        print(f"Inverting {'x' if first else value} {monkey.operation[1]} {value if first else 'x'} = {balance}")
+        log.debug(f"Inverting {'x' if first else value} {monkey.operation[1]} {value if first else 'x'} = {balance}")
         match monkey.operation[1]:
             case "+":
                 return balance - value
@@ -92,16 +92,10 @@ class Solution(Solver):
             case "+":
                 return left + right
             case "-":
-                value = left - right
-                if value < 0:
-                    print(f"{monkey.name}: {left} - {right} = {value}")
-                return value
+                return left - right
             case "*":
                 return left * right
             case "/":
-                value = left / right
-                if value < 0:
-                    print(f"{monkey.name}: {left} / {right} = {value}")
-                return value
+                return left / right
             case "_":
                 raise ValueError(f"Invalid operation: {monkey.operation}")

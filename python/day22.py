@@ -141,7 +141,7 @@ class Solution(Solver):
             if next_col < len(self.map[next_row]) and self.map[next_row][next_col] != ' ':
                 face = Face(len(self.cube_faces) + 1, next_row, next_col, self.cube_size - 1, [])
                 self.cube_faces.append(face)
-                print(f"Found face {face.id} at {face.row}, {face.col}")
+                log.debug(f"Found face {face.id} at {face.row}, {face.col}")
             next_col += self.cube_size
             if len(self.map[next_row]) < next_col:
                 next_row += self.cube_size
@@ -159,27 +159,27 @@ class Solution(Solver):
                 f.facing = facing
 
     def solve(self):
-        print(f"Path: {len(self.path)} movements+turns")
+        log.debug(f"Path: {len(self.path)} movements+turns")
         pos = [0, self.map[0].find("."), 0]
-        print(f"Starting position: {pos}")
+        log.debug(f"Starting position: {pos}")
         for walk, turn in self.path:
             pos = self.walk(pos, walk)
             # print(f"Walk {walk} => {pos}")
             pos = self.turn(pos, turn)
             # print(f"Turn {turn} => {pos}")
         password1 = (pos[0] + 1) * 1000 + (pos[1] + 1) * 4 + pos[2]
-        print(f"[1] final position: {pos} => password {password1}")
+        log.info(f"[1] final position: {pos} => password {password1}")
 
-        print("==> Cube Walk")
+        log.debug("==> Cube Walk")
         pos = [0, self.map[0].find("."), 0]
-        print(f"Starting position: {pos[0] + 1, pos[1] + 1, DIR_TEXT[pos[2]]}")
+        log.debug(f"Starting position: {pos[0] + 1, pos[1] + 1, DIR_TEXT[pos[2]]}")
         for walk, turn in self.path:
             pos = self.walk(pos, walk, True)
             # print(f"Walk {walk} => {pos}")
             pos = self.turn(pos, turn)
             # print(f"Turn {turn} => {pos}")
         password2 = (pos[0] + 1) * 1000 + (pos[1] + 1) * 4 + pos[2]
-        print(f"[2] final position: {pos} => password  {password2}")
+        log.info(f"[2] final position: {pos} => password  {password2}")
         return str(password1), str(password2)
 
     def walk(self, pos, walk, cube_walk=False):
@@ -249,13 +249,13 @@ class Solution(Solver):
         # select expected adjacent based on direction
         adj = face.facing[dir]
         if adj[1] is None:
-            print(f"Crossing face {face.id} / {adj[0]}: {r0 + 1, c0 + 1, DIR_TEXT[dir]} => {r + 1, c + 1, DIR_TEXT[dir]}")
+            log.debug(f"Crossing face {face.id} / {adj[0]}: {r0 + 1, c0 + 1, DIR_TEXT[dir]} => {r + 1, c + 1, DIR_TEXT[dir]}")
             return r, c, dir
         fadj = self.cube_faces[adj[0] - 1]
         # cross into new face based on old position
         pos = fadj.cross(face.relative(r0, c0), dir, adj[1])
         assert fadj.contains(pos[0], pos[1])
-        print(f"Crossing face {face.id} / {fadj.id}: {r0 + 1, c0 + 1, DIR_TEXT[dir]} => {pos[0] + 1, pos[1] + 1, DIR_TEXT[pos[2]]}")
+        log.debug(f"Crossing face {face.id} / {fadj.id}: {r0 + 1, c0 + 1, DIR_TEXT[dir]} => {pos[0] + 1, pos[1] + 1, DIR_TEXT[pos[2]]}")
         return pos
 
     def in_face(self, row, col):

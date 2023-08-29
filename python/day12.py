@@ -52,7 +52,7 @@ class Solution(Solver):
         assert self.start and self.end
 
         def walk(start):
-            print(f"=== Finding path {start} => {self.end}")
+            log.debug(f"=== Finding path {start} => {self.end}")
             costs = {}
             max = self.width * self.height + 1
             for row in range(self.height):
@@ -89,11 +89,11 @@ class Solution(Solver):
 
         parents = walk(self.start)
         path1 = walk_back(parents, self.start)
-        print(f"[1] Min length found: {len(path1)}: {path1}")
+        log.info(f"[1] Min length found: {len(path1)}: {path1}")
 
         # now try to walk from all 'a'
         possible_starts = [pos for pos in self.map if self.map[pos] == 'a']
-        min_length = len(path)
+        min_length = len(path1)
         min_start = self.start
         for start in possible_starts:
             path = walk_back(walk(start), start)
@@ -102,7 +102,7 @@ class Solution(Solver):
             if len(path) < min_length:
                 min_length = len(path)
                 min_start = start
-        print(f"[2] Shortest path from {min_start}: {min_length}")
+        log.info(f"[2] Shortest path from {min_start}: {min_length}")
         return str(len(path1)), str(min_length)
 
     def neighbours(self, node, costs):

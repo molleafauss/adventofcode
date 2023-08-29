@@ -72,9 +72,9 @@ class Solution(Solver):
             valve.mask = 1 << len(self.valves_with_flow)
 
     def solve(self):
-        print(f"Found {len(self.valves)} valves to open in {PART1_MINUTES} minutes")
+        log.debug(f"Found {len(self.valves)} valves to open in {PART1_MINUTES} minutes")
         start = 'AA'
-        print(f"Valves with flow: {len(self.valves_with_flow)} => {math.factorial(len(self.valves_with_flow))} possible paths")
+        log.debug(f"Valves with flow: {len(self.valves_with_flow)} => {math.factorial(len(self.valves_with_flow))} possible paths")
         # find distances between all valves with a flow, plus the starting valve (which can have flow also)
         self.calculate_distances([start] + [valve.name for valve in self.valves_with_flow])
 
@@ -82,7 +82,7 @@ class Solution(Solver):
         best_path = self.find_path(Path(["AA"], 0, 0, 0))
         t1 = time.time()
         path1_flow = best_path.total_flow
-        print(f"[1] Found max flow is {best_path.total_flow}: {best_path.visited} ({self.cache_hits} cache hits) [{t1 - t0:10.3}sec]")
+        log.info(f"[1] Found max flow is {best_path.total_flow}: {best_path.visited} ({self.cache_hits} cache hits) [{t1 - t0:10.3}sec]")
 
         self.cache_hits = 0
         self.cache = {}
@@ -90,7 +90,7 @@ class Solution(Solver):
         best_path = self.two_paths(BiPath(Pos(['AA'], 0), Pos(['AA'], 0), 0, 0, 0))
         t1 = time.time()
         path2_flow = best_path.total_flow
-        print(f"[2] Found max flow is {best_path.total_flow}: {best_path.human} / {best_path.elephant} ({self.cache_hits} cache hits) [{t1 - t0:10.3f}sec]")
+        log.info(f"[2] Found max flow is {best_path.total_flow}: {best_path.human} / {best_path.elephant} ({self.cache_hits} cache hits) [{t1 - t0:10.3f}sec]")
         return str(path1_flow), str(path2_flow)
 
     def find_path(self, path):

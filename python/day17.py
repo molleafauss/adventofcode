@@ -65,8 +65,8 @@ class Solution(Solver):
             self.detect_cycle(piece)
             if self.rocks in self.results and self.results[self.rocks] is None:
                 self.results[self.rocks] = self.max_height
-        print(f"[1] Chamber height: {self.results[MAX_ROCKS_P1]}")
-        print(f"[2] Chamber height: {self.results[MAX_ROCKS_P2]}")
+        log.info(f"[1] Chamber height: {self.results[MAX_ROCKS_P1]}")
+        log.info(f"[2] Chamber height: {self.results[MAX_ROCKS_P2]}")
         return str(self.results[MAX_ROCKS_P1]), str(self.results[MAX_ROCKS_P2])
 
     def drop_piece(self, pidx):
@@ -152,7 +152,7 @@ class Solution(Solver):
                     row[piece.x + c] = '#'
 
     def plot(self, piece, output=False):
-        print(f"** Rock {self.rocks}")
+        log.debug(f"** Rock {self.rocks}")
         y = max(piece.y + piece.height, len(self.chamber))
         while y >= 0:
             row = ["."] * 7 if y >= self.max_height else list(self.chamber[y])
@@ -182,7 +182,7 @@ class Solution(Solver):
         else:
             old_rocks, old_height = self.status[key]
             cycle = self.rocks - old_rocks
-            print(f"Found cycle: {old_rocks} => {self.rocks}: {key}")
+            log.debug(f"Found cycle: {old_rocks} => {self.rocks}: {key}")
             height_diff = self.max_height - old_height
             for target in self.results:
                 num_cycles = (target - self.rocks) // cycle

@@ -32,19 +32,19 @@ class Solution(Solver):
 
     def solve(self):
         visited1 = self.move_rope(2)
-        print(f"[1] Tail visited {visited1} places")
+        log.info(f"[1] Tail visited {visited1} places")
         visited2 = self.move_rope(10)
-        print(f"[2] Tail visited {visited2} places")
+        log.info(f"[2] Tail visited {visited2} places")
         return str(visited1), str(visited2)
 
     def move_rope(self, rope_length):
-        print(f"Moving rope with length {rope_length}")
+        log.debug(f"Moving rope with length {rope_length}")
         self.rope = [[0,0] for _ in range(rope_length)]
         visited = set()
         for m in self.movements:
             dir = m[0]
             steps = m[1]
-            # print(f"{dir} {steps}")
+            # log.debug(f"{dir} {steps}")
             while steps > 0:
                 self.move_head(dir)
                 for i in range(rope_length - 1):

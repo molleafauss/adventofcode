@@ -48,7 +48,7 @@ class Solution(Solver):
         self.height += 1
 
     def solve(self):
-        print(f"Will move around {len(self.elves)} elves")
+        log.debug(f"Will move around {len(self.elves)} elves")
         rounds = 0
         # self.print_elves()
         while True:
@@ -80,9 +80,9 @@ class Solution(Solver):
                 area = (br.row - tl.row + 1) * (br.col - tl.col + 1) - len(self.elves)
             if moves == 0:
                 break
-            print(f"=> Round {rounds}: {moves} moves")
-        print(f"[1] Empty area is {tl}, {br} / {len(self.elves)} => {area}")
-        print(f"[2] Round {rounds} => no moves")
+            log.debug(f"=> Round {rounds}: {moves} moves")
+        log.info(f"[1] Empty area is {tl}, {br} / {len(self.elves)} => {area}")
+        log.info(f"[2] Round {rounds} => no moves")
         return str(area), str(rounds)
 
     def should_move(self, elf):

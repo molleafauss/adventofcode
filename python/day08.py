@@ -78,7 +78,7 @@ class Solution(Solver):
         # borders: 2 x (width + height) - 4 (corners, to not count them multiple times)
         borders = self.width * 2 + self.height * 2 - 4
         trees_visible = inside + borders
-        print(f"[1] number of trees visible {inside}, {borders} => {trees_visible}")
+        log.info(f"[1] number of trees visible {inside}, {borders} => {trees_visible}")
 
         # part 2
         scenic_max = 0
@@ -87,7 +87,7 @@ class Solution(Solver):
                 score = self.tree_score(row, col)
                 if score > scenic_max:
                     scenic_max = score
-        print(f"[2] max scenic score {scenic_max}")
+        log.info(f"[2] max scenic score {scenic_max}")
         return str(trees_visible), str(scenic_max)
 
     def tree_score(self, row, col):
