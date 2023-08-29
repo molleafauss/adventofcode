@@ -27,6 +27,7 @@ fn solve(filename: &str, mut parser: Box<dyn Solver>) {
     let t1 = SystemTime::now();
     println!("File {filename}: {:.3}sec", t1.duration_since(t0).unwrap().as_secs_f32());
     if result.is_none() {
+        println!("==> No result given");
         return;
     }
     let (part1, part2) = result.unwrap();
