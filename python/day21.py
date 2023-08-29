@@ -41,6 +41,7 @@ class Solution(Solver):
         # part 2
         value = self.balance(self.monkeys["root"])
         print(f"[2] HUMN {value}")
+        return str(result), str(value)
 
     def balance(self, monkey):
         balance = None

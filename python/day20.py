@@ -21,15 +21,16 @@ class Solution(Solver):
     def solve(self):
         # part 1
         result = self.mix(self.data.copy())
-        total = self.coordinates(result)
-        print(f"[1] Final coordinates: {total}")
+        total1 = self.coordinates(result)
+        print(f"[1] Final coordinates: {total1}")
 
         # part 2
         data = [[val * ENCRYPTION_KEY, pos] for val, pos in self.data]
         for i in range(10):
             data = self.mix(data)
-        total = self.coordinates(data)
-        print(f"[2] Final coordinates: {total}")
+        total2 = self.coordinates(data)
+        print(f"[2] Final coordinates: {total2}")
+        return str(total1), str(total2)
 
     def mix(self, data):
         original_idx = 0

@@ -26,10 +26,11 @@ class Solution(Solver):
         self.movements.append((parts[0], int(parts[1])))
 
     def solve(self):
-        visited = self.move_rope(2)
-        print(f"[1] Tail visited {visited} places")
-        visited = self.move_rope(10)
-        print(f"[2] Tail visited {visited} places")
+        visited1 = self.move_rope(2)
+        print(f"[1] Tail visited {visited1} places")
+        visited2 = self.move_rope(10)
+        print(f"[2] Tail visited {visited2} places")
+        return str(visited1), str(visited2)
 
     def move_rope(self, rope_length):
         print(f"Moving rope with length {rope_length}")

@@ -163,8 +163,8 @@ class Solution(Solver):
             # print(f"Walk {walk} => {pos}")
             pos = self.turn(pos, turn)
             # print(f"Turn {turn} => {pos}")
-        password = (pos[0] + 1) * 1000 + (pos[1] + 1) * 4 + pos[2]
-        print(f"[1] final position: {pos} => password {password}")
+        password1 = (pos[0] + 1) * 1000 + (pos[1] + 1) * 4 + pos[2]
+        print(f"[1] final position: {pos} => password {password1}")
 
         print("==> Cube Walk")
         pos = [0, self.map[0].find("."), 0]
@@ -174,8 +174,9 @@ class Solution(Solver):
             # print(f"Walk {walk} => {pos}")
             pos = self.turn(pos, turn)
             # print(f"Turn {turn} => {pos}")
-        password = (pos[0] + 1) * 1000 + (pos[1] + 1) * 4 + pos[2]
-        print(f"[2] final position: {pos} => password  {password}")
+        password2 = (pos[0] + 1) * 1000 + (pos[1] + 1) * 4 + pos[2]
+        print(f"[2] final position: {pos} => password  {password2}")
+        return str(password1), str(password2)
 
     def walk(self, pos, walk, cube_walk=False):
         # rows are ordered top->bottom: v moves down = rows + 1; ^ moves up = rows -1

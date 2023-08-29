@@ -96,12 +96,11 @@ impl Solver for Solution {
         }
         // now verify we saw them all
         assert_eq!(self.alldirs.len(), self.dir_found as usize, "Missing dirs?");
-        // sort alldirs and
         let used = self.dirstack.last().unwrap().size;
         println!("Found size for root: {used}");
         if DISK_SIZE - used > MIN_FREE {
             println!("[2] enough space free: used {used} / free {}", DISK_SIZE - used);
-            return None;
+            return Some((self.part1.to_string(), 0.to_string()));
         }
         let size_to_free = MIN_FREE - (DISK_SIZE - used);
         let mut big_dirs = Vec::new();
@@ -112,8 +111,9 @@ impl Solver for Solution {
             }
         }
         big_dirs.sort_by_key(|dir| dir.size);
-        println!("[2] min space to delete = {}", big_dirs.first().unwrap().size);
-        None
+        let to_delete = big_dirs.first().unwrap();
+        println!("[2] min space to delete = {}", to_delete.size);
+        Some((self.part1.to_string(), to_delete.size.to_string()))
     }
 }
 

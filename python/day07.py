@@ -43,11 +43,12 @@ class Solution(Solver):
         print(f"Found size for root: {used}")
         if DISK_SIZE - used > MIN_FREE:
             print("[2] enough space free: used {used} / free {DISK_SIZE - used}")
-            return
+            return str(self.total_size), str(0)
         size_to_free = MIN_FREE - (DISK_SIZE - used)
         big_dirs = [d for d in self.all_dirs if d["size"] > size_to_free]
         big_dirs = sorted(big_dirs, key=lambda d: d["size"])
         print(f"[2] min space to delete = {big_dirs[0]['size']}")
+        return str(self.total_size), str(big_dirs[0]['size'])
 
     def handle_command(self, command):
         if command == "cd /":

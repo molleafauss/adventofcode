@@ -65,3 +65,4 @@ class Solution(Solver):
                 decoder_key *= (i + 1)
         assert divider_packets == 2
         print(f"[2] decoder key: {decoder_key}")
+        return str(self.right_order), str(decoder_key)

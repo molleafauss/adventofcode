@@ -54,3 +54,4 @@ class Solution(Solver):
 
     def solve(self):
         print(f"[1] Signal strength found: {self.signal_strength}")
+        return str(self.signal_strength), ""

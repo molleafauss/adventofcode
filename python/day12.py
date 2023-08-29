@@ -84,8 +84,8 @@ class Solution(Solver):
             return path
 
         parents = walk(self.start)
-        path = walk_back(parents, self.start)
-        print(f"[1] Min length found: {len(path)}: {path}")
+        path1 = walk_back(parents, self.start)
+        print(f"[1] Min length found: {len(path1)}: {path1}")
 
         # now try to walk from all 'a'
         possible_starts = [pos for pos in self.map if self.map[pos] == 'a']
@@ -99,6 +99,7 @@ class Solution(Solver):
                 min_length = len(path)
                 min_start = start
         print(f"[2] Shortest path from {min_start}: {min_length}")
+        return str(len(path1)), str(min_length)
 
     def neighbours(self, node, costs):
         cur_height = self.map[node]

@@ -77,6 +77,7 @@ class Solution(Solver):
         t0 = time.time()
         best_path = self.find_path(Path(["AA"], 0, 0, 0))
         t1 = time.time()
+        path1_flow = best_path.total_flow
         print(f"[1] Found max flow is {best_path.total_flow}: {best_path.visited} ({self.cache_hits} cache hits) [{t1 - t0:10.3}sec]")
 
         self.cache_hits = 0
@@ -84,7 +85,9 @@ class Solution(Solver):
         t0 = time.time()
         best_path = self.two_paths(BiPath(Pos(['AA'], 0), Pos(['AA'], 0), 0, 0, 0))
         t1 = time.time()
+        path2_flow = best_path.total_flow
         print(f"[2] Found max flow is {best_path.total_flow}: {best_path.human} / {best_path.elephant} ({self.cache_hits} cache hits) [{t1 - t0:10.3f}sec]")
+        return str(path1_flow), str(path2_flow)
 
     def find_path(self, path):
         cave = path.visited[-1]
