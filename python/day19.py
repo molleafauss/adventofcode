@@ -1,3 +1,4 @@
+import logging
 import time
 
 from advent import Solver
@@ -8,6 +9,9 @@ import re
 # ended introducing a lot of bugs and missed optimizations that were causing the iterations to never end.
 # I tried a non-recursive solution first, and then landed on the recursive as it's "cleaner".
 # Thanks to hyper-neutrino I also discovered the for ... else construct in python which I didn't know before.
+
+
+log = logging.getLogger("day.19")
 
 
 ORE = 0

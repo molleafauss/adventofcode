@@ -1,3 +1,4 @@
+import logging
 from dataclasses import dataclass
 
 from advent import Solver
@@ -6,6 +7,9 @@ from grid import GridPos, dir_from_char, DIR_N, DIR_E, DIR_S, DIR_W, char_from_d
 
 # https://adventofcode.com/2022/day/24
 # once the first was done, it was a matter of refactoring it to do the back and forth
+
+log = logging.getLogger("day.24")
+
 
 @dataclass
 class Blizzard:

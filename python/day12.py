@@ -1,3 +1,5 @@
+import logging
+
 from advent import Solver
 
 # https://adventofcode.com/2022/day/12
@@ -13,6 +15,8 @@ from advent import Solver
 # though); initializing the cost to an impossible value made me add an extra condition to signal that.
 # The current result is slow, as walk is called once per starting point. Once I have a set of parents, though, ideally
 # I can start finding paths for every element in the possible_starts and remove them if found.
+
+log = logging.getLogger("day.12")
 
 
 class Solution(Solver):

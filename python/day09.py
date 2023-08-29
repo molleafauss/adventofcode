@@ -1,3 +1,5 @@
+import logging
+
 from advent import Solver
 
 
@@ -7,6 +9,9 @@ from advent import Solver
 # of course, I had to refactor for solving part 2 as the rope is longer, so I just keep instruction and do all moves
 # starting from a new state (self.rope could also be passed around btw).
 # part 2 highlighted the need of handling a (2, 2) difference
+
+log = logging.getLogger("day.09")
+
 
 MOVES = {
     "R": [1, 0],

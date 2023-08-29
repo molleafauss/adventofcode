@@ -1,3 +1,4 @@
+import logging
 import time
 from dataclasses import dataclass
 
@@ -9,6 +10,9 @@ import math
 # this needed a lot of looking at other solutions. Of course this is the usual "dynamic programming" (quotes needed)
 # problem, where you have to remember your previous steps
 # for part 2 I ended up to have to optimize, as the algorithm was right, but too costly
+
+log = logging.getLogger("day.16")
+
 
 RE_VALVE = re.compile(r"Valve (\S+) has flow rate=(\d+); tunnels? leads? to valves? (.*)")
 PART1_MINUTES = 30

@@ -1,3 +1,4 @@
+import logging
 from dataclasses import dataclass
 
 from advent import Solver
@@ -10,6 +11,9 @@ from advent import Solver
 # added.
 # Also: this code is hacky af - I should have used some better structure for the various concepts involved (cube, faces,
 # position, adjacency, ...)
+
+log = logging.getLogger("day.22")
+
 
 DIRS = [
     [0, 1],

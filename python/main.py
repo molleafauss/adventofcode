@@ -1,3 +1,4 @@
+import logging
 import sys
 import pathlib
 
@@ -20,18 +21,18 @@ def solve(filename: pathlib.Path, parser):
     t0 = time.time()
     result = parser.solve()
     t1 = time.time()
-    print(f"File {filename}: {t1 - t0:.3f}sec")
+    logging.info(f"File {filename}: {t1 - t0:.3f}sec")
     if not result:
-        print("==> No result given")
+        logging.warning("==> No result given")
         return
     if expected_part_1 and result[0] == expected_part_1:
-        print(f"PART 1 - found expected result: {expected_part_1} = {result[0]}")
+        logging.info(f"PART 1 - found expected result: {expected_part_1} = {result[0]}")
     elif expected_part_1 and result[0] != expected_part_1:
-        print(f"ERROR - part 1 result is incorrect: expected {expected_part_1}, actual {result[0]}")
+        logging.error(f"ERROR - part 1 result is incorrect: expected {expected_part_1}, actual {result[0]}")
     if expected_part_2 and result[1] == expected_part_2:
-        print(f"PART 2 - found expected result: {expected_part_2} = {result[1]}")
+        logging.info(f"PART 2 - found expected result: {expected_part_2} = {result[1]}")
     elif expected_part_2 and result[1] != expected_part_2:
-        print(f"ERROR - part 2 result is incorrect: expected {expected_part_2}, actual {result[1]}")
+        logging.error(f"ERROR - part 2 result is incorrect: expected {expected_part_2}, actual {result[1]}")
 
 
 def solve_all():
@@ -40,7 +41,9 @@ def solve_all():
 
 
 def solve_day(day):
-    print(f"== Solving {day} ==")
+    logging.basicConfig(stream=sys.stdout, format="%(levelname)s | %(name)s | %(message)s", level=logging.INFO)
+    logging.getLogger("day").setLevel(logging.DEBUG)
+    logging.info(f"== Solving {day} ==")
     module = __import__(day)
     # test input
     test_data = pathlib.Path(__file__).parent / f"../inputs/{day}/test.txt"

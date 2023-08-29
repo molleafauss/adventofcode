@@ -1,3 +1,4 @@
+import logging
 import math
 
 from advent import Solver
@@ -6,6 +7,9 @@ import re
 # https://adventofcode.com/2022/day/11
 # ok I had no clue about how to reduce the math - the use modulo of all "divisible by" was a hint that lead to the right
 # solution
+
+log = logging.getLogger("day.11")
+
 RE_MONKEY = re.compile(r"Monkey (\d+):")
 RE_ITEMS = re.compile("Starting items: (.*)")
 RE_OPERATION = re.compile("Operation: new = (.*)")

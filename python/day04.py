@@ -1,3 +1,5 @@
+import logging
+
 from advent import Solver
 
 
@@ -5,6 +7,9 @@ from advent import Solver
 # overlap comparisons were probably cleaner if they were placed into functions
 # the partial overlap was probably working instead calculated as inverted (= one segment ends being outside range of
 # the other segment)
+
+log = logging.getLogger("day.04")
+
 
 def inside(pos, range):
     return range[0] <= pos <= range[1]
