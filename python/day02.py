@@ -70,6 +70,6 @@ class Solution(Solver):
         self.score2 += SCORE_CHOICE[round2] + SCORE_ROUND2[b]
 
     def solve(self):
-        print(f"Resulting score (part 1): {self.score1}")
-        print(f"Resulting score (part 2): {self.score2}")
+        log.info(f"Resulting score (part 1): {self.score1}")
+        log.info(f"Resulting score (part 2): {self.score2}")
         return str(self.score1), str(self.score2)

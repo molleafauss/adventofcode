@@ -28,14 +28,14 @@ class Solution(Solver):
         # part 1
         result = self.mix(self.data.copy())
         total1 = self.coordinates(result)
-        print(f"[1] Final coordinates: {total1}")
+        log.info(f"[1] Final coordinates: {total1}")
 
         # part 2
         data = [[val * ENCRYPTION_KEY, pos] for val, pos in self.data]
         for i in range(10):
             data = self.mix(data)
         total2 = self.coordinates(data)
-        print(f"[2] Final coordinates: {total2}")
+        log.info(f"[2] Final coordinates: {total2}")
         return str(total1), str(total2)
 
     def mix(self, data):
@@ -70,7 +70,7 @@ class Solution(Solver):
         for pos in FINAL:
             val = data[(zero + pos) % self.size][0]
             total += val
-            print(f"{pos}: {val} -> {total}")
+            log.debug(f"{pos}: {val} -> {total}")
         return total
 
     def find_original(self, data, idx):

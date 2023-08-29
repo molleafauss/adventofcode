@@ -23,7 +23,7 @@ class Solution(Solver):
             return
 
         if self.compare(self.lines[self.pairs * 2], self.lines[self.pairs * 2 + 1]) == 1:
-            print(f"pairs {self.pairs} - right order")
+            log.debug(f"pairs {self.pairs} - right order")
             self.right_order += (self.pairs + 1)
         self.pairs += 1
 
@@ -55,7 +55,7 @@ class Solution(Solver):
         return 0 if len(left) == len(right) else 1
 
     def solve(self):
-        print(f"[1] Found right order: {self.right_order}")
+        log.info(f"[1] Found right order: {self.right_order}")
 
         # part 2
         decoder_key = 1
@@ -68,5 +68,5 @@ class Solution(Solver):
                 divider_packets += 1
                 decoder_key *= (i + 1)
         assert divider_packets == 2
-        print(f"[2] decoder key: {decoder_key}")
+        log.info(f"[2] decoder key: {decoder_key}")
         return str(self.right_order), str(decoder_key)

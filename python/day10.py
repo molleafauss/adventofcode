@@ -39,7 +39,7 @@ class Solution(Solver):
         if self.cycle + ticks >= CYCLES[self.cpos]:
             s = self.x * CYCLES[self.cpos]
             self.signal_strength += s
-            print(f"Signal strength at cycle {self.cycle}/{ticks}: {s} => {self.signal_strength}")
+            log.debug(f"Signal strength at cycle {self.cycle}/{ticks}: {s} => {self.signal_strength}")
             self.cpos += 1
 
     def draw(self):
@@ -58,5 +58,5 @@ class Solution(Solver):
             print("".join(l))
 
     def solve(self):
-        print(f"[1] Signal strength found: {self.signal_strength}")
+        log.info(f"[1] Signal strength found: {self.signal_strength}")
         return str(self.signal_strength), ""

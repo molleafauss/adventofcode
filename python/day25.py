@@ -1,5 +1,4 @@
 import logging
-import math
 
 from advent import Solver
 
@@ -69,9 +68,9 @@ class Solution(Solver):
     def parse(self, line: str):
         val = snafu_to_int(line)
         self.fuel += val
-        print(f"{line} => {val} = {self.fuel}")
+        log.debug(f"{line} => {val} = {self.fuel}")
 
     def solve(self):
         fuel_base5 = int_to_snafu(self.fuel)
-        print(f"{self.fuel} => to base 5 {fuel_base5}")
+        log.info(f"[1] {self.fuel} => to base 5 {fuel_base5}")
         return str(fuel_base5), ""

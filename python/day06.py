@@ -30,10 +30,10 @@ class Solution(Solver):
             # start_of_packet : 4 chars
             if not self.start_of_packet and all_different(line[i:i+4]):
                 self.start_of_packet = i + 4
-                print(f"Found start-of-packet at {self.start_of_packet}")
+                log.info(f"Found start-of-packet at {self.start_of_packet}")
             if not self.start_of_message and all_different(line[i:i+14]):
                 self.start_of_message = i + 14
-                print(f"Found start-of-message at {self.start_of_message}")
+                log.info(f"Found start-of-message at {self.start_of_message}")
             if start_of_packet and start_of_message:
                 return
             i += 1

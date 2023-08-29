@@ -68,9 +68,9 @@ class Solution(Solver):
         self.cubes += 1
 
     def solve(self):
-        print(f"[1] {len(self.voxels)} cubes: {self.faces} visible")
+        log.info(f"[1] {len(self.voxels)} cubes: {self.faces} visible")
 
-        print(f"Ranges: {self.ranges}")
+        log.debug(f"Ranges: {self.ranges}")
         # add AIR all in the layer around and then grow it until it touches the lava. Count the faces this way
         # top layer
         self.add_air(range(self.ranges.x[0] - 1, self.ranges.x[1] + 1), range(self.ranges.y[0] - 1, self.ranges.y[1] + 1), range(self.ranges.z[0] - 1, self.ranges.z[0]))
@@ -94,11 +94,11 @@ class Solution(Solver):
                     # add the position of the voxel and the direction of the face touched
                     faces.add(self.face(pos, n))
 
-        print(f"[2] Found {len(faces)} outside facing faces")
+        log.info(f"[2] Found {len(faces)} outside facing faces")
         return str(self.faces), str(len(faces))
 
     def add_air(self, xrange, yrange, zrange):
-        print(f"Add air: {xrange}, {yrange}, {zrange}")
+        log.debug(f"Add air: {xrange}, {yrange}, {zrange}")
         for x in xrange:
             for y in yrange:
                 for z in zrange:

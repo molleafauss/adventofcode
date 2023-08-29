@@ -49,16 +49,16 @@ class Solution(Solver):
         self.height += 1
 
     def solve(self):
-        print(f"Tracing path from {self.entry} => {self.exit}")
+        log.debug(f"Tracing path from {self.entry} => {self.exit}")
         t1 = self.find_path(self.entry, self.exit, 0)
-        print(f"[1] Found exit in: {t1}")
+        log.info(f"[1] Found exit in: {t1}")
         t2 = self.find_path(self.exit, self.entry, t1)
         t2 = self.find_path(self.entry, self.exit, t2)
-        print(f"[2] Total time: {t2}")
+        log.info(f"[2] Total time: {t2}")
         return str(t1), str(t2)
 
     def find_path(self, entry, exit, t):
-        print(f"Finding path {entry} => {exit} starting at {t}")
+        log.debug(f"Finding path {entry} => {exit} starting at {t}")
         exit_reached = False
         steps = [(entry, t)]
         visited = set()

@@ -46,7 +46,7 @@ class Solution(Solver):
             self.count2 += ord(badge) + (LOWER if badge.islower() else UPPER)
 
     def solve(self):
-        print(f"[1] Priority of item in both compartments {self.count}")
-        print(f"[2] Overall priority of badges {self.count2}")
+        log.info(f"[1] Priority of item in both compartments {self.count}")
+        log.info(f"[2] Overall priority of badges {self.count2}")
         return str(self.count), str(self.count2)
 

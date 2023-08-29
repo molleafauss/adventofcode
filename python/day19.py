@@ -87,14 +87,14 @@ class Solution(Solver):
         total2 = 1
         part2 = 0
         for bp in self.blueprints:
-            print(f"Finding max geodes for blueprint {bp.id} => {bp.recipes}")
+            log.debug(f"Finding max geodes for blueprint {bp.id} => {bp.recipes}")
             robots = [1, 0, 0, 0]
             material = [0, 0, 0, 0]
             t0 = time.time()
             max_geodes = self.find_max_geodes(bp, 24, robots, material)
             total1 += max_geodes * bp.id
             t1 = time.time()
-            print(f"[part 1] Blueprint {bp.id} => {max_geodes} ({total1}) [{t1 - t0:10.3f}sec {bp.iterations} total calls / {1000000 * (t1 - t0)/bp.iterations:10.3f} us/call / {bp.cache_hits} cache hits]")
+            log.debug(f"[part 1] Blueprint {bp.id} => {max_geodes} ({total1}) [{t1 - t0:10.3f}sec {bp.iterations} total calls / {1000000 * (t1 - t0)/bp.iterations:10.3f} us/call / {bp.cache_hits} cache hits]")
 
             if part2 < 3:
                 part2 += 1
@@ -104,9 +104,9 @@ class Solution(Solver):
                 max_geodes = self.find_max_geodes(bp, 32, robots, material)
                 total2 *= max_geodes
                 t1 = time.time()
-                print(f"[part 2] Blueprint {bp.id} => {max_geodes} ({total2}) [{t1 - t0:10.3f}sec {bp.iterations} total calls / {1000000 * (t1 - t0)/bp.iterations:10.3f} us/call / {bp.cache_hits} cache hits]")
-        print(f"[1] result is {total1}")
-        print(f"[2] result is {total2}")
+                log.debug(f"[part 2] Blueprint {bp.id} => {max_geodes} ({total2}) [{t1 - t0:10.3f}sec {bp.iterations} total calls / {1000000 * (t1 - t0)/bp.iterations:10.3f} us/call / {bp.cache_hits} cache hits]")
+        log.info(f"[1] result is {total1}")
+        log.info(f"[2] result is {total2}")
         return str(total1), str(total2)
 
     def find_max_geodes(self, bp: Blueprint, minutes_left, robots, materials):
