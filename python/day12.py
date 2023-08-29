@@ -95,7 +95,11 @@ class Solution(Solver):
         possible_starts = [pos for pos in self.map if self.map[pos] == 'a']
         min_length = len(path1)
         min_start = self.start
+        visited = 0
         for start in possible_starts:
+            visited += 1
+            if visited % 100 == 0:
+                print(f"{visited}/{len(possible_starts)} visited ...")
             path = walk_back(walk(start), start)
             if not path:
                 continue
