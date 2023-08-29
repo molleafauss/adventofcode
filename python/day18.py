@@ -1,3 +1,4 @@
+import logging
 from dataclasses import dataclass
 
 from advent import Solver
@@ -5,6 +6,9 @@ from advent import Solver
 # https://adventofcode.com/2022/day/18
 # Was fun finding the right way to do it - in the end I just added a "layer" of air all around the 3D volume and
 # started propagating the air until it touched the lava.
+
+log = logging.getLogger("day.18")
+
 
 LAVA = 1
 AIR = 2

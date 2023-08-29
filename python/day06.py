@@ -1,3 +1,5 @@
+import logging
+
 from advent import Solver
 
 
@@ -7,6 +9,8 @@ from advent import Solver
 # one could actually use a single dictionary containing frequency of letters and add/remove as the sliding window moves
 # but the code would end up being more involved.
 # the `solve()` is an empty method here as the input is a single line
+
+log = logging.getLogger("day.06")
 
 def all_different(string):
     return len(set(string)) == len(string)

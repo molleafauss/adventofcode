@@ -1,7 +1,12 @@
+import logging
+
 from advent import Solver
 
 
 # https://adventofcode.com/2022/day/10
+
+log = logging.getLogger("day.10")
+
 
 CYCLES = [20, 60, 100, 140, 180, 220]
 

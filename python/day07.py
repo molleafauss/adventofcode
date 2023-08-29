@@ -1,9 +1,14 @@
+import logging
+
 from advent import Solver
 
 
 # https://adventofcode.com/2022/day/7
 # probably overkilled a bit by building a tree and doing a standard depth-first visit to calculate directory sizes.
 # but the result is clean enough though, so I preferred sticking to that.
+
+log = logging.getLogger("day.07")
+
 
 LIMIT = 100000
 DISK_SIZE = 70000000

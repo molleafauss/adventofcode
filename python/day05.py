@@ -1,3 +1,4 @@
+import logging
 import re
 from advent import Solver
 
@@ -6,6 +7,9 @@ from advent import Solver
 # entire file. I could not figure a way to build stacks while reading the file. Glad I didn't, as second part had to
 # start from the initial status again. I know parsing isn't the most elegant.
 # But we had regexp for the instructions!
+
+log = logging.getLogger("day.05")
+
 
 RE_INSTRUCTION = re.compile(r"move (\d+) from (\d+) to (\d+)")
 

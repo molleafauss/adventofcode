@@ -1,3 +1,4 @@
+import logging
 import re
 from dataclasses import dataclass
 
@@ -7,6 +8,10 @@ from advent import Solver
 # reasonably simple. I did calculate using recursion and was worried that it could hit a stack overflow (too many tree
 # levels, but it didn't
 # Inversion was also simple - I only had to visualize the equations as I was inverting them wrongly :facepalm:
+
+log = logging.getLogger("day.21")
+
+
 RE_OP = re.compile(r"(\S+) ([+\-*/]) (\S+)")
 HUMAN = "humn"
 

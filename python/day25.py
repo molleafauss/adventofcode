@@ -1,8 +1,11 @@
+import logging
 import math
 
 from advent import Solver
 
 # https://adventofcode.com/2022/day/25
+
+log = logging.getLogger("day.25")
 
 
 VALS = {

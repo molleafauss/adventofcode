@@ -1,3 +1,4 @@
+import logging
 from dataclasses import dataclass
 
 from advent import Solver
@@ -9,6 +10,9 @@ from advent import Solver
 # (wind index, piece falling, relative position to the top height of the columns in the chamber) is the simplest I could
 # come up with.
 # This allows us to magically find the final solution as soon as we get a cycle just with some basic math.
+
+
+log = logging.getLogger("day.17")
 
 
 # pieces blocks in rows from top to bottom

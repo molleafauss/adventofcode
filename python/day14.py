@@ -1,9 +1,14 @@
+import logging
+
 from advent import Solver
 
 # https://adventofcode.com/2022/day/14
 # This was reasonably easy, no important optimizations needed even on the second part.
 # I've used a dict, indexed by (x, y) of each spot to hold walls and resting sand and with the size of the input it was
 # enough.
+
+log = logging.getLogger("day.14")
+
 
 START = (500, 0)
 

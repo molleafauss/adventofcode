@@ -1,4 +1,8 @@
+import logging
+
 from advent import Solver
+
+log = logging.getLogger("day.01")
 
 
 # https://adventofcode.com/2022/day/1
@@ -23,8 +27,8 @@ class Solution(Solver):
         self.calories.append([self.elf, self.elf_calories])
         self.calories.sort(key=lambda x: x[1], reverse=True)
         part1 = self.calories[0][1]
-        print(f"[1] Saw {self.elf} elves: maximum: {self.calories[0]}")
+        log.info(f"[1] Saw {self.elf} elves: maximum: {self.calories[0]}")
         top3 = [x[1] for x in self.calories[0:3]]
         part2 = sum(top3)
-        print(f"[2] First 3 elves: {part2}")
+        log.info(f"[2] First 3 elves: {part2}")
         return str(part1), str(part2)

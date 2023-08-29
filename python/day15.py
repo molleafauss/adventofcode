@@ -1,3 +1,5 @@
+import logging
+
 from advent import Solver
 from grid import Point
 from dataclasses import dataclass
@@ -12,6 +14,9 @@ import time
 # Test input had different constraints - hence the extra parse lines to override them.
 #
 # bonus: I discovered python dataclasses. I will have to refactor everything
+
+
+log = logging.getLogger("day.15")
 
 
 RE_SENSOR = re.compile(r"Sensor at x=(-?\d+), y=(-?\d+): closest beacon is at x=(-?\d+), y=(-?\d+)")

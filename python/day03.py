@@ -1,3 +1,5 @@
+import logging
+
 from advent import Solver
 
 # https://adventofcode.com/2022/day/3
@@ -11,6 +13,8 @@ from advent import Solver
 UPPER = 27 - ord('A')
 # uppercase letter: ord(ch) - 'a' + 1
 LOWER = 1 - ord('a')
+
+log = logging.getLogger("day.03")
 
 
 class Solution(Solver):

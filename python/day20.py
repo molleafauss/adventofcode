@@ -1,8 +1,14 @@
+import logging
+
 from advent import Solver
 
 # https://adventofcode.com/2022/day/20
 # "easy" when you just remember to use the modulo list size (-1) when moving items. Handling the encryption key could
 # probably also have used some modul-ing but python can handle those integers
+
+log = logging.getLogger("day.20")
+
+
 FINAL = [1000, 2000, 3000]
 ENCRYPTION_KEY = 811589153
 
