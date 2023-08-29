@@ -91,6 +91,7 @@ class Solution(Solver):
                     faces.add(self.face(pos, n))
 
         print(f"[2] Found {len(faces)} outside facing faces")
+        return str(self.faces), str(len(faces))
 
     def add_air(self, xrange, yrange, zrange):
         print(f"Add air: {xrange}, {yrange}, {zrange}")

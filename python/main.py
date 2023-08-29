@@ -22,6 +22,7 @@ def solve(filename: pathlib.Path, parser):
     t1 = time.time()
     print(f"File {filename}: {t1 - t0:.3f}sec")
     if not result:
+        print("==> No result given")
         return
     if expected_part_1 and result[0] == expected_part_1:
         print(f"PART 1 - found expected result: {expected_part_1} = {result[0]}")

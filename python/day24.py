@@ -46,11 +46,12 @@ class Solution(Solver):
 
     def solve(self):
         print(f"Tracing path from {self.entry} => {self.exit}")
-        t = self.find_path(self.entry, self.exit, 0)
-        print(f"[1] Found exit in: {t}")
-        t = self.find_path(self.exit, self.entry, t)
-        t = self.find_path(self.entry, self.exit, t)
-        print(f"[2] Total time: {t}")
+        t1 = self.find_path(self.entry, self.exit, 0)
+        print(f"[1] Found exit in: {t1}")
+        t2 = self.find_path(self.exit, self.entry, t1)
+        t2 = self.find_path(self.entry, self.exit, t2)
+        print(f"[2] Total time: {t2}")
+        return str(t1), str(t2)
 
     def find_path(self, entry, exit, t):
         print(f"Finding path {entry} => {exit} starting at {t}")

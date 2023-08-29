@@ -30,12 +30,13 @@ class Solution(Solver):
         self.stack_defs.reverse()
         self.build_stacks()
         self.move_singles()
-        result = "".join([st.pop() for st in self.stacks])
-        print(f"[1] Top stacks values: {result}")
+        result1 = "".join([st.pop() for st in self.stacks])
+        print(f"[1] Top stacks values: {result1}")
         self.build_stacks()
         self.move_multiples()
-        result = "".join([st.pop() for st in self.stacks])
-        print(f"[2] Top stacks values: {result}")
+        result2 = "".join([st.pop() for st in self.stacks])
+        print(f"[2] Top stacks values: {result2}")
+        return result1, result2
 
     def add_instructions(self, line):
         mo = RE_INSTRUCTION.match(line)

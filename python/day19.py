@@ -103,6 +103,7 @@ class Solution(Solver):
                 print(f"[part 2] Blueprint {bp.id} => {max_geodes} ({total2}) [{t1 - t0:10.3f}sec {bp.iterations} total calls / {1000000 * (t1 - t0)/bp.iterations:10.3f} us/call / {bp.cache_hits} cache hits]")
         print(f"[1] result is {total1}")
         print(f"[2] result is {total2}")
+        return str(total1), str(total2)
 
     def find_max_geodes(self, bp: Blueprint, minutes_left, robots, materials):
         bp.iterations += 1

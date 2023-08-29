@@ -103,6 +103,7 @@ class Solution(Solver):
 
         print(f"Finding possible real beacon positions in area 0-{self.area}")
         t0 = time.time()
+        frequency = 0
         for y in range(self.area + 1):
             if (y % 100000) == 0:
                 print(f"Checking line {y}")
@@ -116,8 +117,10 @@ class Solution(Solver):
             x = segments[0].end + 1
             assert x == segments[1].start - 1
             t1 = time.time()
-            print(f"[2] Found frequency: {x * 4000000 + y} in {t1 - t0} sec")
+            frequency = x * 4000000 + y
+            print(f"[2] Found frequency: {frequency} in {t1 - t0} sec")
             break
+        return str(segment_size), str(frequency)
 
     def check_line(self, y):
         segments = []

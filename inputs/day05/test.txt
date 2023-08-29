@@ -1,6 +1,6 @@
 result part 1: CMZ
 result part 2: MCD
-    [D]
+    [D]    
 [N] [C]    
 [Z] [M] [P]
  1   2   3 

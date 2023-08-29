@@ -68,3 +68,4 @@ class Solution(Solver):
     def solve(self):
         print(f"Resulting score (part 1): {self.score1}")
         print(f"Resulting score (part 2): {self.score2}")
+        return str(self.score1), str(self.score2)

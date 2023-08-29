@@ -63,6 +63,7 @@ class Solution(Solver):
                 self.results[self.rocks] = self.max_height
         print(f"[1] Chamber height: {self.results[MAX_ROCKS_P1]}")
         print(f"[2] Chamber height: {self.results[MAX_ROCKS_P2]}")
+        return str(self.results[MAX_ROCKS_P1]), str(self.results[MAX_ROCKS_P2])
 
     def drop_piece(self, pidx):
         piece = Piece(PIECES[pidx], 0, 0, 2, 0)

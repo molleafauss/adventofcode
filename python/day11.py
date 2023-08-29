@@ -93,7 +93,8 @@ class Solution(Solver):
 
         # sort by most inspected, take first twos
         most_active = sorted(self.monkeys, reverse=True, key=lambda m: m.inspected)
-        print(f"[1] Most active: {most_active[0].id} => {most_active[0].inspected}, {most_active[1].id} => {most_active[1].inspected}: {most_active[0].inspected * most_active[1].inspected}")
+        result1 = most_active[0].inspected * most_active[1].inspected
+        print(f"[1] Most active: {most_active[0].id} => {most_active[0].inspected}, {most_active[1].id} => {most_active[1].inspected}: {result1}")
 
         # reset
         for m in self.monkeys:
@@ -107,4 +108,6 @@ class Solution(Solver):
 
         # sort by most inspected, take first twos
         most_active = sorted(self.monkeys, reverse=True, key=lambda m: m.inspected)
-        print(f"[1] Most active: {most_active[0].id} => {most_active[0].inspected}, {most_active[1].id} => {most_active[1].inspected}: {most_active[0].inspected * most_active[1].inspected}")
+        result2 = most_active[0].inspected * most_active[1].inspected
+        print(f"[1] Most active: {most_active[0].id} => {most_active[0].inspected}, {most_active[1].id} => {most_active[1].inspected}: {result2}")
+        return str(result1), str(result2)

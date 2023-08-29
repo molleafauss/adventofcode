@@ -71,3 +71,4 @@ class Solution(Solver):
     def solve(self):
         fuel_base5 = int_to_snafu(self.fuel)
         print(f"{self.fuel} => to base 5 {fuel_base5}")
+        return str(fuel_base5), ""

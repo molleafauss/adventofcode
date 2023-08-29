@@ -78,6 +78,7 @@ class Solution(Solver):
             print(f"=> Round {rounds}: {moves} moves")
         print(f"[1] Empty area is {tl}, {br} / {len(self.elves)} => {area}")
         print(f"[2] Round {rounds} => no moves")
+        return str(area), str(rounds)
 
     def should_move(self, elf):
         # no elf in surrounding: stay put

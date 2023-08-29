@@ -38,7 +38,7 @@ class Solution(Solver):
     def solve(self):
         print(f"Max y: {self.max_y}")
         keep_dripping = True
-        sand = 0
+        sand1 = 0
         while keep_dripping:
             x, y = START
             while y <= self.max_y:
@@ -55,12 +55,12 @@ class Solution(Solver):
                     continue
                 else:
                     # print(f"Sand found resting place in {(x, y)}: {sand}")
-                    sand += 1
+                    sand1 += 1
                     self.scan[(x, y)] = 'o'
                     break
             # reached the abyss - stop
             keep_dripping = y <= self.max_y
-        print(f"[1] Sand resting: {sand}")
+        print(f"[1] Sand resting: {sand1}")
 
         # remove all 'o' from the scan
         self.scan = {pos: val for pos, val in self.scan.items() if val == '#'}
@@ -97,3 +97,4 @@ class Solution(Solver):
             keep_dripping = START not in self.scan
 
         print(f"[2] Sand resting: {sand}")
+        return str(sand1), str(sand)
