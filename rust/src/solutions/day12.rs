@@ -4,6 +4,7 @@
 // (only due to debug target - release build took 10s - all good)
 
 use std::collections::HashMap;
+use log::{debug, info};
 use crate::Solver;
 use crate::grid::{GridPos, MOVE_D, MOVE_L, MOVE_R, MOVE_U};
 
@@ -37,7 +38,7 @@ impl Solution {
                 costs.insert(pos, v);
             })
         });
-        println!("=== Finding path {start} => {end} [costs: {}]", costs.len());
+        debug!("=== Finding path {start} => {end} [costs: {}]", costs.len());
         let mut parents = HashMap::new();
         let mut next_node = start.clone();
         while next_node != *end {
@@ -124,7 +125,7 @@ impl Solver for Solution {
         let parents = self.walk(&self.start.as_ref().unwrap());
         let path = self.walk_back(parents, &self.start.as_ref().unwrap());
         let part1_min_length = path.len();
-        println!("[1] Min length found: {part1_min_length}");
+        info!("[1] Min length found: {part1_min_length}");
 
         // finding shortest
         let mut min_start = self.start.as_ref().unwrap();
@@ -139,7 +140,7 @@ impl Solver for Solution {
                     part2_min_length = path.len();
                 }
             });
-        println!("[2] Shortest path from {min_start}: {part2_min_length}");
+        info!("[2] Shortest path from {min_start}: {part2_min_length}");
         Some((part1_min_length.to_string(), part2_min_length.to_string()))
     }
 }

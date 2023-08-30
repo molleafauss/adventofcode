@@ -15,6 +15,7 @@ use once_cell::sync::Lazy;
 use regex::{Captures, Regex};
 use crate::Solver;
 use factorial::Factorial;
+use log::{debug, info};
 
 pub(crate) struct Solution {
     valves: Vec<Valve>,
@@ -84,8 +85,8 @@ impl Solver for Solution {
     }
 
     fn solve(&mut self) -> Option<(String, String)> {
-        println!("Found {} valves to open in {PART1_MINUTES} minutes", self.valves.len());
-        println!("Valves with flow: {} => {} possible paths",
+        debug!("Found {} valves to open in {PART1_MINUTES} minutes", self.valves.len());
+        debug!("Valves with flow: {} => {} possible paths",
                  self.valves_with_flow.len(), self.valves_with_flow.len().factorial());
         self.calculate_distances();
 
@@ -94,7 +95,7 @@ impl Solver for Solution {
         let mut one_path = OnePathSolver::new();
         let best_path1 = one_path.find_path(&self, OnePath::new(START));
         let t1 = SystemTime::now();
-        println!("[1] Found max flow is {}: {:?} ({} cache hits) [{:.3}sec]",
+        info!("[1] Found max flow is {}: {:?} ({} cache hits) [{:.3}sec]",
                  best_path1.total_flow, best_path1.visited, one_path.cache_hits, t1.duration_since(t0).unwrap().as_secs_f32());
 
         // part 2
@@ -102,7 +103,7 @@ impl Solver for Solution {
         let mut two_path = TwoPathsSolver::new();
         let best_path2 = two_path.find_path(&self, TwoPaths::new(START));
         let t1 = SystemTime::now();
-        println!("[2] Found max flow is {}: {:?} / {:?} ({} cache hits) [{:.3}sec]",
+        info!("[2] Found max flow is {}: {:?} / {:?} ({} cache hits) [{:.3}sec]",
                  best_path2.total_flow, best_path2.human_path, best_path2.ele_path, two_path.cache_hits,
                  t1.duration_since(t0).unwrap().as_secs_f32());
         Some((best_path1.total_flow.to_string(), best_path2.total_flow.to_string()))
@@ -194,6 +195,7 @@ impl OnePath {
 }
 
 struct OnePathSolver {
+    calls: u32,
     cache: HashMap<OnePathKey, OnePath>,
     cache_hits: u32,
 }
@@ -201,12 +203,17 @@ struct OnePathSolver {
 impl OnePathSolver {
     fn new() -> OnePathSolver {
         OnePathSolver {
+            calls: 0,
             cache: HashMap::new(),
             cache_hits: 0,
         }
     }
 
     fn find_path(&mut self, data: &Solution, path: OnePath) -> OnePath {
+        self.calls += 1;
+        if (self.calls % 1000000) == 0 {
+            print!("{} calls, {} cache hits...", self.calls, self.cache_hits)
+        }
         let cave = path.visited.last().unwrap();
         let cache_key = path.cache_key();
         if self.cache.contains_key(&cache_key) {
@@ -343,6 +350,7 @@ impl TwoPaths {
 }
 
 struct TwoPathsSolver {
+    calls: u32,
     cache: HashMap<TwoPathsKey, TwoPaths>,
     cache_hits: u32,
 }
@@ -350,12 +358,17 @@ struct TwoPathsSolver {
 impl TwoPathsSolver {
     fn new() -> TwoPathsSolver {
         TwoPathsSolver {
+            calls: 0,
             cache: HashMap::new(),
             cache_hits: 0,
         }
     }
 
     fn find_path(&mut self, data: &Solution, path: TwoPaths) -> TwoPaths {
+        self.calls += 1;
+        if (self.calls % 1000000) == 0 {
+            print!("{} calls, {} cache hits...", self.calls, self.cache_hits)
+        }
         let man_pos = path.human_path.last().unwrap();
         let ele_pos = path.ele_path.last().unwrap();
         let cache_key = path.cache_key();

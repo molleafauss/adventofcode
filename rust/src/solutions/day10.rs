@@ -4,6 +4,7 @@
 
 use std::str::FromStr;
 use std::str;
+use log::{debug, info};
 use crate::Solver;
 
 pub(crate) struct Solution {
@@ -44,7 +45,7 @@ impl Solution {
         if self.cycle + ticks >= *cycle_val {
             let s = self.x * cycle_val;
             self.signal_strength += s;
-            println!("Signal strength at cycle {}/{ticks}: {s} => {}", self.cycle, self.signal_strength);
+            debug!("Signal strength at cycle {}/{ticks}: {s} => {}", self.cycle, self.signal_strength);
             self.cpos += 1;
         }
     }
@@ -87,7 +88,7 @@ impl Solver for Solution {
     }
 
     fn solve(&mut self) -> Option<(String, String)> {
-        println!("[1] Signal strength found: {}",self.signal_strength);
+        info!("[1] Signal strength found: {}",self.signal_strength);
         Some((self.signal_strength.to_string(), String::new()))
     }
 }

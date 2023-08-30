@@ -8,6 +8,7 @@
 use std::collections::HashMap;
 use std::str::FromStr;
 use std::time::SystemTime;
+use log::{debug, info};
 use once_cell::sync::Lazy;
 use regex::Regex;
 use crate::Solver;
@@ -99,7 +100,7 @@ impl Solver for Solution {
         let mut total2 = 1;
         let mut part2 = 0;
         for bp in &self.blueprints {
-            println!("Finding max geodes for blueprint {} => {:?}", bp.id, bp.recipes);
+            debug!("Finding max geodes for blueprint {} => {:?}", bp.id, bp.recipes);
             let robots = [1, 0, 0, 0];
             let material = [0, 0, 0, 0];
             let mut stats = Stats { calls: 0, cache_hits: 0, cache: HashMap::new() };
@@ -109,7 +110,7 @@ impl Solver for Solution {
             let t1 = SystemTime::now();
             let diff_sec = t1.duration_since(t0).unwrap().as_secs_f32();
             let iter_time = 1000000.0 * diff_sec / stats.calls as f32;
-            println!("[part 1] Blueprint {} => {max_geodes} ({total1}) [{:.3}sec {} total calls / {:.3} us/call / {} cache hits]",
+            debug!("[part 1] Blueprint {} => {max_geodes} ({total1}) [{:.3}sec {} total calls / {:.3} us/call / {} cache hits]",
                      bp.id, diff_sec, stats.calls, iter_time, stats.cache_hits);
 
             if part2 < 3 {
@@ -121,12 +122,12 @@ impl Solver for Solution {
                 let t1 = SystemTime::now();
                 let diff_sec = t1.duration_since(t0).unwrap().as_secs_f32();
                 let iter_time = 1000000.0 * diff_sec / stats.calls as f32;
-                println!("[part 2] Blueprint {} => {max_geodes} ({total2}) [{:.3}sec {} total calls / {:.3} us/call / {} cache hits]",
+                debug!("[part 2] Blueprint {} => {max_geodes} ({total2}) [{:.3}sec {} total calls / {:.3} us/call / {} cache hits]",
                          bp.id, diff_sec, stats.calls, iter_time, stats.cache_hits);
             }
         }
-        println!("[1] result is {total1}");
-        println!("[2] result is {total2}");
+        info!("[1] result is {total1}");
+        info!("[2] result is {total2}");
         Some((total1.to_string(), total2.to_string()))
     }
 }

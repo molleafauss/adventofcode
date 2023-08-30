@@ -4,6 +4,7 @@
 // for the directions to checks for moving, but it's not needed anymore.
 
 use std::collections::{HashMap, HashSet};
+use log::{debug, info};
 
 use crate::grid::{GridPos, MOVE_D, MOVE_DL, MOVE_DR, MOVE_L, MOVE_R, MOVE_U, MOVE_UL, MOVE_UR};
 use crate::Solver;
@@ -80,7 +81,7 @@ impl Solver for Solution {
 
     fn solve(&mut self) -> Option<(String, String)> {
         let mut positions: HashSet<GridPos> = self.elves.iter().map(|elf| elf.pos.clone()).collect();
-        println!("Will move around {} elves", self.elves.len());
+        debug!("Will move around {} elves", self.elves.len());
         let mut rounds = 0;
         let mut tl = GridPos::of(0, 0);
         let mut br = GridPos::of(0, 0);
@@ -123,11 +124,11 @@ impl Solver for Solution {
             if moves == 0 {
                 break;
             }
-            println!("=> Round {rounds}: {moves} moves");
+            debug!("=> Round {rounds}: {moves} moves");
         }
 
-        println!("[1] Empty area is {:?}, {:?}  => {area}", tl, br);
-        println!("[2] Round {rounds} => no moves");
+        info!("[1] Empty area is {:?}, {:?}  => {area}", tl, br);
+        info!("[2] Round {rounds} => no moves");
         Some((area.to_string(), rounds.to_string()))
     }
 }

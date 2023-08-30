@@ -8,6 +8,7 @@
 use std::cmp::max;
 use std::str::FromStr;
 use std::usize;
+use log::{debug, info};
 use once_cell::sync::Lazy;
 use crate::Solver;
 use regex::Regex;
@@ -42,7 +43,7 @@ impl Solution {
 
     fn build_stacks(&mut self) -> Vec<Vec<char>> {
         let num_stacks = (self.stack_defs[0].len() - 3) / 4 + 1;
-        println!("Creating {num_stacks} stacks");
+        debug!("Creating {num_stacks} stacks");
         let mut stacks: Vec<Vec<char>> = vec![Vec::new(); num_stacks];
 
         // ignore last line
@@ -123,10 +124,10 @@ impl Solver for Solution {
     fn solve(&mut self) -> Option<(String, String)> {
         let mut stacks = self.build_stacks();
         let part1 = self.move_singles(stacks);
-        println!("[1] Top stacks values: {part1}");
+        info!("[1] Top stacks values: {part1}");
         stacks = self.build_stacks();
         let part2 = self.move_multiples(stacks);
-        println!("[2] Top stacks values: {part2}");
+        info!("[2] Top stacks values: {part2}");
         Some((part1.to_string(), part2.to_string()))
     }
 }
