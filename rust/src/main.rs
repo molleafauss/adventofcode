@@ -6,6 +6,11 @@ use std::fs;
 use std::path::Path;
 use std::process::exit;
 use std::time::SystemTime;
+use log4rs::append::console::ConsoleAppender;
+use log4rs::Config;
+use log4rs::config::{Appender, Logger, Root};
+use log4rs::encode::pattern::PatternEncoder;
+use log::{error, info, LevelFilter, warn};
 
 use solutions::Solver;
 use solutions::solver_for;
@@ -25,42 +30,42 @@ fn solve(filename: &str, mut parser: Box<dyn Solver>) {
     let t0 = SystemTime::now();
     let result = parser.solve();
     let t1 = SystemTime::now();
-    println!("File {filename}: {:.3}sec", t1.duration_since(t0).unwrap().as_secs_f32());
+    info!("File {filename}: {:.3}sec", t1.duration_since(t0).unwrap().as_secs_f32());
     if result.is_none() {
-        println!("==> No result given");
+        warn!("==> No result given");
         return;
     }
     let (part1, part2) = result.unwrap();
     if let Some(expected1) = expected_part_1 {
         if part1 == expected1 {
-            println!("PART 1 - found expected result: {expected1} = {part1}")
+            info!("PART 1 - found expected result: {expected1} = {part1}")
         } else {
-            println!("ERROR - part 1 result is incorrect: expected {expected1}, actual {part1}");
+            error!("ERROR - part 1 result is incorrect: expected {expected1}, actual {part1}");
         }
     }
     if let Some(expected2) = expected_part_2 {
         if part2 == expected2 {
-            println!("PART 2 - found expected result: {expected2} = {part2}", )
+            info!("PART 2 - found expected result: {expected2} = {part2}", )
         } else  {
-            println!("ERROR - part 2 result is incorrect: expected {expected2}, actual {part2}");
+            error!("ERROR - part 2 result is incorrect: expected {expected2}, actual {part2}");
         }
     }
 }
 
 fn solve_day(day: String) {
-    println!("== Solving {day} ==");
+    info!("== Solving {day} ==");
 
     // assume 'input' is a directory in the current directory
     let test_file = format!("inputs/{day}/test.txt");
     if !Path::new(&test_file).exists() {
-        println!("ERROR: test file {test_file} does not exist");
+        error!("ERROR: test file {test_file} does not exist");
         exit(-1);
     }
     solve(&test_file, solver_for(&day));
 
     let input_file = format!("inputs/{day}/input.txt");
     if !Path::new(&input_file).exists() {
-        println!("ERROR: input file {input_file} does not exist");
+        error!("ERROR: input file {input_file} does not exist");
         exit(-1);
     }
     solve(&input_file, solver_for(&day));
@@ -72,12 +77,25 @@ fn solve_all() {
     }
 }
 
+fn init_logging() {
+    let stdout = ConsoleAppender::builder()
+        .encoder(Box::new(PatternEncoder::new("{l} | {t} | {m}{n}")))
+        .build();
+    let config = Config::builder()
+        .appender(Appender::builder().build("stdout", Box::new(stdout)))
+        .logger(Logger::builder().build("aoc2022::solutions", LevelFilter::Warn))
+        .build(Root::builder().appender("stdout").build(LevelFilter::Info))
+        .unwrap();
+    log4rs::init_config(config).unwrap();
+}
+
 fn main() {
     let mut args = env::args();
     if args.len() < 2 {
         println!("Please specify a day to resolve like 'day03'");
         return;
     }
+    init_logging();
     let day = args.nth(1).unwrap();
     if day == "all" {
         solve_all();
