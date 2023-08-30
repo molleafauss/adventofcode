@@ -212,7 +212,7 @@ impl OnePathSolver {
     fn find_path(&mut self, data: &Solution, path: OnePath) -> OnePath {
         self.calls += 1;
         if (self.calls % 1000000) == 0 {
-            print!("{} calls, {} cache hits...", self.calls, self.cache_hits)
+            println!("{} calls, {} cache hits...", self.calls, self.cache_hits)
         }
         let cave = path.visited.last().unwrap();
         let cache_key = path.cache_key();
@@ -367,7 +367,7 @@ impl TwoPathsSolver {
     fn find_path(&mut self, data: &Solution, path: TwoPaths) -> TwoPaths {
         self.calls += 1;
         if (self.calls % 1000000) == 0 {
-            print!("{} calls, {} cache hits...", self.calls, self.cache_hits)
+            println!("{} calls, {} cache hits...", self.calls, self.cache_hits)
         }
         let man_pos = path.human_path.last().unwrap();
         let ele_pos = path.ele_path.last().unwrap();

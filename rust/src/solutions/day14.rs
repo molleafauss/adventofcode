@@ -93,7 +93,7 @@ impl Solver for Solution {
         info!("[1] Sand resting: {part1_sand}");
 
         self.scan.retain(|_, v| *v == '#');
-        info!("Part 2 - starting with {}", self.scan.len());
+        debug!("Part 2 - starting with {}", self.scan.len());
 
         // part 2
         self.max_y += 2;
@@ -131,7 +131,7 @@ impl Solver for Solution {
             // if reached the abyss - stop
             keep_dripping = !self.scan.contains_key(&start_pos);
         }
-        println!("[2] Sand resting: {sand}");
+        info!("[2] Sand resting: {sand}");
         Some((part1_sand.to_string(), sand.to_string()))
     }
 }
