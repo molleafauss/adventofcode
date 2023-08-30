@@ -5,6 +5,7 @@
 use std::cmp::max;
 use std::collections::HashSet;
 use std::str::FromStr;
+use log::{debug, info};
 
 use once_cell::sync::Lazy;
 use regex::Regex;
@@ -83,17 +84,17 @@ impl Solver for Solution {
     }
 
     fn solve(&mut self) -> Option<(String, String)> {
-        println!("We have {} sensors", self.sensors.len());
-        println!("part 1 - finding invalid beacon positions at line {}", self.y);
+        debug!("We have {} sensors", self.sensors.len());
+        debug!("part 1 - finding invalid beacon positions at line {}", self.y);
         let (segments, beacons) = self.check_line(self.y);
         let segment_size = segment_length(&segments) - beacons.len() as i64;
-        println!("[1] invalid set contains {segment_size} elements");
+        info!("[1] invalid set contains {segment_size} elements");
 
-        println!("Finding possible real beacon positions in area 0-{}", self.area);
+        debug!("Finding possible real beacon positions in area 0-{}", self.area);
         let mut frequency = 0;
         for y in 0..self.area + 1 {
             if (y % 100000) == 0 {
-                println!("Checking line {y}");
+                println!("Checking line {y}/{}", self.area);
             }
             let (mut segments, beacons) = self.check_line(y);
             for b in beacons {
@@ -102,11 +103,11 @@ impl Solver for Solution {
             if segments.len() == 1 && segments[0].start <= 0 && segments[0].end >= self.area {
                 continue;
             }
-            println!("Found something at y: {y} - {}?", segments.len());
+            debug!("Found something at y: {y} - {}?", segments.len());
             let x = segments[0].end + 1;
             assert_eq!(x, segments[1].start - 1);
             frequency = x as i64 * FREQ_MULT + y as i64;
-            println!("[2] Found frequency: {frequency}");
+            info!("[2] Found frequency: {frequency}");
             break;
         }
         Some((segment_size.to_string(), frequency.to_string()))

@@ -3,6 +3,7 @@
 
 use std::collections::HashMap;
 use std::str::FromStr;
+use log::{debug, info};
 
 use once_cell::sync::Lazy;
 use regex::{Captures, Regex};
@@ -60,7 +61,7 @@ impl Solution {
                 }
             }
             if balance.is_none() {
-                println!("Found root branch value: {}", value.unwrap());
+                debug!("Found root branch value: {}", value.unwrap());
                 balance = value;
             } else {
                 balance = self.invert_op(balance.unwrap(), op, value.unwrap(), human == m_left);
@@ -72,7 +73,7 @@ impl Solution {
 
     fn invert_op(&self, balance: f64, op: &Op, value: f64, first: bool) -> Option<f64> {
         let v_str = value.to_string();
-        println!("Inverting {} {:?} {} = {balance}",
+        debug!("Inverting {} {:?} {} = {balance}",
                  if first { "x" } else { &v_str }, op, if first { &v_str } else { "x" });
         match op {
             Op::Sum => Some(balance - value),
@@ -105,11 +106,11 @@ impl Solver for Solution {
 
         // part 1 - must not fail
         let result = self.calculate(&self.monkeys[ROOT], false).unwrap();
-        println!("[1] Result is {result}");
+        info!("[1] Result is {result}");
 
         // part 2
         let value = self.balance(&self.monkeys[ROOT]);
-        println!("[2] HUMN {value}");
+        info!("[2] HUMN {value}");
         Some((result.to_string(), value.to_string()))
     }
 }

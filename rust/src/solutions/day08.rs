@@ -3,6 +3,7 @@
 // complex to handle ownerships and mutability.
 // As in the python solution, the code could reuse some factoring...
 
+use log::{debug, info};
 use crate::Solver;
 
 pub(crate) struct Solution {
@@ -119,7 +120,7 @@ impl Solver for Solution {
     }
 
     fn solve(&mut self) -> Option<(String, String)> {
-        println!("Forest size: {}x{}", self.width, self.height);
+        debug!("Forest size: {}x{}", self.width, self.height);
         // part 1
         let mut inside = 0;
         for col in 1..self.width - 1 {
@@ -131,7 +132,7 @@ impl Solver for Solution {
         // borders: 2 x (width + height) - 4 (corners, to not count them multiple times)
         let borders = self.width * 2 + self.height * 2 - 4;
         let total_visible = inside + borders;
-        println!("[1] number of trees visible inside: {} borders: {} => visible {}",
+        info!("[1] number of trees visible inside: {} borders: {} => visible {}",
                  inside, borders, total_visible);
 
 
@@ -145,7 +146,7 @@ impl Solver for Solution {
                 }
             })
         });
-        println!("[2] max scenic score {scenic_max}");
+        info!("[2] max scenic score {scenic_max}");
         Some((total_visible.to_string(), scenic_max.to_string()))
     }
 }
