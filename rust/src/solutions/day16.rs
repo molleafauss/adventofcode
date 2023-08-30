@@ -5,7 +5,8 @@
 // Had to split the implementation in two structs as the cache_key is different.
 // Part 2 time - 9min vs 30ish (python)
 // TODO - Possible optimization: index valves/distances into a Vec by position, search always
-// directly by index (should save some
+// directly by index (should save some time)
+// apparently is slower than python?
 
 use std::cmp::max;
 use std::collections::{HashMap, HashSet};
