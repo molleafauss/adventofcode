@@ -2,6 +2,7 @@
 // Vec basic APIs and a bit of functional/iterator constructs.
 
 use std::str::FromStr;
+use log::info;
 use crate::solutions::Solver;
 
 struct Elf {
@@ -36,13 +37,13 @@ impl Solver for Solution {
     }
 
     fn solve(&mut self) -> Option<(String, String)> {
-        println!("solve day01");
+        info!("solve day01");
         self.calories.push(Elf{calories: self.elf_calories});
         self.calories.sort_by_key(|elf| elf.calories);
         self.calories.reverse();
-        println!("[1] Saw {} elves: maximum: {}", self.calories.len(), self.calories[0].calories);
+        info!("[1] Saw {} elves: maximum: {}", self.calories.len(), self.calories[0].calories);
         let top3: u32 = self.calories.iter().take(3).map(|elf| elf.calories).sum();
-        println!("[2] First 3 elves: {top3}");
+        info!("[2] First 3 elves: {top3}");
         Some((self.calories[0].calories.to_string(), top3.to_string()))
     }
 }
