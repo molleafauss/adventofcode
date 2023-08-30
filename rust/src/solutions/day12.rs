@@ -129,11 +129,16 @@ impl Solver for Solution {
 
         // finding shortest
         let mut min_start = self.start.as_ref().unwrap();
-        let mut part2_min_length = 0;
+        let mut part2_min_length = self.map.len() + 1;
+        let mut visited = 0;
         self.map.iter()
             .filter(|e| e.1 == &LOWEST)
             .map(|e| e.0)
             .for_each(|start| {
+                visited += 1;
+                if visited % 100 == 0 {
+                    println!("{visited} visited ...")
+                }
                 let path = self.walk_back(self.walk(start), start);
                 if path.len() > 0 && path.len() < part2_min_length {
                     min_start = start;
