@@ -53,10 +53,11 @@ class BiPath:
 class Solution(Solver):
     def __init__(self):
         self.valves = {}
+        self.calls = 0
         self.cache = {}
+        self.cache_hits = 0
         self.distances = {}
         self.valves_with_flow = []
-        self.cache_hits = 0
 
     def parse(self, line: str):
         if not line:
@@ -84,6 +85,7 @@ class Solution(Solver):
         path1_flow = best_path.total_flow
         log.info(f"[1] Found max flow is {best_path.total_flow}: {best_path.visited} ({self.cache_hits} cache hits) [{t1 - t0:10.3}sec]")
 
+        self.calls = 0
         self.cache_hits = 0
         self.cache = {}
         t0 = time.time()
@@ -94,6 +96,9 @@ class Solution(Solver):
         return str(path1_flow), str(path2_flow)
 
     def find_path(self, path):
+        self.calls += 1
+        if self.calls % 1000000 == 0:
+            print(f"{self.calls} calls - {self.cache_hits} cache hits")
         cave = path.visited[-1]
         cache_key = (cave, path.elapsed, path.open_valves)
         if cache_key in self.cache:
@@ -131,6 +136,10 @@ class Solution(Solver):
         return best_path
 
     def two_paths(self, path):
+        self.calls += 1
+        if self.calls % 1000000 == 0:
+            print(f"{self.calls} calls - {self.cache_hits} cache hits")
+
         man_pos = path.human.visited[-1]
         ele_pos = path.elephant.visited[-1]
 
