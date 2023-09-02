@@ -4,7 +4,7 @@
 // As in the python solution, the code could reuse some factoring...
 
 use log::{debug, info};
-use crate::Solver;
+use adventofcode::Solver;
 
 pub(crate) struct Solution {
     matrix: Vec<Tree>,

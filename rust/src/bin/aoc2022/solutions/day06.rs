@@ -2,7 +2,7 @@
 // contains, some slice/sub-slce manipulation. Used directly u8 instead of chars for simplicity.
 
 use log::info;
-use crate::Solver;
+use adventofcode::Solver;
 
 pub(crate) struct Solution {
     start_of_packet: Option<usize>,

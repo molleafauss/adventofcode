@@ -3,8 +3,8 @@
 
 use std::collections::{HashSet, VecDeque};
 use log::{debug, info};
-use crate::grid::{GridPos, MOVE_D, MOVE_L, MOVE_R, MOVE_U};
-use crate::Solver;
+use adventofcode::grid::{GridPos, MOVE_D, MOVE_L, MOVE_R, MOVE_U};
+use adventofcode::Solver;
 
 pub(crate) struct Solution {
     height: i64,

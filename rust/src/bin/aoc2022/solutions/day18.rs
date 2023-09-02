@@ -10,7 +10,7 @@ use std::collections::{HashMap, HashSet, VecDeque};
 use std::str::FromStr;
 use log::{debug, info};
 
-use crate::Solver;
+use adventofcode::Solver;
 
 pub(crate) struct Solution {
     cubes: u32,

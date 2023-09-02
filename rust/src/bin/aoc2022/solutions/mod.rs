@@ -24,13 +24,7 @@ mod day23;
 mod day24;
 mod day25;
 
-/// A solver for a AOC puzzle
-pub(crate) trait Solver {
-    /// parse the given line
-    fn parse(&mut self, line: &str);
-    /// solve the puzzle
-    fn solve(&mut self) -> Option<(String, String)>;
-}
+use adventofcode::Solver;
 
 pub(crate) fn solver_for(day: &str) -> Box<dyn Solver> {
     match day {

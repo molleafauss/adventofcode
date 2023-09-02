@@ -14,7 +14,7 @@ use std::str::FromStr;
 use std::time::SystemTime;
 use once_cell::sync::Lazy;
 use regex::{Captures, Regex};
-use crate::Solver;
+use adventofcode::Solver;
 use factorial::Factorial;
 use log::{debug, info};
 

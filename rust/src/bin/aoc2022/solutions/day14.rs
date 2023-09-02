@@ -6,8 +6,8 @@ use std::cmp::max;
 use std::collections::HashMap;
 use std::str::FromStr;
 use log::{debug, info};
-use crate::grid::GridPos;
-use crate::Solver;
+use adventofcode::grid::GridPos;
+use adventofcode::Solver;
 
 pub(crate) struct Solution {
     scan: HashMap<GridPos, char>,
