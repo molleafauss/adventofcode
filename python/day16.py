@@ -1,3 +1,4 @@
+import logging
 import time
 from dataclasses import dataclass
 
@@ -9,6 +10,9 @@ import math
 # this needed a lot of looking at other solutions. Of course this is the usual "dynamic programming" (quotes needed)
 # problem, where you have to remember your previous steps
 # for part 2 I ended up to have to optimize, as the algorithm was right, but too costly
+
+log = logging.getLogger("day.16")
+
 
 RE_VALVE = re.compile(r"Valve (\S+) has flow rate=(\d+); tunnels? leads? to valves? (.*)")
 PART1_MINUTES = 30
@@ -49,10 +53,11 @@ class BiPath:
 class Solution(Solver):
     def __init__(self):
         self.valves = {}
+        self.calls = 0
         self.cache = {}
+        self.cache_hits = 0
         self.distances = {}
         self.valves_with_flow = []
-        self.cache_hits = 0
 
     def parse(self, line: str):
         if not line:
@@ -68,25 +73,32 @@ class Solution(Solver):
             valve.mask = 1 << len(self.valves_with_flow)
 
     def solve(self):
-        print(f"Found {len(self.valves)} valves to open in {PART1_MINUTES} minutes")
+        log.debug(f"Found {len(self.valves)} valves to open in {PART1_MINUTES} minutes")
         start = 'AA'
-        print(f"Valves with flow: {len(self.valves_with_flow)} => {math.factorial(len(self.valves_with_flow))} possible paths")
+        log.debug(f"Valves with flow: {len(self.valves_with_flow)} => {math.factorial(len(self.valves_with_flow))} possible paths")
         # find distances between all valves with a flow, plus the starting valve (which can have flow also)
         self.calculate_distances([start] + [valve.name for valve in self.valves_with_flow])
 
         t0 = time.time()
         best_path = self.find_path(Path(["AA"], 0, 0, 0))
         t1 = time.time()
-        print(f"[1] Found max flow is {best_path.total_flow}: {best_path.visited} ({self.cache_hits} cache hits) [{t1 - t0:10.3}sec]")
+        path1_flow = best_path.total_flow
+        log.info(f"[1] Found max flow is {best_path.total_flow}: {best_path.visited} ({self.cache_hits} cache hits) [{t1 - t0:10.3}sec]")
 
+        self.calls = 0
         self.cache_hits = 0
         self.cache = {}
         t0 = time.time()
         best_path = self.two_paths(BiPath(Pos(['AA'], 0), Pos(['AA'], 0), 0, 0, 0))
         t1 = time.time()
-        print(f"[2] Found max flow is {best_path.total_flow}: {best_path.human} / {best_path.elephant} ({self.cache_hits} cache hits) [{t1 - t0:10.3f}sec]")
+        path2_flow = best_path.total_flow
+        log.info(f"[2] Found max flow is {best_path.total_flow}: {best_path.human} / {best_path.elephant} ({self.cache_hits} cache hits) [{t1 - t0:10.3f}sec]")
+        return str(path1_flow), str(path2_flow)
 
     def find_path(self, path):
+        self.calls += 1
+        if self.calls % 1000000 == 0:
+            print(f"{self.calls} calls - {self.cache_hits} cache hits")
         cave = path.visited[-1]
         cache_key = (cave, path.elapsed, path.open_valves)
         if cache_key in self.cache:
@@ -124,6 +136,10 @@ class Solution(Solver):
         return best_path
 
     def two_paths(self, path):
+        self.calls += 1
+        if self.calls % 1000000 == 0:
+            print(f"{self.calls} calls - {self.cache_hits} cache hits")
+
         man_pos = path.human.visited[-1]
         ele_pos = path.elephant.visited[-1]
 

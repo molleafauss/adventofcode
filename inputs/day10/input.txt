@@ -1,3 +1,4 @@
+result part 1: 11220
 noop
 addx 26
 addx -21

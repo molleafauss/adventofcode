@@ -8,6 +8,7 @@
 
 use std::collections::{HashMap, HashSet, VecDeque};
 use std::str::FromStr;
+use log::{debug, info};
 
 use crate::Solver;
 
@@ -53,10 +54,10 @@ impl Solver for Solution {
         self.cubes += 1;
     }
 
-    fn solve(&mut self) {
-        println!("[1] {} cubes: {} visible", self.voxels.len(), self.faces);
+    fn solve(&mut self) -> Option<(String, String)> {
+        info!("[1] {} cubes: {} visible", self.voxels.len(), self.faces);
 
-        println!("Ranges: {:?}", self.ranges);
+        debug!("Ranges: {:?}", self.ranges);
         // add AIR all in the layer around and then grow it until it touches the lava. Count the faces this way
         // back
         self.add_air((self.ranges.x.min - 1, self.ranges.x.max + 1), (self.ranges.y.min - 1, self.ranges.y.max + 1), (self.ranges.z.min - 1, self.ranges.z.min));
@@ -93,13 +94,14 @@ impl Solver for Solution {
             self.voxels.insert(pos, VOXEL_AIR);
         }
 
-        println!("[2] Found {} outside facing faces", faces.len());
+        info!("[2] Found {} outside facing faces", faces.len());
+        Some((self.faces.to_string(), faces.len().to_string()))
     }
 }
 
 impl Solution {
     fn add_air(&mut self, rangex: (i32, i32), rangey: (i32, i32), rangez: (i32, i32)) {
-        println!("Add air: {:?}, {:?}, {:?}", rangex, rangey, rangez);
+        debug!("Add air: {:?}, {:?}, {:?}", rangex, rangey, rangez);
         for x in rangex.0..rangex.1 {
             for y in rangey.0..rangey.1 {
                 for z in rangez.0..rangez.1 {

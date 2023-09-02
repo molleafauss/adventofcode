@@ -7,6 +7,7 @@
 // But this implementation is actually simpler.
 
 use std::str::FromStr;
+use log::{debug, info};
 use crate::Solver;
 
 pub(crate) struct Solution {
@@ -86,8 +87,8 @@ impl Solver for Solution {
         }
     }
 
-    fn solve(&mut self) {
-        println!("[1] Found small dir sizes: {}", self.part1);
+    fn solve(&mut self) -> Option<(String, String)> {
+        info!("[1] Found small dir sizes: {}", self.part1);
         while self.dirstack.len() > 1 {
             // pop all remaining dirs and save them
             let dir = self.dirstack.pop().unwrap();
@@ -96,12 +97,11 @@ impl Solver for Solution {
         }
         // now verify we saw them all
         assert_eq!(self.alldirs.len(), self.dir_found as usize, "Missing dirs?");
-        // sort alldirs and
         let used = self.dirstack.last().unwrap().size;
-        println!("Found size for root: {used}");
+        debug!("Found size for root: {used}");
         if DISK_SIZE - used > MIN_FREE {
-            println!("[2] enough space free: used {used} / free {}", DISK_SIZE - used);
-            return;
+            info!("[2] enough space free: used {used} / free {}", DISK_SIZE - used);
+            return Some((self.part1.to_string(), 0.to_string()));
         }
         let size_to_free = MIN_FREE - (DISK_SIZE - used);
         let mut big_dirs = Vec::new();
@@ -112,7 +112,9 @@ impl Solver for Solution {
             }
         }
         big_dirs.sort_by_key(|dir| dir.size);
-        println!("[2] min space to delete = {}", big_dirs.first().unwrap().size);
+        let to_delete = big_dirs.first().unwrap();
+        info!("[2] min space to delete = {}", to_delete.size);
+        Some((self.part1.to_string(), to_delete.size.to_string()))
     }
 }
 

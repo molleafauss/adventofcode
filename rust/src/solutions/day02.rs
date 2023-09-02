@@ -1,6 +1,7 @@
 // What did I learn?
 // matching on multiple variables, a bit of borrowing for function parameters
 
+use log::info;
 use crate::Solver;
 
 pub struct Solution {
@@ -97,8 +98,9 @@ impl Solver for Solution {
         self.score2 += score_played(&round2_play) + score_round2;
     }
 
-    fn solve(&mut self) {
-        println!("[1] Resulting score (part 1): {}", self.score1);
-        println!("[2] Resulting score (part 2): {}", self.score2)
+    fn solve(&mut self) -> Option<(String, String)> {
+        info!("[1] Resulting score (part 1): {}", self.score1);
+        info!("[2] Resulting score (part 2): {}", self.score2);
+        Some((self.score1.to_string(), self.score2.to_string()))
     }
 }

@@ -1,8 +1,13 @@
+import logging
+
 from advent import Solver
 from grid import *
 
 # https://adventofcode.com/2022/day/23
 # "simple" - the final solution is brute force - not sure if there is a "mathematical" way to calculate it
+
+log = logging.getLogger("day.23")
+
 
 SURROUNDING = [DIR_N, DIR_NE, DIR_E, DIR_SE, DIR_S, DIR_SW, DIR_W, DIR_NW]
 
@@ -43,7 +48,7 @@ class Solution(Solver):
         self.height += 1
 
     def solve(self):
-        print(f"Will move around {len(self.elves)} elves")
+        log.debug(f"Will move around {len(self.elves)} elves")
         rounds = 0
         # self.print_elves()
         while True:
@@ -75,9 +80,10 @@ class Solution(Solver):
                 area = (br.row - tl.row + 1) * (br.col - tl.col + 1) - len(self.elves)
             if moves == 0:
                 break
-            print(f"=> Round {rounds}: {moves} moves")
-        print(f"[1] Empty area is {tl}, {br} / {len(self.elves)} => {area}")
-        print(f"[2] Round {rounds} => no moves")
+            log.debug(f"=> Round {rounds}: {moves} moves")
+        log.info(f"[1] Empty area is {tl}, {br} / {len(self.elves)} => {area}")
+        log.info(f"[2] Round {rounds} => no moves")
+        return str(area), str(rounds)
 
     def should_move(self, elf):
         # no elf in surrounding: stay put

@@ -4,6 +4,7 @@
 // but was a nice learning experience.
 
 use std::cmp::Ordering;
+use log::{debug, info};
 use crate::Solver;
 
 pub(crate) struct Solution {
@@ -26,7 +27,7 @@ impl Solver for Solution {
     fn parse(&mut self, line: &str) {
         if line.is_empty() {
             if self.packets[self.pairs * 2] < self.packets[self.pairs * 2 + 1] {
-                println!("pairs {} - right order", self.pairs);
+                debug!("pairs {} - right order", self.pairs);
                 self.right_order += self.pairs + 1;
             }
             self.pairs += 1;
@@ -35,8 +36,8 @@ impl Solver for Solution {
         }
     }
 
-    fn solve(&mut self) {
-        println!("[1] Right order value: {}", self.right_order);
+    fn solve(&mut self) -> Option<(String, String)> {
+        info!("[1] Right order value: {}", self.right_order);
 
         let mut decoder_key = 1;
         let mut divider_packets = 0;
@@ -47,13 +48,14 @@ impl Solver for Solution {
         self.packets.sort();
         self.packets.iter().enumerate().for_each(|(i, packet)| {
             if packet == &divider_1 || packet == &divider_2 {
-                println!("Found divider at position {i}: {:?}", packet);
+                debug!("Found divider at position {i}: {:?}", packet);
                 divider_packets += 1;
                 decoder_key *= i + 1;
             }
         });
         assert_eq!(divider_packets, 2, "Did not find all divider packets");
-        println!("[2] decoder key: {decoder_key}");
+        info!("[2] decoder key: {decoder_key}");
+        Some((self.right_order.to_string(), decoder_key.to_string()))
     }
 }
 
@@ -66,7 +68,7 @@ enum Packet {
 impl Packet {
     fn parse(line: &str) -> Packet {
         assert!(line.starts_with("[") && line.ends_with("]"), "Line not a list? {line}");
-        println!("Parsing {}", line);
+        debug!("Parsing {}", line);
         // packet is always at least an empty list
         let mut stack = vec![Packet::List(Vec::new())];
         // skip start and end and iterate on chars

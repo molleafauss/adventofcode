@@ -1,3 +1,5 @@
+import logging
+
 from advent import Solver
 
 # https://adventofcode.com/2022/day/2
@@ -8,6 +10,8 @@ from advent import Solver
 #   result: 0 if you lost, 3 if the round was a draw, and 6 if you won
 #
 # I could have calculated most of these lookup tables in code, but tbh they make the code simple enough.
+
+log = logging.getLogger("day.02")
 
 SCORE_CHOICE = {
     "R": 1,
@@ -66,5 +70,6 @@ class Solution(Solver):
         self.score2 += SCORE_CHOICE[round2] + SCORE_ROUND2[b]
 
     def solve(self):
-        print(f"Resulting score (part 1): {self.score1}")
-        print(f"Resulting score (part 2): {self.score2}")
+        log.info(f"Resulting score (part 1): {self.score1}")
+        log.info(f"Resulting score (part 2): {self.score2}")
+        return str(self.score1), str(self.score2)

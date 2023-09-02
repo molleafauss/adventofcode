@@ -3,6 +3,7 @@
 
 use std::collections::HashSet;
 use std::str::FromStr;
+use log::{debug, info};
 use crate::Solver;
 use crate::grid::{GridPos, MOVE_D, MOVE_L, MOVE_R, MOVE_U};
 
@@ -18,7 +19,7 @@ impl Solution {
     }
 
     fn move_rope(&mut self, rope_length: usize) -> usize {
-        println!("Moving rope with length {rope_length}");
+        debug!("Moving rope with length {rope_length}");
         let mut rope = Rope::with_length(rope_length);
         let mut visited = HashSet::new();
         self.movements.iter().for_each(|movement| {
@@ -42,11 +43,12 @@ impl Solver for Solution {
         })
     }
 
-    fn solve(&mut self) {
+    fn solve(&mut self) -> Option<(String, String)> {
         let part1 = self.move_rope(2);
-        println!("[1] Tail visited {part1} places");
+        info!("[1] Tail visited {part1} places");
         let part2 = self.move_rope(10);
-        println!("[2] Tail visited {part2} places");
+        info!("[2] Tail visited {part2} places");
+        Some((part1.to_string(), part2.to_string()))
     }
 }
 

@@ -1,3 +1,5 @@
+result part 1: SBPQRSCDF
+result part 2: RGLVRCQSB
 [V]     [B]                     [F]
 [N] [Q] [W]                 [R] [B]
 [F] [D] [S]     [B]         [L] [P]

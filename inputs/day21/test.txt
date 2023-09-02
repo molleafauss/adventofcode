@@ -1,3 +1,5 @@
+result part 1: 152
+result part 2: 301
 root: pppw + sjmn
 dbpl: 5
 cczh: sllz + lgvd

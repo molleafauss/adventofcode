@@ -1,3 +1,5 @@
+result part 1: 31
+result part 2: 29
 Sabqponm
 abcryxxl
 accszExk

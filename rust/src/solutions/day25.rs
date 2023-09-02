@@ -2,6 +2,7 @@
 // very simple, discovered String::from_iterator(Iter<char>)
 
 use std::collections::HashMap;
+use log::{debug, info};
 use once_cell::sync::Lazy;
 use crate::Solver;
 
@@ -21,12 +22,13 @@ impl Solver for Solution {
     fn parse(&mut self, line: &str) {
         let val = snafu_to_int(line);
         self.fuel += val;
-        println!("{line} => {val} = {}", self.fuel);
+        debug!("{line} => {val} = {}", self.fuel);
     }
 
-    fn solve(&mut self) {
+    fn solve(&mut self) -> Option<(String, String)> {
         let fuel_base5 = int_to_snafu(self.fuel);
-        println!("[1] {} => to base 5 {fuel_base5}", self.fuel);
+        info!("[1] {} => to base 5 {fuel_base5}", self.fuel);
+        Some((fuel_base5, String::new()))
     }
 }
 

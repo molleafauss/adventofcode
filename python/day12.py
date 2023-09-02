@@ -1,3 +1,5 @@
+import logging
+
 from advent import Solver
 
 # https://adventofcode.com/2022/day/12
@@ -13,6 +15,8 @@ from advent import Solver
 # though); initializing the cost to an impossible value made me add an extra condition to signal that.
 # The current result is slow, as walk is called once per starting point. Once I have a set of parents, though, ideally
 # I can start finding paths for every element in the possible_starts and remove them if found.
+
+log = logging.getLogger("day.12")
 
 
 class Solution(Solver):
@@ -48,7 +52,7 @@ class Solution(Solver):
         assert self.start and self.end
 
         def walk(start):
-            print(f"=== Finding path {start} => {self.end}")
+            log.debug(f"=== Finding path {start} => {self.end}")
             costs = {}
             max = self.width * self.height + 1
             for row in range(self.height):
@@ -84,21 +88,26 @@ class Solution(Solver):
             return path
 
         parents = walk(self.start)
-        path = walk_back(parents, self.start)
-        print(f"[1] Min length found: {len(path)}: {path}")
+        path1 = walk_back(parents, self.start)
+        log.info(f"[1] Min length found: {len(path1)}: {path1}")
 
         # now try to walk from all 'a'
         possible_starts = [pos for pos in self.map if self.map[pos] == 'a']
-        min_length = len(path)
+        min_length = len(path1)
         min_start = self.start
+        visited = 0
         for start in possible_starts:
+            visited += 1
+            if visited % 100 == 0:
+                print(f"{visited}/{len(possible_starts)} visited ...")
             path = walk_back(walk(start), start)
             if not path:
                 continue
             if len(path) < min_length:
                 min_length = len(path)
                 min_start = start
-        print(f"[2] Shortest path from {min_start}: {min_length}")
+        log.info(f"[2] Shortest path from {min_start}: {min_length}")
+        return str(len(path1)), str(min_length)
 
     def neighbours(self, node, costs):
         cur_height = self.map[node]

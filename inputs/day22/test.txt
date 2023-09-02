@@ -1,3 +1,5 @@
+result part 1: 6032
+result part 2: 5031
         ...#
         .#..
         #...
