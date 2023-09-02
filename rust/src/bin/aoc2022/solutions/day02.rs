@@ -2,7 +2,7 @@
 // matching on multiple variables, a bit of borrowing for function parameters
 
 use log::info;
-use crate::Solver;
+use adventofcode::Solver;
 
 pub struct Solution {
     score1: u32,

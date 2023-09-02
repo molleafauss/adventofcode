@@ -11,7 +11,7 @@ use std::time::SystemTime;
 use log::{debug, info};
 use once_cell::sync::Lazy;
 use regex::Regex;
-use crate::Solver;
+use adventofcode::Solver;
 
 pub(crate) struct Solution {
     blueprints: Vec<Blueprint>

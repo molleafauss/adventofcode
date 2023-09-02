@@ -10,8 +10,8 @@ use log::{debug, info};
 use once_cell::sync::Lazy;
 use regex::Regex;
 
-use crate::grid::GridPos;
-use crate::Solver;
+use adventofcode::grid::GridPos;
+use adventofcode::Solver;
 
 pub(crate) struct Solution {
     sensors: Vec<Sensor>,

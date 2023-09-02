@@ -1,5 +1,4 @@
 mod solutions;
-mod grid;
 
 use std::env;
 use std::fs;
@@ -12,7 +11,7 @@ use log4rs::config::{Appender, Logger, Root};
 use log4rs::encode::pattern::PatternEncoder;
 use log::{error, info, LevelFilter, warn};
 
-use solutions::Solver;
+use adventofcode::Solver;
 use solutions::solver_for;
 
 fn solve(filename: &str, mut parser: Box<dyn Solver>) {
@@ -56,14 +55,14 @@ fn solve_day(day: String) {
     info!("== Solving {day} ==");
 
     // assume 'input' is a directory in the current directory
-    let test_file = format!("inputs/{day}/test.txt");
+    let test_file = format!("inputs/2022/{day}/test.txt");
     if !Path::new(&test_file).exists() {
         error!("ERROR: test file {test_file} does not exist");
         exit(-1);
     }
     solve(&test_file, solver_for(&day));
 
-    let input_file = format!("inputs/{day}/input.txt");
+    let input_file = format!("inputs/2022/{day}/input.txt");
     if !Path::new(&input_file).exists() {
         error!("ERROR: input file {input_file} does not exist");
         exit(-1);

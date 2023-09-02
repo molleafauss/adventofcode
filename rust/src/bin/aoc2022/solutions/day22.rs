@@ -6,7 +6,7 @@
 use std::str::FromStr;
 use std::usize;
 use log::{debug, info};
-use crate::Solver;
+use adventofcode::Solver;
 
 pub(crate) struct Solution {
     is_map: bool,

@@ -3,7 +3,7 @@
 
 use std::str::FromStr;
 use log::info;
-use crate::Solver;
+use adventofcode::Solver;
 
 pub(crate) struct Solution {
     full_overlaps: u32,

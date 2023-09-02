@@ -6,8 +6,8 @@
 use std::collections::HashMap;
 use log::{debug, info};
 use once_cell::sync::Lazy;
-use crate::grid::GridPos;
-use crate::Solver;
+use adventofcode::grid::GridPos;
+use adventofcode::Solver;
 
 const MAX_ROCKS_P1: u64 = 2022;
 const MAX_ROCKS_P2: u64 = 1_000_000_000_000;

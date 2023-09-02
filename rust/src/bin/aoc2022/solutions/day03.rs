@@ -4,7 +4,7 @@
 
 use std::collections::HashSet;
 use log::info;
-use crate::Solver;
+use adventofcode::Solver;
 
 pub struct Solution {
     part1: u32,

@@ -8,7 +8,7 @@ use log::{debug, info};
 use once_cell::sync::Lazy;
 use regex::{Captures, Regex};
 
-use crate::Solver;
+use adventofcode::Solver;
 
 pub(crate) struct Solution {
     monkeys: HashMap<String, Monkey>

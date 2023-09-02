@@ -10,7 +10,7 @@ use std::str::FromStr;
 use std::usize;
 use log::{debug, info};
 use once_cell::sync::Lazy;
-use crate::Solver;
+use adventofcode::Solver;
 use regex::Regex;
 
 static RE_INSTRUCTION: Lazy<Regex> = Lazy::new(|| Regex::new(r"move (\d+) from (\d+) to (\d+)").unwrap());

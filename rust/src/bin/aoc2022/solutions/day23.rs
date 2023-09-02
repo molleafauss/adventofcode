@@ -6,8 +6,8 @@
 use std::collections::{HashMap, HashSet};
 use log::{debug, info};
 
-use crate::grid::{GridPos, MOVE_D, MOVE_DL, MOVE_DR, MOVE_L, MOVE_R, MOVE_U, MOVE_UL, MOVE_UR};
-use crate::Solver;
+use adventofcode::grid::{GridPos, MOVE_D, MOVE_DL, MOVE_DR, MOVE_L, MOVE_R, MOVE_U, MOVE_UL, MOVE_UR};
+use adventofcode::Solver;
 
 pub(crate) struct Solution {
     width: usize,

@@ -5,7 +5,7 @@
 
 use std::cmp::Ordering;
 use log::{debug, info};
-use crate::Solver;
+use adventofcode::Solver;
 
 pub(crate) struct Solution {
     right_order: usize,

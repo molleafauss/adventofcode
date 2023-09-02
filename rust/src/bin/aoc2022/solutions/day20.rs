@@ -5,7 +5,7 @@
 
 use std::str::FromStr;
 use log::{debug, info};
-use crate::Solver;
+use adventofcode::Solver;
 
 pub(crate) struct Solution {
     data: Vec<(i64, usize)>,

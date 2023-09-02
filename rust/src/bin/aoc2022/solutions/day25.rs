@@ -4,7 +4,7 @@
 use std::collections::HashMap;
 use log::{debug, info};
 use once_cell::sync::Lazy;
-use crate::Solver;
+use adventofcode::Solver;
 
 pub(crate) struct Solution {
     fuel: i64,
