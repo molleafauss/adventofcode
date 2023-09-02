@@ -3,7 +3,7 @@
 
 use std::str::FromStr;
 use log::info;
-use crate::solutions::Solver;
+use adventofcode::Solver;
 
 struct Elf {
     calories: u32,
