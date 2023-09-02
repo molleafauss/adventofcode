@@ -88,7 +88,7 @@ fn init_logging(year: &str, level: LevelFilter) {
         .build();
     let config = Config::builder()
         .appender(Appender::builder().build("stdout", Box::new(stdout)))
-        .logger(Logger::builder().build(format!("aoc{}::solutions", year), level))
+        .logger(Logger::builder().build(format!("aoc{}", year), level))
         .build(Root::builder().appender("stdout").build(LevelFilter::Info))
         .unwrap();
     log4rs::init_config(config).unwrap();
