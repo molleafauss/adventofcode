@@ -29,7 +29,7 @@ pub(crate) trait Solver {
     /// parse the given line
     fn parse(&mut self, line: &str);
     /// solve the puzzle
-    fn solve(&mut self);
+    fn solve(&mut self) -> Option<(String, String)>;
 }
 
 pub(crate) fn solver_for(day: &str) -> Box<dyn Solver> {

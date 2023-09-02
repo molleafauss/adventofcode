@@ -4,6 +4,7 @@
 // had to refactor GridPos to i64 as numbers are getting bigger here.
 
 use std::collections::HashMap;
+use log::{debug, info};
 use once_cell::sync::Lazy;
 use crate::grid::GridPos;
 use crate::Solver;
@@ -153,7 +154,7 @@ impl Solution {
         }
 
         let (old_rocks, old_height) = &self.status[&cache_key];
-        println!("Found cycle: {} => {}: {:?}", old_rocks, self.rocks, cache_key);
+        debug!("Found cycle: {} => {}: {:?}", old_rocks, self.rocks, cache_key);
         if self.height1.is_none() {
             self.height1 = Some(self.calculate_height(MAX_ROCKS_P1, *old_rocks, *old_height));
         }
@@ -189,7 +190,7 @@ impl Solver for Solution {
         self.winds = line.as_bytes().into();
     }
 
-    fn solve(&mut self) {
+    fn solve(&mut self) -> Option<(String, String)> {
         let mut piece = 0;
         while self.height1.is_none() || self.height2.is_none() {
             self.rocks += 1;
@@ -205,11 +206,12 @@ impl Solver for Solution {
                 self.height2 = Some(self.max_height);
             }
             if self.rocks % 1000 == 0 {
-                println!("{} rocks dropped", self.rocks);
+                debug!("{} rocks dropped", self.rocks);
             }
         }
-        println!("[1] Chamber height: {}", self.height1.unwrap());
-        println!("[2] Chamber height: {}", self.height2.unwrap());
+        info!("[1] Chamber height: {}", self.height1.unwrap());
+        info!("[2] Chamber height: {}", self.height2.unwrap());
+        Some((self.height1.unwrap().to_string(), self.height2.unwrap().to_string()))
     }
 }
 

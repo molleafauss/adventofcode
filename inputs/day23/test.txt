@@ -1,3 +1,5 @@
+result part 1: 110
+result part 2: 20
 ....#..
 ..###.#
 #...#.#

@@ -1,3 +1,5 @@
+result part 1: 1728
+result part 2: 2304
 Valve GJ has flow rate=14; tunnels lead to valves UV, AO, MM, UD, GM
 Valve HE has flow rate=0; tunnels lead to valves QE, SV
 Valve ET has flow rate=0; tunnels lead to valves LU, SB

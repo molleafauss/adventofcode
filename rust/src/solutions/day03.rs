@@ -3,6 +3,7 @@
 // separate structure to hold the changes - as modifying while in-flight seems not possible...
 
 use std::collections::HashSet;
+use log::info;
 use crate::Solver;
 
 pub struct Solution {
@@ -75,8 +76,9 @@ impl Solver for Solution {
         }
     }
 
-    fn solve(&mut self) {
-        println!("[1] Priority of item in both compartments {}", self.part1);
-        println!("[2] Overall priority of badges {}", self.part2);
+    fn solve(&mut self) -> Option<(String, String)> {
+        info!("[1] Priority of item in both compartments {}", self.part1);
+        info!("[2] Overall priority of badges {}", self.part2);
+        Some((self.part1.to_string(), self.part2.to_string()))
     }
 }

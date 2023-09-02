@@ -1,3 +1,5 @@
+import logging
+
 from advent import Solver
 
 
@@ -7,6 +9,9 @@ from advent import Solver
 # of course, I had to refactor for solving part 2 as the rope is longer, so I just keep instruction and do all moves
 # starting from a new state (self.rope could also be passed around btw).
 # part 2 highlighted the need of handling a (2, 2) difference
+
+log = logging.getLogger("day.09")
+
 
 MOVES = {
     "R": [1, 0],
@@ -26,19 +31,20 @@ class Solution(Solver):
         self.movements.append((parts[0], int(parts[1])))
 
     def solve(self):
-        visited = self.move_rope(2)
-        print(f"[1] Tail visited {visited} places")
-        visited = self.move_rope(10)
-        print(f"[2] Tail visited {visited} places")
+        visited1 = self.move_rope(2)
+        log.info(f"[1] Tail visited {visited1} places")
+        visited2 = self.move_rope(10)
+        log.info(f"[2] Tail visited {visited2} places")
+        return str(visited1), str(visited2)
 
     def move_rope(self, rope_length):
-        print(f"Moving rope with length {rope_length}")
+        log.debug(f"Moving rope with length {rope_length}")
         self.rope = [[0,0] for _ in range(rope_length)]
         visited = set()
         for m in self.movements:
             dir = m[0]
             steps = m[1]
-            # print(f"{dir} {steps}")
+            # log.debug(f"{dir} {steps}")
             while steps > 0:
                 self.move_head(dir)
                 for i in range(rope_length - 1):

@@ -1,3 +1,5 @@
+result part 1: 7
+result part 2: 19
 mjqjpqmgbljsphdztnvjfqwrcgsmlb
 bvwbjplbgvbhsrlpgdmjqwftvncz
 nppdvjthqldpwncqszvftbrmjlhg

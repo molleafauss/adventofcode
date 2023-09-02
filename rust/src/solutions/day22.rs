@@ -5,6 +5,7 @@
 
 use std::str::FromStr;
 use std::usize;
+use log::{debug, info};
 use crate::Solver;
 
 pub(crate) struct Solution {
@@ -62,7 +63,7 @@ impl Solution {
                 self.faces[face_id].col = next_col;
                 self.faces[face_id].size = self.cube_size - 1;
                 face_id += 1;
-                println!("Found face {} at {}, {}", face_id, next_row, next_col)
+                debug!("Found face {} at {}, {}", face_id, next_row, next_col)
             }
             next_col += self.cube_size;
             if self.map[next_row].len() < next_col {
@@ -70,7 +71,7 @@ impl Solution {
                 next_col = 0;
             }
         }
-        println!("Found {} faces", face_id);
+        debug!("Found {} faces", face_id);
     }
 
     fn add_facing(&mut self, line: &str) {
@@ -157,7 +158,7 @@ impl Solution {
         }
         let adj = &face.facing[dir];
         if adj.1 == ' ' {
-            println!("Crossing face {} / {}: ({}, {}, {}) => ({}, {}, {})",
+            debug!("Crossing face {} / {}: ({}, {}, {}) => ({}, {}, {})",
                   face.id, adj.0, r0 + 1, c0 + 1, DIR_TEXT[dir], r + 1, c + 1, DIR_TEXT[dir]);
             return (r, c, dir);
         }
@@ -165,7 +166,7 @@ impl Solution {
         // cross into new face based on old position
         let pos = fadj.cross(face.relative(r0, c0), dir, adj.1);
         assert!(fadj.contains(pos.0, pos.1));
-        println!("Crossing face {} / {}: ({}, {}, {}) => ({}, {}, {})",
+        debug!("Crossing face {} / {}: ({}, {}, {}) => ({}, {}, {})",
               face.id, adj.0, r0 + 1, c0 + 1, DIR_TEXT[dir], pos.0 + 1, pos.1 + 1, DIR_TEXT[pos.2]);
         pos
     }
@@ -263,29 +264,30 @@ impl Solver for Solution {
 
     }
 
-    fn solve(&mut self) {
-        println!("Path: {} movements+turns", self.path.len());
+    fn solve(&mut self) -> Option<(String, String)> {
+        debug!("Path: {} movements+turns", self.path.len());
         let mut pos = (0, self.map[0].iter().position(|ch| *ch == '.').unwrap(), 0);
-        println!("Starting position: {:?}", pos);
+        debug!("Starting position: {:?}", pos);
         for act in &self.path {
             match act {
                 Move::Walk(steps) => pos = self.part1_walk(pos, *steps),
                 Move::Turn(dir) => pos = self.turn(pos, *dir),
             }
         }
-        let password = (pos.0 + 1) * 1000 + (pos.1 + 1) * 4 + pos.2;
-        println!("[1] final position: {:?} => password {password}", pos);
+        let password1 = (pos.0 + 1) * 1000 + (pos.1 + 1) * 4 + pos.2;
+        info!("[1] final position: {:?} => password {password1}", pos);
 
         let mut pos = (0, self.map[0].iter().position(|ch| *ch == '.').unwrap(), 0);
-        println!("==> Cube walk: starting position: {:?}", pos);
+        debug!("==> Cube walk: starting position: {:?}", pos);
         for act in &self.path {
             match act {
                 Move::Walk(steps) => pos = self.part2_walk(pos, *steps),
                 Move::Turn(dir) => pos = self.turn(pos, *dir),
             }
         }
-        let password = (pos.0 + 1) * 1000 + (pos.1 + 1) * 4 + pos.2;
-        println!("[2] final position: {:?} => password {password}", pos);
+        let password2 = (pos.0 + 1) * 1000 + (pos.1 + 1) * 4 + pos.2;
+        info!("[2] final position: {:?} => password {password2}", pos);
+        Some((password1.to_string(), password2.to_string()))
     }
 }
 

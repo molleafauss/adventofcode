@@ -1,3 +1,5 @@
+import logging
+
 from advent import Solver
 from grid import Point
 from dataclasses import dataclass
@@ -12,6 +14,9 @@ import time
 # Test input had different constraints - hence the extra parse lines to override them.
 #
 # bonus: I discovered python dataclasses. I will have to refactor everything
+
+
+log = logging.getLogger("day.15")
 
 
 RE_SENSOR = re.compile(r"Sensor at x=(-?\d+), y=(-?\d+): closest beacon is at x=(-?\d+), y=(-?\d+)")
@@ -95,29 +100,32 @@ class Solution(Solver):
         self.sensors.append(sensor)
 
     def solve(self):
-        print(f"We have {len(self.sensors)} sensors")
-        print(f"Finding invalid beacon positions at line {self.y}")
+        log.debug(f"We have {len(self.sensors)} sensors")
+        log.debug(f"Finding invalid beacon positions at line {self.y}")
         segments, beacons = self.check_line(self.y)
         segment_size = segment_length(segments) - len(beacons)
-        print(f"[1] invalid set contains {segment_size} elements")
+        log.info(f"[1] invalid set contains {segment_size} elements")
 
-        print(f"Finding possible real beacon positions in area 0-{self.area}")
+        log.debug(f"Finding possible real beacon positions in area 0-{self.area}")
         t0 = time.time()
+        frequency = 0
         for y in range(self.area + 1):
             if (y % 100000) == 0:
-                print(f"Checking line {y}")
+                print(f"Checking line {y}/{self.area}")
             segments, beacons = self.check_line(y)
             # ignore beacons - mark them as not valid
             for b in beacons:
                 merge(segments, b, b)
             if len(segments) == 1 and segments[0].start <= 0 and segments[0].end >= self.area:
                 continue
-            print(f"Found something at y: {y} - {segments}?")
+            log.debug(f"Found something at y: {y} - {segments}?")
             x = segments[0].end + 1
             assert x == segments[1].start - 1
             t1 = time.time()
-            print(f"[2] Found frequency: {x * 4000000 + y} in {t1 - t0} sec")
+            frequency = x * 4000000 + y
+            log.info(f"[2] Found frequency: {frequency} in {t1 - t0} sec")
             break
+        return str(segment_size), str(frequency)
 
     def check_line(self, y):
         segments = []

@@ -1,8 +1,14 @@
+import logging
+
 from advent import Solver
 
 # https://adventofcode.com/2022/day/20
 # "easy" when you just remember to use the modulo list size (-1) when moving items. Handling the encryption key could
 # probably also have used some modul-ing but python can handle those integers
+
+log = logging.getLogger("day.20")
+
+
 FINAL = [1000, 2000, 3000]
 ENCRYPTION_KEY = 811589153
 
@@ -21,15 +27,16 @@ class Solution(Solver):
     def solve(self):
         # part 1
         result = self.mix(self.data.copy())
-        total = self.coordinates(result)
-        print(f"[1] Final coordinates: {total}")
+        total1 = self.coordinates(result)
+        log.info(f"[1] Final coordinates: {total1}")
 
         # part 2
         data = [[val * ENCRYPTION_KEY, pos] for val, pos in self.data]
         for i in range(10):
             data = self.mix(data)
-        total = self.coordinates(data)
-        print(f"[2] Final coordinates: {total}")
+        total2 = self.coordinates(data)
+        log.info(f"[2] Final coordinates: {total2}")
+        return str(total1), str(total2)
 
     def mix(self, data):
         original_idx = 0
@@ -63,7 +70,7 @@ class Solution(Solver):
         for pos in FINAL:
             val = data[(zero + pos) % self.size][0]
             total += val
-            print(f"{pos}: {val} -> {total}")
+            log.debug(f"{pos}: {val} -> {total}")
         return total
 
     def find_original(self, data, idx):

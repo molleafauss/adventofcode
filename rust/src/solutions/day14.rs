@@ -5,6 +5,7 @@
 use std::cmp::max;
 use std::collections::HashMap;
 use std::str::FromStr;
+use log::{debug, info};
 use crate::grid::GridPos;
 use crate::Solver;
 
@@ -37,7 +38,7 @@ impl Solver for Solution {
         for i in 0..parts.len() - 1 {
             let (x0, y0) = parts[i];
             let (x1, y1) = parts[i + 1];
-            println!("Tracing line: ({x0}, {y0}) <=> ({x1}, {y1})");
+            debug!("Tracing line: ({x0}, {y0}) <=> ({x1}, {y1})");
             if x0 == x1 {
                 // horizontal line
                 match y1 > y0 {
@@ -57,8 +58,8 @@ impl Solver for Solution {
         }
     }
 
-    fn solve(&mut self) {
-        println!("Max y {} / walls {}", self.max_y, self.scan.len());
+    fn solve(&mut self) -> Option<(String, String)> {
+        debug!("Max y {} / walls {}", self.max_y, self.scan.len());
         // part 1
         let mut keep_dripping = true;
         let mut sand = 0;
@@ -88,10 +89,11 @@ impl Solver for Solution {
             // if reached the abyss - stop
             keep_dripping = y <= self.max_y;
         }
-        println!("[1] Sand resting: {sand}");
+        let part1_sand = sand;
+        info!("[1] Sand resting: {part1_sand}");
 
         self.scan.retain(|_, v| *v == '#');
-        println!("Part 2 - starting with {}", self.scan.len());
+        debug!("Part 2 - starting with {}", self.scan.len());
 
         // part 2
         self.max_y += 2;
@@ -129,6 +131,7 @@ impl Solver for Solution {
             // if reached the abyss - stop
             keep_dripping = !self.scan.contains_key(&start_pos);
         }
-        println!("[2] Sand resting: {sand}");
+        info!("[2] Sand resting: {sand}");
+        Some((part1_sand.to_string(), sand.to_string()))
     }
 }

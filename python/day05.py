@@ -1,3 +1,4 @@
+import logging
 import re
 from advent import Solver
 
@@ -6,6 +7,9 @@ from advent import Solver
 # entire file. I could not figure a way to build stacks while reading the file. Glad I didn't, as second part had to
 # start from the initial status again. I know parsing isn't the most elegant.
 # But we had regexp for the instructions!
+
+log = logging.getLogger("day.05")
+
 
 RE_INSTRUCTION = re.compile(r"move (\d+) from (\d+) to (\d+)")
 
@@ -30,12 +34,13 @@ class Solution(Solver):
         self.stack_defs.reverse()
         self.build_stacks()
         self.move_singles()
-        result = "".join([st.pop() for st in self.stacks])
-        print(f"[1] Top stacks values: {result}")
+        result1 = "".join([st.pop() for st in self.stacks])
+        log.info(f"[1] Top stacks values: {result1}")
         self.build_stacks()
         self.move_multiples()
-        result = "".join([st.pop() for st in self.stacks])
-        print(f"[2] Top stacks values: {result}")
+        result2 = "".join([st.pop() for st in self.stacks])
+        log.info(f"[2] Top stacks values: {result2}")
+        return result1, result2
 
     def add_instructions(self, line):
         mo = RE_INSTRUCTION.match(line)
@@ -47,7 +52,7 @@ class Solution(Solver):
         for level in self.stack_defs:
             if not num_stacks:
                 num_stacks = int(level.rsplit(" ", maxsplit=1)[-1].strip())
-                print(f"Found {num_stacks} stacks")
+                log.debug(f"Found {num_stacks} stacks")
                 self.stacks = [[] for _ in range(num_stacks)]
                 continue
 

@@ -1,3 +1,4 @@
+import logging
 import math
 
 from advent import Solver
@@ -6,6 +7,9 @@ import re
 # https://adventofcode.com/2022/day/11
 # ok I had no clue about how to reduce the math - the use modulo of all "divisible by" was a hint that lead to the right
 # solution
+
+log = logging.getLogger("day.11")
+
 RE_MONKEY = re.compile(r"Monkey (\d+):")
 RE_ITEMS = re.compile("Starting items: (.*)")
 RE_OPERATION = re.compile("Operation: new = (.*)")
@@ -83,7 +87,7 @@ class Solution(Solver):
 
     def solve(self):
         reducer = math.prod([m.test[0] for m in self.monkeys])
-        print(f"reducer: {reducer}")
+        log.debug(f"reducer: {reducer}")
         for m in self.monkeys:
             m.start()
         for i in range(20):
@@ -93,7 +97,8 @@ class Solution(Solver):
 
         # sort by most inspected, take first twos
         most_active = sorted(self.monkeys, reverse=True, key=lambda m: m.inspected)
-        print(f"[1] Most active: {most_active[0].id} => {most_active[0].inspected}, {most_active[1].id} => {most_active[1].inspected}: {most_active[0].inspected * most_active[1].inspected}")
+        result1 = most_active[0].inspected * most_active[1].inspected
+        log.info(f"[1] Most active: {most_active[0].id} => {most_active[0].inspected}, {most_active[1].id} => {most_active[1].inspected}: {result1}")
 
         # reset
         for m in self.monkeys:
@@ -102,9 +107,9 @@ class Solution(Solver):
             for m in self.monkeys:
                 for (id, item) in m.act(1, reducer):
                     self.monkeys[id].add_item(item)
-            if i % 1000 == 0:
-                print("[%s] %s" % (i, [m.inspected for m in self.monkeys]))
 
         # sort by most inspected, take first twos
         most_active = sorted(self.monkeys, reverse=True, key=lambda m: m.inspected)
-        print(f"[1] Most active: {most_active[0].id} => {most_active[0].inspected}, {most_active[1].id} => {most_active[1].inspected}: {most_active[0].inspected * most_active[1].inspected}")
+        result2 = most_active[0].inspected * most_active[1].inspected
+        log.info(f"[2] Most active: {most_active[0].id} => {most_active[0].inspected}, {most_active[1].id} => {most_active[1].inspected}: {result2}")
+        return str(result1), str(result2)

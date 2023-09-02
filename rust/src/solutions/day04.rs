@@ -2,6 +2,7 @@
 // fun with iterators, how to extract from them and how to check splits don't have extra values.
 
 use std::str::FromStr;
+use log::info;
 use crate::Solver;
 
 pub(crate) struct Solution {
@@ -57,8 +58,9 @@ impl Solver for Solution {
         }
     }
 
-    fn solve(&mut self) {
-        println!("[1] Fully overlapping sections: {}", self.full_overlaps);
-        println!("[2] Partially overlapping sections: {}", self.partial_overlaps);
+    fn solve(&mut self) -> Option<(String, String)> {
+        info!("[1] Fully overlapping sections: {}", self.full_overlaps);
+        info!("[2] Partially overlapping sections: {}", self.partial_overlaps);
+        Some((self.full_overlaps.to_string(), self.partial_overlaps.to_string()))
     }
 }

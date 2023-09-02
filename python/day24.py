@@ -1,3 +1,4 @@
+import logging
 from dataclasses import dataclass
 
 from advent import Solver
@@ -6,6 +7,9 @@ from grid import GridPos, dir_from_char, DIR_N, DIR_E, DIR_S, DIR_W, char_from_d
 
 # https://adventofcode.com/2022/day/24
 # once the first was done, it was a matter of refactoring it to do the back and forth
+
+log = logging.getLogger("day.24")
+
 
 @dataclass
 class Blizzard:
@@ -45,15 +49,16 @@ class Solution(Solver):
         self.height += 1
 
     def solve(self):
-        print(f"Tracing path from {self.entry} => {self.exit}")
-        t = self.find_path(self.entry, self.exit, 0)
-        print(f"[1] Found exit in: {t}")
-        t = self.find_path(self.exit, self.entry, t)
-        t = self.find_path(self.entry, self.exit, t)
-        print(f"[2] Total time: {t}")
+        log.debug(f"Tracing path from {self.entry} => {self.exit}")
+        t1 = self.find_path(self.entry, self.exit, 0)
+        log.info(f"[1] Found exit in: {t1}")
+        t2 = self.find_path(self.exit, self.entry, t1)
+        t2 = self.find_path(self.entry, self.exit, t2)
+        log.info(f"[2] Total time: {t2}")
+        return str(t1), str(t2)
 
     def find_path(self, entry, exit, t):
-        print(f"Finding path {entry} => {exit} starting at {t}")
+        log.debug(f"Finding path {entry} => {exit} starting at {t}")
         exit_reached = False
         steps = [(entry, t)]
         visited = set()

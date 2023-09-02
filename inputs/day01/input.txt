@@ -1,3 +1,5 @@
+result part 1: 66487
+result part 2: 197301
 4514
 8009
 6703

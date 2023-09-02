@@ -4,6 +4,7 @@
 // (only due to debug target - release build took 10s - all good)
 
 use std::collections::HashMap;
+use log::{debug, info};
 use crate::Solver;
 use crate::grid::{GridPos, MOVE_D, MOVE_L, MOVE_R, MOVE_U};
 
@@ -37,7 +38,7 @@ impl Solution {
                 costs.insert(pos, v);
             })
         });
-        println!("=== Finding path {start} => {end} [costs: {}]", costs.len());
+        debug!("=== Finding path {start} => {end} [costs: {}]", costs.len());
         let mut parents = HashMap::new();
         let mut next_node = start.clone();
         while next_node != *end {
@@ -118,26 +119,33 @@ impl Solver for Solution {
         self.height += 1;
     }
 
-    fn solve(&mut self) {
+    fn solve(&mut self) -> Option<(String, String)> {
         assert!(self.start.is_some() && self.end.is_some(), "Start or end not found?");
 
         let parents = self.walk(&self.start.as_ref().unwrap());
         let path = self.walk_back(parents, &self.start.as_ref().unwrap());
-        let mut min_length = path.len();
-        println!("[1] Min length found: {min_length}");
+        let part1_min_length = path.len();
+        info!("[1] Min length found: {part1_min_length}");
 
         // finding shortest
         let mut min_start = self.start.as_ref().unwrap();
+        let mut part2_min_length = self.map.len() + 1;
+        let mut visited = 0;
         self.map.iter()
             .filter(|e| e.1 == &LOWEST)
             .map(|e| e.0)
             .for_each(|start| {
+                visited += 1;
+                if visited % 100 == 0 {
+                    println!("{visited} visited ...")
+                }
                 let path = self.walk_back(self.walk(start), start);
-                if path.len() > 0 && path.len() < min_length {
+                if path.len() > 0 && path.len() < part2_min_length {
                     min_start = start;
-                    min_length = path.len();
+                    part2_min_length = path.len();
                 }
             });
-        println!("[2] Shortest path from {min_start}: {min_length}")
+        info!("[2] Shortest path from {min_start}: {part2_min_length}");
+        Some((part1_min_length.to_string(), part2_min_length.to_string()))
     }
 }

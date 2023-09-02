@@ -2,6 +2,7 @@
 // mostly smooth sailing, some clones needed to make borrow checker happy
 
 use std::collections::{HashSet, VecDeque};
+use log::{debug, info};
 use crate::grid::{GridPos, MOVE_D, MOVE_L, MOVE_R, MOVE_U};
 use crate::Solver;
 
@@ -39,7 +40,7 @@ impl Solution {
     }
 
     fn find_path(&mut self, entry: GridPos, exit: GridPos, t: i64) -> i64 {
-        println!("Finding path {entry} => {exit} starting at {t}");
+        debug!("Finding path {entry} => {exit} starting at {t}");
         let mut steps = VecDeque::from([(entry, t)]);
         let mut visited = HashSet::new();
         // need copies to avoid second borrow:
@@ -111,14 +112,15 @@ impl Solver for Solution {
         self.height += 1;
     }
 
-    fn solve(&mut self) {
-        println!("Tracing path from {:?} => {:?}", self.entry, self.exit);
+    fn solve(&mut self) -> Option<(String, String)> {
+        debug!("Tracing path from {:?} => {:?}", self.entry, self.exit);
         self.blizzards_at_time(0);
-        let mut t = self.find_path(self.entry.clone(), self.exit.clone(), 0);
-        println!("[1] Found exit in: {t}");
-        t = self.find_path(self.exit.clone(), self.entry.clone(), t);
-        t = self.find_path(self.entry.clone(), self.exit.clone(), t);
-        println!("[2] Total time: {t}");
+        let t1 = self.find_path(self.entry.clone(), self.exit.clone(), 0);
+        info!("[1] Found exit in: {t1}");
+        let mut t2 = self.find_path(self.exit.clone(), self.entry.clone(), t1);
+        t2 = self.find_path(self.entry.clone(), self.exit.clone(), t2);
+        info!("[2] Total time: {t2}");
+        Some((t1.to_string(), t2.to_string()))
     }
 }
 

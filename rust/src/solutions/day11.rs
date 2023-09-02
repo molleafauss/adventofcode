@@ -5,6 +5,7 @@
 
 use std::str::FromStr;
 use std::usize;
+use log::{debug, info};
 use once_cell::sync::Lazy;
 use regex::Regex;
 use crate::Solver;
@@ -22,7 +23,7 @@ impl Solution {
 
     fn run_loops(&mut self, iterations: u32, reduce_worry: u64, reducer: u64) -> u64 {
         self.monkeys.iter_mut().for_each(|m| m.start());
-        (0..iterations).for_each(|i| {
+        (0..iterations).for_each(|_i| {
             // not clear if I can use an iter here
             (0..self.monkeys.len()).for_each(|i| {
                 self.monkeys[i].act(reduce_worry, reducer)
@@ -30,15 +31,15 @@ impl Solution {
                     .for_each(|(id, item)| self.monkeys[*id].add_item(*item));
             });
 
-            if i % 1000 == 0 {
-                let mut vals = String::from("[");
-                self.monkeys.iter().for_each(|m| {
-                    vals.push_str(&m.inspected.to_string());
-                    vals.push_str(", ")
-                });
-                vals.push_str("]");
-                println!("[{}] {}", i, vals);
-            }
+            // if i % 1000 == 0 {
+            //     let mut vals = String::from("[");
+            //     self.monkeys.iter().for_each(|m| {
+            //         vals.push_str(&m.inspected.to_string());
+            //         vals.push_str(", ")
+            //     });
+            //     vals.push_str("]");
+            //     println!("[{}] {}", i, vals);
+            // }
         });
 
         let mut result: Vec<(usize, u32)> = self.monkeys.iter()
@@ -46,8 +47,8 @@ impl Solution {
             .collect();
         result.sort_by_key(|it| it.1);
         result.reverse();
-        println!("1st {} => {}", result[0].0, result[0].1);
-        println!("2nd {} => {}", result[1].0, result[1].1);
+        info!("1st {} => {}", result[0].0, result[0].1);
+        info!("2nd {} => {}", result[1].0, result[1].1);
         result[0].1 as u64 * result[1].1 as u64
     }
 }
@@ -75,15 +76,16 @@ impl Solver for Solution {
         }
     }
 
-    fn solve(&mut self) {
+    fn solve(&mut self) -> Option<(String, String)> {
         let reducer = self.monkeys.iter().map(|m| m.test.0).product();
-        println!("Reducer: {reducer}");
+        debug!("Reducer: {reducer}");
 
-        let total_inspected = self.run_loops(20, 3, reducer);
-        println!("[1] top 2 inspected: {total_inspected}");
+        let part1_inspected = self.run_loops(20, 3, reducer);
+        info!("[1] top 2 inspected: {part1_inspected}");
 
-        let total_inspected = self.run_loops(10000, 1, reducer);
-        println!("[2] top 2 inspected: {total_inspected}");
+        let part2_inspected = self.run_loops(10000, 1, reducer);
+        info!("[2] top 2 inspected: {part2_inspected}");
+        Some((part1_inspected.to_string(), part2_inspected.to_string()))
     }
 }
 
@@ -116,7 +118,7 @@ impl Monkey {
     }
 
     fn set_operation(&mut self, operation: &str) {
-        println!("Operation for monkey {}: {operation}", self.id);
+        debug!("Operation for monkey {}: {operation}", self.id);
         self.operation.parse(operation);
     }
 

@@ -1,3 +1,5 @@
+result part 1: 1454188
+result part 2: 4183246
 $ cd /
 $ ls
 dir cmvqf

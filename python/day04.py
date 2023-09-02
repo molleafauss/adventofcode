@@ -1,3 +1,5 @@
+import logging
+
 from advent import Solver
 
 
@@ -5,6 +7,9 @@ from advent import Solver
 # overlap comparisons were probably cleaner if they were placed into functions
 # the partial overlap was probably working instead calculated as inverted (= one segment ends being outside range of
 # the other segment)
+
+log = logging.getLogger("day.04")
+
 
 def inside(pos, range):
     return range[0] <= pos <= range[1]
@@ -30,5 +35,7 @@ class Solution(Solver):
             self.partial_overlaps += 1
 
     def solve(self):
-        print(f"Fully overlapping sections: {self.full_overlaps}")
-        print(f"Partially overlapping sections: {self.partial_overlaps}")
+        log.info(f"Fully overlapping sections: {self.full_overlaps}")
+        log.info(f"Partially overlapping sections: {self.partial_overlaps}")
+        return str(self.full_overlaps), str(self.partial_overlaps)
+

@@ -1,3 +1,4 @@
+import logging
 import re
 from dataclasses import dataclass
 
@@ -7,6 +8,10 @@ from advent import Solver
 # reasonably simple. I did calculate using recursion and was worried that it could hit a stack overflow (too many tree
 # levels, but it didn't
 # Inversion was also simple - I only had to visualize the equations as I was inverting them wrongly :facepalm:
+
+log = logging.getLogger("day.21")
+
+
 RE_OP = re.compile(r"(\S+) ([+\-*/]) (\S+)")
 HUMAN = "humn"
 
@@ -36,11 +41,12 @@ class Solution(Solver):
 
         # part 1
         result = self.calculate(self.monkeys["root"])
-        print(f"[1] Result is {result}")
+        log.info(f"[1] Result is {result}")
 
         # part 2
         value = self.balance(self.monkeys["root"])
-        print(f"[2] HUMN {value}")
+        log.info(f"[2] HUMN {value}")
+        return str(int(result)), str(int(value))
 
     def balance(self, monkey):
         balance = None
@@ -54,7 +60,7 @@ class Solution(Solver):
                 human = 0
                 value = self.calculate(self.monkeys[monkey.operation[2]], True)
             if not balance:
-                print(f"Found root branch value: {value}")
+                log.debug(f"Found root branch value: {value}")
                 balance = value
             else:
                 balance = self.invert_op(monkey, balance, value, human == 0)
@@ -62,7 +68,7 @@ class Solution(Solver):
         return int(balance)
 
     def invert_op(self, monkey, balance, value, first):
-        print(f"Inverting {'x' if first else value} {monkey.operation[1]} {value if first else 'x'} = {balance}")
+        log.debug(f"Inverting {'x' if first else value} {monkey.operation[1]} {value if first else 'x'} = {balance}")
         match monkey.operation[1]:
             case "+":
                 return balance - value
@@ -86,16 +92,10 @@ class Solution(Solver):
             case "+":
                 return left + right
             case "-":
-                value = left - right
-                if value < 0:
-                    print(f"{monkey.name}: {left} - {right} = {value}")
-                return value
+                return left - right
             case "*":
                 return left * right
             case "/":
-                value = left / right
-                if value < 0:
-                    print(f"{monkey.name}: {left} / {right} = {value}")
-                return value
+                return left / right
             case "_":
                 raise ValueError(f"Invalid operation: {monkey.operation}")

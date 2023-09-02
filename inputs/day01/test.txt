@@ -1,3 +1,5 @@
+result part 1: 24000
+result part 2: 45000
 1000
 2000
 3000
