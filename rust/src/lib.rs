@@ -57,18 +57,18 @@ fn solve(filename: &str, mut parser: Box<dyn Solver>) {
     }
 }
 
-fn solve_day(day: String, solver_for: fn(day: &str) -> Box<dyn Solver>) {
+fn solve_day(year: &str, day: String, solver_for: fn(day: &str) -> Box<dyn Solver>) {
     info!("== Solving {day} ==");
 
     // assume 'input' is a directory in the current directory
-    let test_file = format!("inputs/2022/{day}/test.txt");
+    let test_file = format!("inputs/{year}/{day}/test.txt");
     if !Path::new(&test_file).exists() {
         error!("ERROR: test file {test_file} does not exist");
         exit(-1);
     }
     solve(&test_file, solver_for(&day));
 
-    let input_file = format!("inputs/2022/{day}/input.txt");
+    let input_file = format!("inputs/{year}/{day}/input.txt");
     if !Path::new(&input_file).exists() {
         error!("ERROR: input file {input_file} does not exist");
         exit(-1);
@@ -76,35 +76,35 @@ fn solve_day(day: String, solver_for: fn(day: &str) -> Box<dyn Solver>) {
     solve(&input_file, solver_for(&day));
 }
 
-fn solve_all(solver_for: fn(day: &str) -> Box<dyn Solver>) {
+fn solve_all(year: &str, solver_for: fn(day: &str) -> Box<dyn Solver>) {
     for day in 1..26 {
-        solve_day(format!("day{:02}", day), solver_for);
+        solve_day(year, format!("day{:02}", day), solver_for);
     }
 }
 
-fn init_logging(year: &str) {
+fn init_logging(year: &str, level: LevelFilter) {
     let stdout = ConsoleAppender::builder()
         .encoder(Box::new(PatternEncoder::new("{l} | {t} | {m}{n}")))
         .build();
     let config = Config::builder()
         .appender(Appender::builder().build("stdout", Box::new(stdout)))
-        .logger(Logger::builder().build(format!("aoc{}::solutions", year), LevelFilter::Warn))
+        .logger(Logger::builder().build(format!("aoc{}::solutions", year), level))
         .build(Root::builder().appender("stdout").build(LevelFilter::Info))
         .unwrap();
     log4rs::init_config(config).unwrap();
 }
 
-pub fn advent_of_code(year: &str, solver_for: fn(day: &str) -> Box<dyn Solver>) {
+pub fn advent_of_code(year: &str, solver_for: fn(day: &str) -> Box<dyn Solver>, level: LevelFilter) {
     let mut args = env::args();
     if args.len() < 2 {
         println!("Please specify a day to resolve like 'day03'");
         return;
     }
-    init_logging(year);
+    init_logging(year, level);
     let day = args.nth(1).unwrap();
     if day == "all" {
-        solve_all(solver_for);
+        solve_all(year, solver_for);
     } else {
-        solve_day(day, solver_for);
+        solve_day(year, day, solver_for);
     }
 }

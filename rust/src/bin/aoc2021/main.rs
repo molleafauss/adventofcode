@@ -1,5 +1,6 @@
 mod day01;
 
+use log::LevelFilter;
 use adventofcode::Solver;
 
 fn solver_for(day: &str) -> Box<dyn Solver> {
@@ -10,5 +11,5 @@ fn solver_for(day: &str) -> Box<dyn Solver> {
 }
 
 fn main() {
-    adventofcode::advent_of_code("2021", solver_for);
+    adventofcode::advent_of_code("2021", solver_for, LevelFilter::Debug);
 }
