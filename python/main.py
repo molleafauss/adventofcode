@@ -46,10 +46,10 @@ def solve_day(day):
     logging.info(f"== Solving {day} ==")
     module = __import__(day)
     # test input
-    test_data = pathlib.Path(__file__).parent / f"../inputs/{day}/test.txt"
+    test_data = pathlib.Path(__file__).parent / f"../inputs/2022/{day}/test.txt"
     solve(test_data, module.Solution())
     # real input
-    input_data = pathlib.Path(__file__).parent / f"../inputs/{day}/input.txt"
+    input_data = pathlib.Path(__file__).parent / f"../inputs/2022/{day}/input.txt"
     solve(input_data, module.Solution())
 
 
