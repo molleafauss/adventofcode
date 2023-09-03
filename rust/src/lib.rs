@@ -94,7 +94,7 @@ fn init_logging(year: &str, level: LevelFilter) {
     log4rs::init_config(config).unwrap();
 }
 
-pub fn advent_of_code(year: &str, solver_for: fn(day: &str) -> Box<dyn Solver>, level: LevelFilter) {
+pub fn run(year: &str, solver_for: fn(day: &str) -> Box<dyn Solver>, level: LevelFilter) {
     let mut args = env::args();
     if args.len() < 2 {
         println!("Please specify a day to resolve like 'day03'");
