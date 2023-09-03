@@ -1,3 +1,5 @@
+// https://adventofcode.com/2021/day/1
+
 use std::collections::VecDeque;
 use std::str::FromStr;
 use log::{debug, info};
