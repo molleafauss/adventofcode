@@ -17,5 +17,5 @@ fn solver_for(day: &str) -> Box<dyn Solver> {
 }
 
 fn main() {
-    adventofcode::run("2021", solver_for, LevelFilter::Debug);
+    adventofcode::run("2021", solver_for, LevelFilter::Info);
 }
