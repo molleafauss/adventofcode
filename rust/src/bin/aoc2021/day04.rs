@@ -36,23 +36,43 @@ impl Solver for Solution {
 
     fn solve(&mut self) -> Option<(String, String)> {
         info!("Found {} draws and {} boards", self.draws.len(), self.boards.len());
-        let mut part1 = 0;
-        self.draws.iter().any(|num| {
+        let mut part1 = None;
+        let mut win = 0;
+        let mut last_num = 0;
+        let mut last_id = 0;
+        for num in &self.draws {
+            if win == self.boards.len() - 1 {
+                // find last that will win
+                last_id = self.boards.iter().find(|b| !b.win).unwrap().id;
+            }
+            if win == self.boards.len() {
+                // all have won
+                break;
+            }
+            last_num = *num;
             for b in &mut self.boards {
                 if let Some(score) = b.draw(*num) {
-                    part1 = score;
-                    return true;
+                    win += 1;
+                    if part1.is_none() {
+                        part1 = Some(score);
+                    }
                 }
             }
-            return false;
-        });
-        info!("[1] Part 1 result: {part1}");
+        }
+        info!("[1] Part 1 result: {}", part1.unwrap());
 
-        Some((part1.to_string(), String::new()))
+        // find the board which has not yet win and calculate the score
+        let last_board = self.boards.iter().find(|b| b.id == last_id).unwrap();
+        let last_score = last_board.score();
+        let part2 = last_score * last_num;
+        info!("[2] Part 2 result: last score {}, last_num {} => {}", last_score, last_num, part2);
+
+        Some((part1.unwrap().to_string(), part2.to_string()))
     }
 }
 
 struct Board {
+    win: bool,
     id: usize,
     table: [[(u32, bool); 5]; 5],
     line: usize,
@@ -62,6 +82,7 @@ impl Board {
     fn new(id: usize) -> Board {
         Board {
             id,
+            win: false,
             table: [[(0, false); 5]; 5],
             line: 0,
         }
@@ -78,6 +99,9 @@ impl Board {
     }
 
     fn draw(&mut self, num: u32) -> Option<u32> {
+        if self.win {
+            return None;
+        }
         // check if the number is in the table
         let mut pos = None;
         for row in 0..5 {
@@ -104,17 +128,22 @@ impl Board {
         let full_col = (0..5).into_iter().all(|row| self.table[row][col].1);
 
         if full_row || full_col {
-            // sum all unmarked numbers
-            let sum = (0..5).into_iter().map(|row| {
-                (0..5).into_iter()
-                    .filter(|col| self.table[row][*col].1 == false)
-                    .map(|col| self.table[row][col].0)
-                    .sum::<u32>()
-            }).sum::<u32>();
+            let sum = self.score();
             debug!("Board {}: winner on {num} - {full_row}/{full_col} ({row}, {col}) => unmarked {sum}", self.id);
+            self.win = true;
             return Some(sum * num);
         }
 
         None
+    }
+
+    fn score(&self) -> u32 {
+        // sum all unmarked numbers
+        (0..5).into_iter().map(|row| {
+            (0..5).into_iter()
+                .filter(|col| self.table[row][*col].1 == false)
+                .map(|col| self.table[row][col].0)
+                .sum::<u32>()
+        }).sum::<u32>()
     }
 }
