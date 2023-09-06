@@ -3,7 +3,7 @@
 use std::collections::HashMap;
 use std::str::FromStr;
 use log::{debug, info};
-use adventofcode::grid::{GridPos, MOVE_D, MOVE_L, MOVE_R, MOVE_U};
+use adventofcode::grid::GridPos;
 use adventofcode::Solver;
 
 pub struct Solution {
@@ -36,7 +36,7 @@ impl Solver for Solution {
                     val.0 += 1;
                 } else {
                     val.1 += 1;
-                }).or_insert((1, 0));
+                }).or_insert(if straight { (1, 0) } else { (0, 1) });
             if pos == end {
                 break;
             }
@@ -45,13 +45,13 @@ impl Solver for Solution {
     }
 
     fn solve(&mut self) -> Option<(String, String)> {
-        let part1 = self.map.iter().filter(|(k, v)| v.0 > 1_u32).count();
-        info!("[1] points with overlaps: {part1}");
+        let part1 = self.map.iter().filter(|(_k, v)| v.0 > 1_u32).count();
+        info!("[1] points with overlaps (only straight lines): {part1}");
 
-        let part2 = self.map.iter().filter(|(k, v)| (v.0 + v.1) > 1_u32).count();
-        info!("[1] points with overlaps: {part1}");
+        let part2 = self.map.iter().filter(|(_k, v)| (v.0 + v.1) > 1_u32).count();
+        info!("[2] points with overlaps (including diagonal): {part2}");
 
-        Some((part1.to_string(), String::new()))
+        Some((part1.to_string(), part2.to_string()))
     }
 }
 
