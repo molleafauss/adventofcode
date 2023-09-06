@@ -7,7 +7,7 @@ use adventofcode::grid::{GridPos, MOVE_D, MOVE_L, MOVE_R, MOVE_U};
 use adventofcode::Solver;
 
 pub struct Solution {
-    map: HashMap<GridPos, u32>,
+    map: HashMap<GridPos, (u32, u32)>,
 }
 
 impl Solution {
@@ -24,19 +24,19 @@ impl Solver for Solution {
             .map(|(start, end)| (map_point(start), map_point(end)))
             .unwrap();
         // add all line points to the map - adding up for every point
-        let delta = match (start.row - end.row, start.col - end.col) {
-            (0, _) => if end.col > start.col { Some(MOVE_R) } else { Some(MOVE_L) }
-            (_, 0) => if end.row > start.row { Some(MOVE_U) } else { Some(MOVE_D) }
-            _ => None,
-        };
-        if delta.is_none() {
-            debug!("Not a straight line: {:?} => {:?} - ignoring", start, end);
-            return;
-        }
+        let dx = if end.col > start.col { 1 } else if start.col > end.col { -1 } else { 0 };
+        let dy = if end.row > start.row { 1 } else if start.row > end.row { -1 } else { 0 };
+        let straight = dx == 0 || dy == 0;
         let mut pos = start.clone();
-        let delta = delta.unwrap();
+        let delta = GridPos::of(dx, dy);
+        debug!("Moving {:?} => {:?} - delta {:?} - straight {}", start, end, delta, straight);
         loop {
-            self.map.entry(pos.clone()).and_modify(|val| *val += 1).or_insert(1);
+            self.map.entry(pos.clone()).and_modify(|val|
+                if straight {
+                    val.0 += 1;
+                } else {
+                    val.1 += 1;
+                }).or_insert((1, 0));
             if pos == end {
                 break;
             }
@@ -45,7 +45,10 @@ impl Solver for Solution {
     }
 
     fn solve(&mut self) -> Option<(String, String)> {
-        let part1 = self.map.iter().filter(|v| *v.1 > 1_u32).count();
+        let part1 = self.map.iter().filter(|(k, v)| v.0 > 1_u32).count();
+        info!("[1] points with overlaps: {part1}");
+
+        let part2 = self.map.iter().filter(|(k, v)| (v.0 + v.1) > 1_u32).count();
         info!("[1] points with overlaps: {part1}");
 
         Some((part1.to_string(), String::new()))
