@@ -46,11 +46,11 @@ impl GridPos {
 
     /// if GridPos is within a square 0..width, 0..height, return an index into a linear array, else
     /// return none.
-    pub fn to_linear(&self, width: usize, height: usize) -> Option<i64> {
+    pub fn to_linear(&self, width: usize, height: usize) -> Option<usize> {
         if self.col < 0 || self.col >= width as i64 || self.row < 0 || self.row >= height as i64 {
             return None
         }
-        Some(self.row * width as i64 + self.col)
+        Some(self.row as usize * width + self.col as usize)
     }
 }
 

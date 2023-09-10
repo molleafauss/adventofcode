@@ -1,5 +1,5 @@
 result part 1: 15
-result part 2: 0
+result part 2: 1134
 2199943210
 3987894921
 9856789892
