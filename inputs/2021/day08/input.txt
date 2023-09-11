@@ -1,4 +1,4 @@
-result part 1: 0
+result part 1: 288
 result part 2: 0
 ecgabfd gfbe dgbeaf aeg gfbda eg bgdcaf efgdca abced eadgb | begf decgfa aeg eg
 ebfg bfgdea gaf gf baedgc dafec cfdabg ecfabgd fdgea dbaeg | gaedbc egbf dbgcea dagfebc
