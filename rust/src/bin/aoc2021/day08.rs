@@ -1,6 +1,6 @@
 // https://adventofcode.com/2021/day/8
 
-use log::{debug, info};
+use log::info;
 use adventofcode::Solver;
 
 pub struct Solution {
@@ -18,7 +18,7 @@ impl Solution {
 impl Solver for Solution {
     fn parse(&mut self, line: &str) {
         // simple part - just count the patterns for the indicated numbers.
-        let (patterns, output) = line.split_once(" | ").unwrap();
+        let (_patterns, output) = line.split_once(" | ").unwrap();
         for digit in output.split(" ") {
             let dlen = digit.len();
             // if it's a 1, 4, 7, 8
