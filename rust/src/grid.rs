@@ -14,6 +14,8 @@ pub const MOVE_UR : GridPos = GridPos::of(1, 1);
 pub const MOVE_UL : GridPos = GridPos::of(-1, 1);
 pub const MOVE_DL : GridPos = GridPos::of(-1, -1);
 pub const MOVE_DR : GridPos = GridPos::of(1, -1);
+pub const ALL_ORTHOGONAL: [GridPos; 4] = [MOVE_U, MOVE_R, MOVE_D, MOVE_L];
+pub const ALL_SURROUNDING: [GridPos; 8] = [MOVE_U, MOVE_UR, MOVE_R, MOVE_DR, MOVE_D, MOVE_DL, MOVE_L, MOVE_UL];
 
 impl GridPos {
     /// Creates a position from the x/y pair given.
