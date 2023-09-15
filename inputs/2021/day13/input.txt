@@ -1,5 +1,4 @@
-result part 1: -
-result part 2: -
+result part 1: 716
 1101,291
 221,448
 1098,383
