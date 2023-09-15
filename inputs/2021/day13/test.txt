@@ -1,5 +1,4 @@
 result part 1: 17
-result part 2: -
 6,10
 0,14
 9,10

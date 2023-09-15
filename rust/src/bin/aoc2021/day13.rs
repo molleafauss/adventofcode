@@ -2,7 +2,9 @@
 
 use std::collections::HashSet;
 use std::str::FromStr;
-use log::{debug, info};
+
+use log::info;
+
 use adventofcode::grid::GridPos;
 use adventofcode::Solver;
 
@@ -42,6 +44,20 @@ impl Solution {
             });
         self.dots = not_move;
     }
+
+    fn print_dots(&self) {
+        let width = self.dots.iter().map(|dot| dot.col).max().unwrap() + 1;
+        let height = self.dots.iter().map(|dot| dot.row).max().unwrap() + 1;
+        let mut row = 0;
+        while row < height {
+            let mut line = vec!['.'; width as usize];
+            self.dots.iter()
+                .filter(|dot| dot.row == row)
+                .for_each(|dot| line[dot.col as usize] = '#');
+            println!("{}", line.iter().collect::<String>());
+            row += 1;
+        }
+    }
 }
 
 impl Solver for Solution {
@@ -74,6 +90,8 @@ impl Solver for Solution {
 
     fn solve(&mut self) -> Option<(String, String)> {
         info!("[1] Dots visible after first fold: {}", self.part1);
+
+        self.print_dots();
 
         Some((self.part1.to_string(), String::new()))
     }
