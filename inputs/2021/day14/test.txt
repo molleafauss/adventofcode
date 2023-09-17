@@ -1,5 +1,5 @@
 result part 1: 1588
-result part 2: -
+result part 2: 2188189693529
 NNCB
 
 CH -> B
