@@ -1,4 +1,4 @@
-// https://adventofcode.com/2021/day/1
+// https://adventofcode.com/2021/day/14
 
 use std::collections::HashMap;
 use log::{debug, info};
@@ -36,17 +36,30 @@ impl Solver for Solution {
     fn solve(&mut self) -> Option<(String, String)> {
         info!("transforimg polymer {:?}", self.polymer);
 
+        let mut counts = HashMap::new();
+        self.polymer.iter()
+            .for_each(|ch| { counts.entry(ch.clone()).and_modify(|val| *val += 1).or_insert(1_usize); });
+        debug!("Initial counts: {:?}", counts);
         for it in 0..10 {
             let mut i = 0;
             while i < self.polymer.len() - 1 {
                 let pair = (self.polymer[i], self.polymer[i+1]);
                 let generated = self.mapping.get(&pair).unwrap();
-                self.polymer.insert(i, *generated);
+                counts.entry(*generated).and_modify(|val| *val += 1).or_insert(1);
+                self.polymer.insert(i + 1, *generated);
                 i += 2;
             }
+            debug!("Iteration {} - counts: {:?}", it, counts);
         }
-        debug!("Final polymer length: {}", self.polymer.len());
+        debug!("Final polymer length: {} - counts: {:?}", self.polymer.len(), counts);
+        let mut counts: Vec<(char, i32)> = counts.into_iter().collect();
+        counts.sort_by_key(|val| val.1);
 
-        None
+        let first = counts.first().unwrap();
+        let last = counts.last().unwrap();
+        let part1 = last.1 - first.1;
+        info!("[1] Polymer: first {:?}, last {:?} => {}", first, last, part1);
+
+        Some((part1.to_string(), String::new()))
     }
 }
