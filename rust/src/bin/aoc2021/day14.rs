@@ -52,7 +52,7 @@ impl Solver for Solution {
             debug!("Iteration {} - counts: {:?}", it, counts);
         }
         debug!("Final polymer length: {} - counts: {:?}", self.polymer.len(), counts);
-        let mut counts: Vec<(char, i32)> = counts.into_iter().collect();
+        let mut counts: Vec<(char, usize)> = counts.into_iter().collect();
         counts.sort_by_key(|val| val.1);
 
         let first = counts.first().unwrap();
