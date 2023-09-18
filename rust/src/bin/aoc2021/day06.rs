@@ -1,4 +1,6 @@
 // https://adventofcode.com/2021/day/6
+// of course for part 2 there's no need to keep track of _each_ lanternfish, just the count for each
+// day, which makes all a simple count (provided we using u64 as number increase)
 
 use std::str::FromStr;
 use std::usize;

@@ -1,4 +1,6 @@
 // https://adventofcode.com/2021/day/5
+// trick was keeping points covered by straight and diagonal lines separately so they could be
+// counted separately for the two parts of the puzzle.
 
 use std::collections::HashMap;
 use std::str::FromStr;
