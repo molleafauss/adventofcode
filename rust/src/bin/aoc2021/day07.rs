@@ -1,4 +1,6 @@
 // https://adventofcode.com/2021/day/7
+// both parts can be calculated for each iteration, making it a simple "linear" problem.
+// learned fold construct
 
 use std::str::FromStr;
 use log::info;

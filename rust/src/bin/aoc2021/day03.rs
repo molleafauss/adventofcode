@@ -1,4 +1,5 @@
 // https://adventofcode.com/2021/day/3
+// nice way to learn how to use function pointers/lambdas as parameters
 
 use log::info;
 use adventofcode::Solver;

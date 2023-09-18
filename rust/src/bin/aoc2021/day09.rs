@@ -1,4 +1,5 @@
 // https://adventofcode.com/2021/day/9
+// learned use of reduce
 
 use std::collections::{HashSet, VecDeque};
 use log::{debug, info};
