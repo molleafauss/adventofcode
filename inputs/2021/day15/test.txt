@@ -1,5 +1,5 @@
 result part 1: 40
-result part 2: -
+result part 2: 315
 1163751742
 1381373672
 2136511328
