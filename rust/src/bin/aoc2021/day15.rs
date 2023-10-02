@@ -1,8 +1,7 @@
 // https://adventofcode.com/2021/day/15
 
-use std::cmp::{Ordering, Reverse};
+use std::cmp::{Ordering};
 use std::collections::BinaryHeap;
-use std::str::FromStr;
 use log::{debug, info};
 use adventofcode::grid::{ALL_ORTHOGONAL, GridPos};
 use adventofcode::Solver;
