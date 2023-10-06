@@ -1,0 +1,4 @@
+result part 1: 4851
+result part 2: -
+target area: x=201..230, y=-99..-65
+
