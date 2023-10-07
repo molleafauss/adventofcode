@@ -1,5 +1,5 @@
-result part 1: -
-result part 2: -
+result part 1: 3048
+result part 2: 3288891573057
 PKHOVVOSCNVHHCVVCBOH
 
 NO -> B
