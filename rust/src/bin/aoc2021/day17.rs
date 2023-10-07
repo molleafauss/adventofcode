@@ -35,9 +35,7 @@ impl Solution {
         let mut valid_vectors = 0;
         for vx in min_vx..max_vx + 1 {
             let mut vy = max_vy;
-            // will stop if I realise that I end before and beneath the trench
-            let mut aim_lower = true;
-            while aim_lower {
+            loop {
                 let mut dx = vx;
                 let mut dy = vy;
                 let mut t = 0;
