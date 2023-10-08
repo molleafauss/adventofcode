@@ -5,6 +5,7 @@
 
 use log::{debug, info};
 use adventofcode::Solver;
+use adventofcode::utils::ZERO;
 
 pub(crate) struct Solution {
     matrix: Vec<Tree>,
@@ -150,8 +151,6 @@ impl Solver for Solution {
         Some((total_visible.to_string(), scenic_max.to_string()))
     }
 }
-
-const ZERO: u8 = '0' as u8;
 
 struct Tree {
     size: u8,

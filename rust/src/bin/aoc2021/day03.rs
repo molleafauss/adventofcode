@@ -3,6 +3,7 @@
 
 use log::info;
 use adventofcode::Solver;
+use adventofcode::utils::{ONE, ZERO};
 
 pub struct Solution {
     digits: Vec<Digits>,
@@ -59,9 +60,6 @@ impl Solver for Solution {
         Some(((gamma * epsilon).to_string(), (oxygen * co2).to_string()))
     }
 }
-
-const ZERO: u8 = '0' as u8;
-const ONE: u8 = '1' as u8;
 
 // zero, one
 struct Digits(u32, u32);

@@ -11,6 +11,7 @@ use log4rs::config::{Appender, Logger, Root};
 use log4rs::encode::pattern::PatternEncoder;
 
 pub mod grid;
+pub mod utils;
 
 /// A solver for a AOC puzzle
 pub trait Solver {
