@@ -81,7 +81,7 @@ impl Solver for Solution {
         let mut end_id = self.caves.iter().position(|c| c.name == end);
         if start_id.is_none() {
             let id = self.caves.len();
-            self.caves.push(Cave::new(id, start));
+            self.caves.push(Cave::new(start));
             debug!("Added cave {id} for {start} (large: {})", self.caves[id].large);
             if start == "start" {
                 self.start = id
@@ -89,11 +89,11 @@ impl Solver for Solution {
             if start == "end" {
                 self.end = id
             }
-            start_id.insert(id);
+            start_id = Some(id);
         }
         if end_id.is_none() {
             let id = self.caves.len();
-            self.caves.push(Cave::new(id, end));
+            self.caves.push(Cave::new(end));
             debug!("Added cave {id} for {end} (large: {})", self.caves[id].large);
             if end == "end" {
                 self.end = id
@@ -101,7 +101,7 @@ impl Solver for Solution {
             if end == "start" {
                 self.start = id
             }
-            end_id.insert(id);
+            end_id = Some(id);
         }
         let start_id = start_id.unwrap();
         let end_id = end_id.unwrap();
@@ -122,7 +122,6 @@ impl Solver for Solution {
 }
 
 struct Cave {
-    id: usize,
     name: String,
     large: bool,
     // connect by id into the caves vector
@@ -130,9 +129,8 @@ struct Cave {
 }
 
 impl Cave {
-    fn new(id: usize, name: &str) -> Cave {
+    fn new(name: &str) -> Cave {
         Cave {
-            id,
             name: String::from(name),
             large: name.chars().all(|ch| ch.is_ascii_uppercase()),
             connections: Vec::new(),
