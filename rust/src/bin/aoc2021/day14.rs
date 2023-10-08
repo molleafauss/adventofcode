@@ -90,7 +90,6 @@ impl Solver for Solution {
 }
 
 struct Folding {
-    key: (char, char),
     counts: HashMap<char, usize>,
     polymer: Vec<char>,
 }
@@ -103,7 +102,6 @@ impl Folding {
         });
         let polymer = vec![key.0, key.1];
         let mut folding = Folding {
-            key,
             counts,
             polymer,
         };
@@ -113,7 +111,7 @@ impl Folding {
     }
 
     fn fold(&mut self, mappings: &HashMap<(char, char), char>, folds: usize) {
-        for it in 0..folds {
+        for _ in 0..folds {
             let sequence = self.polymer.clone();
             let mut next = Vec::with_capacity(2 * sequence.len());
             for i in 0..sequence.len() - 1 {
