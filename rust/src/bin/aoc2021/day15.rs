@@ -5,6 +5,7 @@ use std::collections::BinaryHeap;
 use log::{debug, info};
 use adventofcode::grid::{ALL_ORTHOGONAL, GridPos};
 use adventofcode::Solver;
+use adventofcode::utils::ZERO;
 
 pub struct Solution {
     width: usize,
@@ -44,8 +45,6 @@ impl Solution {
         (map, width, height)
     }
 }
-
-const ZERO: u8 = '0' as u8;
 
 impl Solver for Solution {
     fn parse(&mut self, line: &str) {

@@ -5,6 +5,7 @@ use std::collections::{HashSet, VecDeque};
 use log::{debug, info};
 use adventofcode::grid::{GridPos, MOVE_D, MOVE_L, MOVE_R, MOVE_U};
 use adventofcode::Solver;
+use adventofcode::utils::ZERO;
 
 pub struct Solution {
     map: Vec<u8>,
@@ -63,8 +64,6 @@ impl Solution {
         basin.len()
     }
 }
-
-const ZERO: u8 = '0' as u8;
 
 impl Solver for Solution {
     fn parse(&mut self, line: &str) {

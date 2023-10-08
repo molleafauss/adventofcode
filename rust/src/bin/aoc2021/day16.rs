@@ -4,6 +4,7 @@ use std::collections::HashMap;
 use log::{debug, info};
 use once_cell::sync::Lazy;
 use adventofcode::Solver;
+use adventofcode::utils::{ONE, ZERO};
 
 pub struct Solution {
     packets: Vec<Packet>,
@@ -57,9 +58,6 @@ const HEX_MAP: Lazy<HashMap<u8, [u8; 4]>> = Lazy::new(|| HashMap::from([
         ('E' as u8, [ONE, ONE, ONE, ZERO]),
         ('F' as u8, [ONE, ONE, ONE, ONE]),
     ]));
-
-const ZERO: u8 = '0' as u8;
-const ONE: u8 = '1' as u8;
 
 struct Packet {
     total_version: u32,
