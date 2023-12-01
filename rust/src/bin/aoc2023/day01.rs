@@ -42,10 +42,7 @@ impl Solver for Solution {
             last_num_val = last_digit.unwrap().1 as u32;
         }
 
-        let p2 = first_num_val * 10 + last_num_val;
-        debug!("Decoded calibration {} from {} ({}/{} - {:?}/{:?})", p2, line, first_num_pos, last_num_pos,
-            first_digit, last_digit);
-        self.part2 += p2;
+        self.part2 += first_num_val * 10 + last_num_val;
     }
 
     fn solve(&mut self) -> Option<(String, String)> {
