@@ -1,7 +1,8 @@
 // https://adventofcode.com/2023/day/1
+// simple enough, great that rust has good string search primitives
 
 use std::str::FromStr;
-use log::{debug, info};
+use log::info;
 use adventofcode::Solver;
 
 pub struct Solution {
