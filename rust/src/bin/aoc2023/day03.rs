@@ -72,11 +72,11 @@ impl Solver for Solution {
         let part1: u32 = self.symbols.iter()
             .map(|symbol| {
                 // overkill way to extract only uniques
-                let numbers: HashSet<&usize> = ALL_SURROUNDING.iter()
+                ALL_SURROUNDING.iter()
                     .filter_map(|dir| self.numbers_pos.get(&symbol.pos.add(dir)))
-                    .collect();
-                numbers.into_iter().map(|idx| self.numbers[*idx].value).sum::<u32>()
+                    .collect::<HashSet<&usize>>()
             })
+            .map(|numbers| numbers.into_iter().map(|idx| self.numbers[*idx].value).sum::<u32>())
             .sum();
         info!("[1] part numbers sum: {}", part1);
 
