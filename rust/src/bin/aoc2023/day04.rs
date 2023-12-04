@@ -11,7 +11,7 @@ use log::{debug, info};
 use adventofcode::Solver;
 
 pub struct Solution {
-    part1: u32,
+    total_points: u32,
     card_queue: VecDeque<u32>,
     total_cards: u32
 }
@@ -19,7 +19,7 @@ pub struct Solution {
 impl Solution {
     pub(crate) fn new() -> Solution {
         Solution {
-            part1: 0,
+            total_points: 0,
             card_queue: VecDeque::new(),
             total_cards: 0,
         }
@@ -74,13 +74,13 @@ impl Solver for Solution {
         }
 
         debug!("Card {} => value {}, scored cards {}", card_id, card_value, num_cards_scored);
-        self.part1 += card_value;
+        self.total_points += card_value;
     }
 
     fn solve(&mut self) -> Option<(String, String)> {
-        info!("[1] Total points: {}", self.part1);
+        info!("[1] Total points: {}", self.total_points);
         info!("[2] Total cards: {}", self.total_cards);
 
-        Some((self.part1.to_string(), self.total_cards.to_string()))
+        Some((self.total_points.to_string(), self.total_cards.to_string()))
     }
 }
