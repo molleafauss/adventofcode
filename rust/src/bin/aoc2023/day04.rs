@@ -59,21 +59,21 @@ impl Solver for Solution {
             _ => 2 << (card_winners - 2),
         };
 
-        let winning_cards = 1 + match self.card_queue.is_empty() {
+        let num_cards_scored = 1 + match self.card_queue.is_empty() {
             true => 0,
             false => self.card_queue.pop_front().unwrap(),
         };
-        self.total_cards += winning_cards;
+        self.total_cards += num_cards_scored;
 
         for i in 0..card_winners {
             if self.card_queue.len() > i {
-                self.card_queue[i] += winning_cards;
+                self.card_queue[i] += num_cards_scored;
             } else {
-                self.card_queue.push_back(winning_cards);
+                self.card_queue.push_back(num_cards_scored);
             }
         }
 
-        debug!("Card {} => value {}", card_id, card_value);
+        debug!("Card {} => value {}, scored cards {}", card_id, card_value, num_cards_scored);
         self.part1 += card_value;
     }
 
