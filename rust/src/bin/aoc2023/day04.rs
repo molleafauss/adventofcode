@@ -1,4 +1,7 @@
 // https://adventofcode.com/2023/day/4
+// til: split returns "" when two separators are contiguous
+// the card_queue contains the number of same cards won from the previous round. Keep adding or
+// updating and pop when you get the next card, no need to re-score.
 
 use std::collections::{HashSet, VecDeque};
 use std::str::FromStr;
