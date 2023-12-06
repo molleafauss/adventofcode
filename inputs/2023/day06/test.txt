@@ -1,0 +1,4 @@
+result part 1: 288
+result part 2: 71503
+Time:      7  15   30
+Distance:  9  40  200
