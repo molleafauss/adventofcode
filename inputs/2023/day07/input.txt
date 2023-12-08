@@ -1,4 +1,5 @@
 result part 1: 250254244
+result part 1: 250087440
 Q97J7 740
 65KJ6 889
 6664J 275
