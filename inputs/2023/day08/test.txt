@@ -1,0 +1,7 @@
+result part 1: 6
+result part 2: 6
+LLR
+
+AAA = (BBB, BBB)
+BBB = (AAA, ZZZ)
+ZZZ = (ZZZ, ZZZ)
