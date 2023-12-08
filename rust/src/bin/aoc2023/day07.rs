@@ -25,16 +25,32 @@ impl Solver for Solution {
 
     fn solve(&mut self) -> Option<(String, String)> {
         // sort hands
-        self.hands.sort();
-        let winnings: u32 = self.hands.iter().enumerate()
+        self.hands.iter_mut().for_each(|hand| {
+            hand.result = score_hand(&hand.cards, false);
+        });
+        self.hands.sort_by(|a, b| compare_hands(a, b, CARD_RANK_PART1));
+        let winnings_part1: u32 = self.hands.iter().enumerate()
             .map(|(idx, hand)| {
                 debug!("[{}] Cards {:?}, bid {} => {} result", idx, hand.cards, hand.bid, hand.result);
                 (idx as u32 + 1) * hand.bid
             })
             .sum();
-        info!("[1] Total winnings: {}", winnings);
+        info!("[1] Total winnings: {}", winnings_part1);
 
-        Some((winnings.to_string(), "".to_string()))
+        // reset scores
+        self.hands.iter_mut().for_each(|hand| {
+            hand.result = score_hand(&hand.cards, true);
+        });
+        self.hands.sort_by(|a, b| compare_hands(a, b, CARD_RANK_PART2));
+        let winnings_part2: u32 = self.hands.iter().enumerate()
+            .map(|(idx, hand)| {
+                debug!("[{}] Cards {:?}, bid {} => {} result", idx, hand.cards, hand.bid, hand.result);
+                (idx as u32 + 1) * hand.bid
+            })
+            .sum();
+        info!("[2] Total winnings: {}", winnings_part2);
+
+        Some((winnings_part1.to_string(), "".to_string()))
     }
 }
 
@@ -47,50 +63,34 @@ struct Hand {
 impl Hand {
     fn parse(text: &str, val: &str) -> Hand {
         let cards = text.chars().collect();
-        let result = hand_result(&cards);
         // calculate result
         Hand {
             cards,
-            result,
+            result: 0,
             bid: u32::from_str(val).unwrap(),
         }
     }
 }
 
-impl Ord for Hand {
-    fn cmp(&self, other: &Self) -> Ordering {
-        match self.result.cmp(&other.result) {
-            Ordering::Equal => (0..5)
-                .find_map(|i| compare_card(self.cards[i], other.cards[i]))
-                .unwrap(),
-            x => x,
-        }
+fn compare_hands(this: &Hand, that: &Hand, ties: &str) -> Ordering {
+    match this.result.cmp(&that.result) {
+        Ordering::Equal => (0..5)
+            .find_map(|i| compare_card(this.cards[i], that.cards[i], ties))
+            .unwrap(),
+        x => x,
     }
 }
 
-const CARD_RANK: &str = "23456789TJQKA";
+const CARD_RANK_PART1: &str = "23456789TJQKA";
+const CARD_RANK_PART2: &str = "J23456789TQKA";
 
-fn compare_card(left: char, right: char) -> Option<Ordering> {
+fn compare_card(left: char, right: char, ties: &str) -> Option<Ordering> {
     if left == right {
         return None;
     }
-    let lv = CARD_RANK.find(left).unwrap();
-    let rv = CARD_RANK.find(right).unwrap();
+    let lv = ties.find(left).unwrap();
+    let rv = ties.find(right).unwrap();
     Some(lv.cmp(&rv))
-}
-
-impl PartialOrd for Hand {
-    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        Some(self.cmp(other))
-    }
-}
-
-impl Eq for Hand {}
-
-impl PartialEq for Hand {
-    fn eq(&self, other: &Self) -> bool {
-        self.cmp(other) == Ordering::Equal
-    }
 }
 
 const HIGH_CARD: u8 = 0;
@@ -101,37 +101,51 @@ const FULL_HOUSE: u8 = 4;
 const FOUR_OF_A_KIND: u8 = 5;
 const FIVE_OF_A_KIND: u8 = 6;
 
-fn hand_result(chars: &Vec<char>) -> u8 {
+fn score_hand(chars: &Vec<char>, use_wildcards: bool) -> u8 {
     let mut groups = HashMap::new();
-    chars.iter().for_each(|ch| {
-        groups.entry(ch).and_modify(|val| *val += 1).or_insert(1);
-    });
-    let mut freqs: Vec<u8> = groups.iter().map(|(_, count)| count.clone()).collect();
-    freqs.sort();
-    freqs.reverse();
-    let uniques = freqs.len();
-    if uniques == 1 {
-        // all the same
-        return FIVE_OF_A_KIND;
-    } else if uniques == 2 && freqs[0] == 4 {
-        // all the same
-        return FOUR_OF_A_KIND;
-    } else if uniques == 2 && freqs[0] == 3 {
-        // all the same
-        return FULL_HOUSE;
-    } else if uniques == 3 && freqs[0] == 3 {
-        // all the same
-        return THREE_OF_A_KIND;
-    } else if uniques == 3 && freqs[0] == 2 {
-        // all the same
-        return TWO_PAIR;
-    } else if uniques == 4 {
-        // all the same
-        return ONE_PAIR;
-    } else if uniques == 5 {
-        // all the same
-        return HIGH_CARD;
+    let mut wildcards = 0;
+    if use_wildcards {
+        wildcards = chars.iter().filter(|ch| **ch == 'J').count();
+        chars.iter()
+            .filter(|ch| **ch != 'J')
+            .for_each(|ch| {
+                groups.entry(ch).and_modify(|val| *val += 1).or_insert(1);
+            });
+    } else {
+        chars.iter().for_each(|ch| {
+            groups.entry(ch).and_modify(|val| *val += 1).or_insert(1);
+        });
     }
 
-    panic!("Invalid hand? {:?} => freqs {:?}", chars, freqs);
+    let mut freqs: Vec<usize> = groups.iter().map(|(_, count)| count.clone()).collect();
+    freqs.sort();
+    freqs.reverse();
+    if use_wildcards {
+        // add jokers to the most frequent card
+        if !freqs.is_empty() {
+            freqs[0] += wildcards;
+        } else {
+            // all J hand
+            freqs.push(wildcards);
+        }
+    }
+
+    match (freqs.len(), freqs[0]) {
+        // all the same
+        (1, _) => FIVE_OF_A_KIND,
+        // 4+1
+        (2, 4) => FOUR_OF_A_KIND,
+        // 3 + 2
+        (2, 3) => FULL_HOUSE,
+        // 3+1+1
+        (3, 3) => THREE_OF_A_KIND,
+        // 2+2+1
+        (3, 2) => TWO_PAIR,
+        // 2+1+1+1
+        (4, _) => ONE_PAIR,
+        // all different
+        (5, _) => HIGH_CARD,
+        // invalid?
+        (_, _) => panic!("Invalid hand? {:?} => freqs {:?}", chars, freqs),
+    }
 }
