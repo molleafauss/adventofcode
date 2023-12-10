@@ -1,5 +1,5 @@
 result part 1: 80
-result part 1: 10
+result part 2: 10
 FF7FSF7F7F7F7F7F---7
 L|LJ||||||||||||F--J
 FL-7LJLJ||||||LJL-77
