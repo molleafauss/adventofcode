@@ -8,6 +8,7 @@ mod day07;
 mod day08;
 mod day09;
 mod day10;
+mod day11;
 
 use log::LevelFilter;
 use adventofcode::Solver;
@@ -24,6 +25,7 @@ fn solver_for(day: &str) -> Box<dyn Solver> {
         "day08" => Box::new(day08::Solution::new()),
         "day09" => Box::new(day09::Solution::new()),
         "day10" => Box::new(day10::Solution::new()),
+        "day11" => Box::new(day11::Solution::new()),
         _ => panic!("Unsupported puzzle {day}"),
     }
 }
