@@ -37,12 +37,7 @@ impl Solution {
         if !self.map.contains_key(&next_pos) {
             debug!("Should ignore this - dead end?");
         }
-        path.prev = path.pos.clone();
-        path.pos = next_pos;
-        path.distance += 1;
         path.push(next_pos);
-    }
-
     }
 }
 
