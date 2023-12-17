@@ -24,19 +24,25 @@ impl Solution {
         }
     }
 
-    fn next_step(&self, path: &mut Path) {
-        let tunnel = self.map.get(&path.pos).unwrap();
-        let next = match path.pos.add(&tunnel.dirs[0]) == path.prev {
+    fn next_step(&self, path: &mut Vec<GridPos>) {
+        let cur_pos = path.last().unwrap();
+        let prev_pos = path.get(path.len() - 2).unwrap();
+
+        let tunnel = self.map.get(&cur_pos).unwrap();
+        let next = match cur_pos.add(&tunnel.dirs[0]) == *prev_pos {
             true => &tunnel.dirs[1],
             false => &tunnel.dirs[0],
         };
-        let next_pos = path.pos.add(next);
+        let next_pos = cur_pos.add(next);
         if !self.map.contains_key(&next_pos) {
             debug!("Should ignore this - dead end?");
         }
         path.prev = path.pos.clone();
         path.pos = next_pos;
         path.distance += 1;
+        path.push(next_pos);
+    }
+
     }
 }
 
@@ -81,34 +87,22 @@ impl Solver for Solution {
             if let Some(tunnel) = map_pos {
                 // check if tunnel has a "matching" facing with the dir I am trying to move
                 if facing(&tunnel.dirs[0], dir) || facing(&tunnel.dirs[1], dir) {
-                    paths.push(Path { prev: self.start.clone(), pos, distance: 1});
+                    paths.push(vec![self.start.clone(), pos]);
                 }
             }
         }
         debug!("Starting with the following paths [{}]: {:?}", paths.len(), paths);
+        // I should only have two paths
+        assert_eq!(paths.len(), 2);
 
-        let mut max_distance = 0;
-        while !paths.is_empty() {
-            paths.iter_mut().for_each(|path| self.next_step(path));
-            // find pairs
-            let mut i = 0;
-            // need at least 2
-            while i + 1 < paths.len() {
-                let one = paths.get(i).unwrap();
-                let second = paths.iter().enumerate()
-                    .position(|(q, p)| q > i && p.pos == one.pos && p.distance == one.distance);
-                if let Some(p) = second {
-                    info!("Found matching paths ({i}, {}) => [max {max_distance}] {:?}", p + i + 1, one);
-                    if max_distance < one.distance {
-                        max_distance = one.distance;
-                    }
-                    paths.remove(p);
-                    paths.remove(i);
-                    continue;
-                }
-                i += 1;
-            }
+        let mut one = paths.remove(0);
+        let mut two = paths.remove(0);
+
+        while one.last().unwrap() != two.last().unwrap() {
+            self.next_step(&mut one);
+            self.next_step(&mut two);
         }
+        let max_distance = one.len() - 1;
         info!("[1] Found max distance: {}", max_distance);
 
         Some((max_distance.to_string(), "".to_string()))
@@ -135,10 +129,3 @@ static TUNNELS: [Tunnel; 6] = [
     Tunnel { glyph: '7', dirs: [MOVE_U, MOVE_L] },
     Tunnel { glyph: 'F', dirs: [MOVE_U, MOVE_R] },
 ];
-
-#[derive(Debug)]
-struct Path {
-    prev: GridPos,
-    pos: GridPos,
-    distance: u32,
-}
