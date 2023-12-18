@@ -37,7 +37,7 @@ impl Solver for Solution {
         let part2: usize = scores.iter().map(|(_, score)| *score).sum();
         info!("[2] Reflection total: {}", part2);
 
-        Some((part1.to_string(), "".to_string()))
+        Some((part1.to_string(), part2.to_string()))
     }
 }
 
