@@ -1,7 +1,9 @@
 // https://adventofcode.com/2023/day/13
 
 use std::cmp::min;
+
 use log::{debug, info};
+
 use adventofcode::Solver;
 
 pub struct Solution {
@@ -27,10 +29,13 @@ impl Solver for Solution {
 
     fn solve(&mut self) -> Option<(String, String)> {
         // find last reflection
-        let part1: u32 = self.maps.iter()
-            .map(|m| m.find_reflection())
-            .sum();
+        let scores: Vec<(usize, usize)> = self.maps.iter()
+            .map(|m| m.find_reflections())
+            .collect();
+        let part1: usize = scores.iter().map(|(score, _)| *score).sum();
         info!("[1] Reflection total: {}", part1);
+        let part2: usize = scores.iter().map(|(_, score)| *score).sum();
+        info!("[2] Reflection total: {}", part2);
 
         Some((part1.to_string(), "".to_string()))
     }
@@ -63,35 +68,50 @@ impl Pattern {
         self.map.push(text);
     }
 
-    fn find_reflection(&self) -> u32 {
-        // first try column reflection
-        for mid in 1..self.width {
+    fn find_reflections(&self) -> (usize, usize) {
+        // check similarities - will count all similar points and discard whenever it's > 1
+        let mut all_diffs: Vec<(&str, usize, usize, usize)> = (1..self.width).map(|mid| {
             // find the width to analyze
             let w = min(mid, self.width - mid);
-            if (0..w).all(|i| self.is_vertical_reflection(mid, i)) {
-                debug!("[pattern {}] Found vertical reflection at column: {}", self.id, mid);
-                return mid as u32;
-            }
-        }
+            let diffs: usize = (0..w)
+                .map(|i| self.vertical_differences(mid, i))
+                .sum();
+            ("vertical", mid, mid, diffs)
+        })
+        .filter(|(_, _, _, diffs)| *diffs <= 1)
+        .collect();
 
-        // now check wor reflection
-        for mid in 1..self.height {
-            // find the width to analyze
+        (1..self.height).map(|mid| {
+            // find the height to analyze
             let w = min(mid, self.height - mid);
-            if (0..w).all(|i| self.is_horizontal_reflection(mid, i)) {
-                debug!("[patterns {}] Found horizontal reflection at row: {}", self.id, mid);
-                return (100 * mid) as u32;
-            }
+            let diffs: usize = (0..w)
+                .map(|i| self.horizontal_differences(mid, i))
+                .sum();
+            ("horizontal", mid, mid * 100, diffs)
+        })
+        .filter(|(_, _, _, diffs)| *diffs <= 1)
+        .for_each(|v| all_diffs.push(v));
+
+        all_diffs.sort_by_key(|val| val.3);
+        for (direction, pos, score, diffs) in &all_diffs {
+            debug!("[pattern {}] Found {direction} diff at position {pos} => {diffs} [score {score}]", self.id);
         }
+        assert_eq!(all_diffs.len(), 2);
+        assert_eq!(all_diffs[0].3, 0);
+        assert_eq!(all_diffs[1].3, 1);
 
-        0
+        (all_diffs[0].2, all_diffs[1].2)
     }
 
-    fn is_vertical_reflection(&self, mid: usize, i: usize) -> bool {
-        (0..self.height).all(|row| self.map[row][mid - i - 1] == self.map[row][mid + i])
+    fn vertical_differences(&self, mid: usize, i: usize) -> usize {
+        (0..self.height)
+            .filter(|row| self.map[*row][mid - i - 1] != self.map[*row][mid + i])
+            .count()
     }
 
-    fn is_horizontal_reflection(&self, mid: usize, i: usize) -> bool {
-        (0..self.width).all(|col| self.map[mid - i - 1][col] == self.map[mid + i][col])
+    fn horizontal_differences(&self, mid: usize, i: usize) -> usize {
+        (0..self.width)
+            .filter(|col| self.map[mid - i - 1][*col] != self.map[mid + i][*col])
+            .count()
     }
 }
