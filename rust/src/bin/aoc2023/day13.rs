@@ -5,22 +5,62 @@ use log::{debug, info};
 use adventofcode::Solver;
 
 pub struct Solution {
-    map: Vec<Vec<char>>,
-    part1: u32,
-    width: usize,
-    height: usize,
-    pattern: usize,
+    maps: Vec<Pattern>,
 }
 
 impl Solution {
     pub(crate) fn new() -> Solution {
         Solution {
+            maps: vec![Pattern::new(1)],
+        }
+    }
+}
+
+impl Solver for Solution {
+    fn parse(&mut self, line: &str) {
+        if line.is_empty() {
+            self.maps.push(Pattern::new(self.maps.len() + 1));
+        } else {
+            self.maps.last_mut().unwrap().add_line(line.chars().collect());
+        }
+    }
+
+    fn solve(&mut self) -> Option<(String, String)> {
+        // find last reflection
+        let part1: u32 = self.maps.iter()
+            .map(|m| m.find_reflection())
+            .sum();
+        info!("[1] Reflection total: {}", part1);
+
+        Some((part1.to_string(), "".to_string()))
+    }
+}
+
+struct Pattern {
+    id: usize,
+    map: Vec<Vec<char>>,
+    width: usize,
+    height: usize,
+}
+
+impl Pattern {
+    fn new(id: usize) -> Pattern {
+        Pattern {
+            id,
             map: Vec::new(),
-            part1: 0,
             width: 0,
             height: 0,
-            pattern: 1,
         }
+    }
+
+    fn add_line(&mut self, text: Vec<char>) {
+        if self.width == 0 {
+            self.width = text.len();
+        } else {
+            assert_eq!(self.width, text.len());
+        }
+        self.height += 1;
+        self.map.push(text);
     }
 
     fn find_reflection(&self) -> u32 {
@@ -29,7 +69,7 @@ impl Solution {
             // find the width to analyze
             let w = min(mid, self.width - mid);
             if (0..w).all(|i| self.is_vertical_reflection(mid, i)) {
-                debug!("[pattern {}] Found vertical reflection at column: {}", self.pattern, mid);
+                debug!("[pattern {}] Found vertical reflection at column: {}", self.id, mid);
                 return mid as u32;
             }
         }
@@ -39,7 +79,7 @@ impl Solution {
             // find the width to analyze
             let w = min(mid, self.height - mid);
             if (0..w).all(|i| self.is_horizontal_reflection(mid, i)) {
-                debug!("[patterns {}] Found horizontal reflection at row: {}", self.pattern, mid);
+                debug!("[patterns {}] Found horizontal reflection at row: {}", self.id, mid);
                 return (100 * mid) as u32;
             }
         }
@@ -53,29 +93,5 @@ impl Solution {
 
     fn is_horizontal_reflection(&self, mid: usize, i: usize) -> bool {
         (0..self.width).all(|col| self.map[mid - i - 1][col] == self.map[mid + i][col])
-    }
-}
-
-impl Solver for Solution {
-    fn parse(&mut self, line: &str) {
-        if line.is_empty() {
-            self.part1 += self.find_reflection();
-            self.map.clear();
-            self.width = 0;
-            self.height = 0;
-            self.pattern += 1;
-        } else {
-            self.width = line.len();
-            self.map.push(line.chars().collect());
-            self.height += 1;
-        }
-    }
-
-    fn solve(&mut self) -> Option<(String, String)> {
-        // find last reflection
-        self.part1 += self.find_reflection();
-        info!("[1] Reflection total: {}", self.part1);
-
-        Some((self.part1.to_string(), "".to_string()))
     }
 }
