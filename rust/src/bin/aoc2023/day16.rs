@@ -29,43 +29,14 @@ impl Solution {
         }
     }
 
-    fn next_pos(&self, pos: GridPos, dir: GridPos) -> Option<(GridPos, GridPos)> {
-        let next_pos = pos.add(&dir);
-        if next_pos.row < 0 || next_pos.row >= self.width as i64
-            || next_pos.col < 0 || next_pos.col >= self.height as i64 {
-            // beam is out of map - stop following it
-            return None;
-        } else {
-            Some((next_pos, dir.clone()))
-        }
-    }
-}
-
-impl Solver for Solution {
-    fn parse(&mut self, line: &str) {
-        if self.width == 0 {
-            self.width = line.len();
-        } else {
-            assert_eq!(line.len(), self.width);
-        }
-        line.chars().enumerate()
-            .filter(|(_, ch)| *ch != '.')
-            .for_each(|(pos, ch)| {
-                self.mirrors.insert(GridPos::of(pos as i64, self.height as i64), ch);
-            });
-        self.height += 1;
-    }
-
-    fn solve(&mut self) -> Option<(String, String)> {
-        debug!("Found {} mirrors, Map size {}x{}", self.mirrors.len(), self.width, self.height);
-
+    fn lit_tiles(&self, pos: GridPos, dir: GridPos) -> usize {
         // beams - start with the initial spot (top left moving right) - continue until empty
-        let mut beams = vec![(GridPos::of(-1, 0), MOVE_R)];
-        // tiles - add every new spot a beam passes through, duplicates handled by the set
-        let mut tiles: HashSet<GridPos> = [GridPos::of(0, 0)].into_iter().collect();
+        let mut beams = vec![(pos.clone(), dir.clone())];
+        // tiles - add every new spot a beam passes through, duplicates handled by the set - start with
+        let mut tiles: HashSet<GridPos> = [pos.add(&dir)].into_iter().collect();
         // set of starting point - whenever a beam split add it here - don't add it again if we
         // passed through the same
-        let mut starts: HashSet<(GridPos, GridPos)> = vec![(GridPos::of(0, 0), MOVE_R)].into_iter().collect();
+        let mut starts: HashSet<(GridPos, GridPos)> = vec![(pos.add(&dir), dir.clone())].into_iter().collect();
 
         while !beams.is_empty() {
             let (pos, dir) = beams.remove(0);
@@ -150,9 +121,54 @@ impl Solver for Solution {
                 (_, ch) => panic!("Invalid combination direction {:?} - mirror {ch}", dir),
             }
         }
-        info!("[1] Found {} energized tiles", tiles.len());
 
-        Some((tiles.len().to_string(), "".to_string()))
+        tiles.len()
+    }
+
+    fn next_pos(&self, pos: GridPos, dir: GridPos) -> Option<(GridPos, GridPos)> {
+        let next_pos = pos.add(&dir);
+        if next_pos.row < 0 || next_pos.row >= self.width as i64
+            || next_pos.col < 0 || next_pos.col >= self.height as i64 {
+            // beam is out of map - stop following it
+            return None;
+        } else {
+            Some((next_pos, dir.clone()))
+        }
+    }
+}
+
+impl Solver for Solution {
+    fn parse(&mut self, line: &str) {
+        if self.width == 0 {
+            self.width = line.len();
+        } else {
+            assert_eq!(line.len(), self.width);
+        }
+        line.chars().enumerate()
+            .filter(|(_, ch)| *ch != '.')
+            .for_each(|(pos, ch)| {
+                self.mirrors.insert(GridPos::of(pos as i64, self.height as i64), ch);
+            });
+        self.height += 1;
+    }
+
+    fn solve(&mut self) -> Option<(String, String)> {
+        debug!("Found {} mirrors, Map size {}x{}", self.mirrors.len(), self.width, self.height);
+
+        let part1 = self.lit_tiles(GridPos::of(-1, 0), MOVE_R);
+        info!("[1] Found {} energized tiles", part1);
+
+        // part 2 try all around the borders
+        let part2 =
+            (0..self.width).map(|col| self.lit_tiles(GridPos::of(col as i64, -1), MOVE_U))
+                .chain((0..self.width).map(|col| self.lit_tiles(GridPos::of(col as i64, self.height as i64), MOVE_D)))
+                .chain((0..self.height).map(|row| self.lit_tiles(GridPos::of(-1, row as i64), MOVE_R)))
+                .chain((0..self.height).map(|row| self.lit_tiles(GridPos::of(self.width as i64, row as i64), MOVE_L)))
+                .max()
+                .unwrap();
+        info!("[2] Found maximum {} energizable tiles", part2);
+
+        Some((part1.to_string(), part2.to_string()))
     }
 }
 
