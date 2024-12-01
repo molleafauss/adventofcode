@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -49,9 +50,9 @@ func solve(file string, solver Solver) {
 	scanner := bufio.NewScanner(f)
 	for scanner.Scan() {
 		line := scanner.Text()
-		if line[:15] == "result part 1: " {
+		if strings.HasPrefix(line, "result part 1: ") {
 			expectedPart1 = line[15:]
-		} else if line[:15] == "result part 2: " {
+		} else if strings.HasPrefix(line, "result part 2: ") {
 			expectedPart2 = line[15:]
 		} else {
 			solver.Parse(line)
@@ -60,23 +61,23 @@ func solve(file string, solver Solver) {
 
 	t0 := time.Now()
 	part1, part2 := solver.Solve()
-	t1 := time.Now()
-	Info("File %s: %.3sec", file, t1.Sub(t0))
+	delta := time.Since(t0)
+	Info("File %s: %s", file, delta)
 	if part1 != nil {
 		if *part1 == expectedPart1 {
-			Info("PART 1 - found expected result: %s = %s", expectedPart1, part1)
+			Info("PART 1 - found expected result: %s = %s", expectedPart1, *part1)
 		} else {
 			Error("ERROR - part 1 result is incorrect: expected %s, actual %s",
-				expectedPart1, part1)
+				expectedPart1, *part1)
 		}
 	}
 
 	if part2 != nil {
 		if *part2 == expectedPart2 {
-			Info("PART 2 - found expected result: %s = %s", expectedPart2, part2)
+			Info("PART 2 - found expected result: %s = %s", expectedPart2, *part2)
 		} else {
 			Error("ERROR - part 2 result is incorrect: expected %s, actual %s",
-				expectedPart2, part2)
+				expectedPart2, *part2)
 		}
 	}
 }
