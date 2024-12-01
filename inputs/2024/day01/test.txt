@@ -1,4 +1,5 @@
 result part 1: 11
+result part 2: 31
 3   4
 4   3
 2   5
