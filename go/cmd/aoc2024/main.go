@@ -12,7 +12,7 @@ func main() {
 func solverFactory(day string) aoc.Solver {
 	switch day {
 	case "day01":
-		return Day01{}
+		return Day01()
 	}
 	return nil
 }
