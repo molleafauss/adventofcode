@@ -4,7 +4,8 @@ import "fmt"
 
 const DEBUG = 10
 const INFO = 20
-const ERROR = 30
+const WARN = 30
+const ERROR = 40
 
 var logLevel = INFO
 
@@ -20,6 +21,13 @@ func Info(msg string, args ...any) {
 		return
 	}
 	fmt.Println("INFO  | " + fmt.Sprintf(msg, args...))
+}
+
+func Warn(msg string, args ...any) {
+	if logLevel > WARN {
+		return
+	}
+	fmt.Println("WARN  | " + fmt.Sprintf(msg, args...))
 }
 
 func Error(msg string, args ...any) {
