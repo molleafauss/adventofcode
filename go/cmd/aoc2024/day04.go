@@ -32,23 +32,26 @@ func (solver *day04) Parse(line string) {
 }
 
 func (solver *day04) Solve() (*string, *string) {
-	for i := 0; i < len(solver.puzzle); i++ {
-		for j := 0; j < len(solver.puzzle[i]); j++ {
-			if solver.puzzle[i][j] != 'X' {
-				continue
-			}
-			// navigate all directions
-			for _, dir := range aoc.ALL_SURROUNDING {
-				start := aoc.RowColToGridPos(j, i)
-				if checkDir(solver, start, dir) {
-					solver.part1 += 1
-					aoc.Info("[%d] Found word at %v -> %v", solver.part1, start, dir)
-				}
+	for row := 0; row < len(solver.puzzle); row++ {
+		for col := 0; col < len(solver.puzzle[row]); col++ {
+			if solver.puzzle[row][col] == 'X' {
+				checkPart1(solver, row, col)
 			}
 		}
 	}
 	part1 := strconv.Itoa(solver.part1)
 	return &part1, nil
+}
+
+func checkPart1(solver *day04, row int, col int) {
+	// navigate all directions
+	for _, dir := range aoc.ALL_SURROUNDING {
+		start := aoc.RowColToGridPos(col, row)
+		if checkDir(solver, start, dir) {
+			solver.part1 += 1
+			aoc.Info("[%d] Found word at %v -> %v", solver.part1, start, dir)
+		}
+	}
 }
 
 const SEARCH = "MAS"
