@@ -12,6 +12,7 @@ type day04 struct {
 	width  int
 	height int
 	part1  int
+	part2  int
 }
 
 func Day04() *day04 {
@@ -36,11 +37,14 @@ func (solver *day04) Solve() (*string, *string) {
 		for col := 0; col < len(solver.puzzle[row]); col++ {
 			if solver.puzzle[row][col] == 'X' {
 				checkPart1(solver, row, col)
+			} else if solver.puzzle[row][col] == 'A' {
+				checkPart2(solver, row, col)
 			}
 		}
 	}
 	part1 := strconv.Itoa(solver.part1)
-	return &part1, nil
+	part2 := strconv.Itoa(solver.part2)
+	return &part1, &part2
 }
 
 func checkPart1(solver *day04, row int, col int) {
@@ -51,6 +55,51 @@ func checkPart1(solver *day04, row int, col int) {
 			solver.part1 += 1
 			aoc.Info("[%d] Found word at %v -> %v", solver.part1, start, dir)
 		}
+	}
+}
+
+var directions = []aoc.GridPos{aoc.MOVE_DL, aoc.MOVE_DR, aoc.MOVE_UR, aoc.MOVE_UL}
+
+var checks = []string{
+	// M.M
+	// .A.
+	// S.S
+	"MMSS",
+	// M.S
+	// .A.
+	// M.S
+	"MSSM",
+	// S.S
+	// .A.
+	// M.M
+	"SSMM",
+	// S.M
+	// .A.
+	// S.M
+	"SMMS",
+}
+
+func checkPart2(solver *day04, row int, col int) {
+	center := aoc.RowColToGridPos(col, row)
+	for _, letters := range checks {
+		matches := 0
+		for i, dir := range directions {
+			next := center.Add(&dir)
+			if !next.InBounds(solver.width, solver.height) {
+				break
+			}
+			if solver.puzzle[next.Row][next.Col] != letters[i] {
+				break
+			}
+			matches++
+		}
+		if matches < 4 {
+			continue
+		}
+		// if all match we have a winner
+		solver.part2 += 1
+		aoc.Info("[%d] Found X-MAS at %v", solver.part2, center)
+		return
 	}
 }
 
