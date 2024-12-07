@@ -1,5 +1,5 @@
 result part 1: 18
-result part 2: -
+result part 2: 9
 MMMSXXMASM
 MSAMXMSMSA
 AMXSXMAAMM
