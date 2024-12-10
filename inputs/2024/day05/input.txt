@@ -1,5 +1,5 @@
-result part 1: -
-result part 2: -
+result part 1: 5732
+result part 2: 4716
 79|97
 51|89
 51|74
