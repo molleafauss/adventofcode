@@ -47,6 +47,7 @@ func solve(file string, solver Solver) {
 		Error("file %s does not exist", file)
 		os.Exit(-1)
 	}
+	t0 := time.Now()
 	scanner := bufio.NewScanner(f)
 	for scanner.Scan() {
 		line := scanner.Text()
@@ -59,7 +60,6 @@ func solve(file string, solver Solver) {
 		}
 	}
 
-	t0 := time.Now()
 	part1, part2 := solver.Solve()
 	delta := time.Since(t0)
 	Info("File %s: %s", file, delta)

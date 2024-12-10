@@ -1,5 +1,5 @@
 result part 1: 143
-result part 2: -
+result part 2: 123
 47|53
 97|13
 97|61

@@ -12,6 +12,7 @@ type day05 struct {
 	rules   map[int][]int
 	updates bool
 	part1   int
+	part2   int
 }
 
 func Day05() *day05 {
@@ -55,28 +56,47 @@ func addRule(rules map[int][]int, line string) {
 
 func checkUpdate(solver *day05, line string) {
 	numbers := convertToNumbers(line)
+	part1 := findMiddle(numbers)
+	swaps := 0
 	// walk froward on each number and check backward if any number should be after this one
-	for i := range numbers {
+	for i := 0; i < len(numbers); {
+		current := numbers[i]
 		rules := solver.rules[numbers[i]]
 		if rules == nil {
-			aoc.Info("No rules for %d", numbers[i])
+			aoc.Debug("pos [%d] No rules for %d", i, current)
+			i++
 			continue
 		}
 		for j := i - 1; j >= 0; j-- {
 			prev := numbers[j]
 			if slices.Index(rules, prev) != -1 {
-				aoc.Warn("%s violates rules %d before %d", line, numbers[i], prev)
-				return
+				// if a rule is violated, rearrange the numbers by placing the current in the expected order, and reset
+				// i to the swapped position
+				aoc.Debug("%s violates rules %d before %d", line, current, prev)
+				numbers[j], numbers[i] = numbers[i], numbers[j]
+				i = j - 1
+				swaps++
+				break
 			}
 		}
+		i++
 	}
+	if swaps == 0 {
+		solver.part1 += part1
+		aoc.Info("[1] Sequence is ok: %s - middle %d - part 1 %d", line, part1, solver.part1)
+	} else {
+		middle := findMiddle(numbers)
+		solver.part2 += findMiddle(numbers)
+		aoc.Info("[2] Sequence had %d swaps - new middle is %d - final sequence %v", swaps, middle, numbers)
+	}
+}
+
+func findMiddle(numbers []int) int {
 	// ensure number count is odd
 	if len(numbers)%2 == 0 {
-		panic(fmt.Sprintf("Line has even numbers? %s (%d)", line, len(numbers)))
+		panic(fmt.Sprintf("Line has even numbers? %v (%d)", numbers, len(numbers)))
 	}
-	middle := numbers[len(numbers)/2]
-	solver.part1 += middle
-	aoc.Info("Sequence is ok: %s - middle %d - part 1 %d", line, middle, solver.part1)
+	return numbers[len(numbers)/2]
 }
 
 func convertToNumbers(line string) []int {
@@ -94,5 +114,6 @@ func convertToNumbers(line string) []int {
 
 func (solver *day05) Solve() (*string, *string) {
 	part1 := strconv.Itoa(solver.part1)
-	return &part1, nil
+	part2 := strconv.Itoa(solver.part2)
+	return &part1, &part2
 }
