@@ -5,7 +5,7 @@ import (
 )
 
 func main() {
-	aoc.SetLogLevel(aoc.DEBUG)
+	aoc.SetLogLevel(aoc.INFO)
 	aoc.Run("2024", solverFactory)
 }
 
@@ -21,6 +21,8 @@ func solverFactory(day string) aoc.Solver {
 		return Day04()
 	case "day05":
 		return Day05()
+	case "day06":
+		return Day06()
 	}
 	return nil
 }
