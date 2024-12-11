@@ -17,10 +17,11 @@ I've added some notes  in every puzzle just as a comment how hard it was or if I
 
 
 ## May-July 2023: Finishing what was left unsolved
+
 As expected some of the tougher nuts required some time to solve. I needed to look for other solution, compare, and
 rewrite into my code.
 
-For some I was close to the right idea but I didn't have the right structure in mind.
+For some I was close to the right idea, but I didn't have the right structure in mind.
 
 
 ## August 2023: Rust
@@ -31,17 +32,29 @@ good learning opportunity.
 This helped me refactor a bit all solutions; all days of a year are compiled in a single binary, and each day can 
 be invoked separately, or one can specify `all` to start solving all puzzles in order.
 
-I also added the expected results to all files so I can check that the solution keeps working whenever I refactor
+I also added the expected results to all files, so I can check that the solution keeps working whenever I refactor
 the code.
 
 
 ## September 2023: 2021
 
-I started tacking few problems, I managed to get the first 17 done, but then I had to deal with other stuff and
-all the other problems were paused.
+I started tacking few problems from 2021, I managed to get the first 17 done, but then I had to deal with life stuff, 
+and progress was paused.
 
 
 ## December 2023: ready for next challenge
 
-Waiting for the next challenges coming up. Expect activity in the next weeks. I've a couple weeks off also so "maybe"
+Waiting for the next challenges coming up. Expect activity in the next weeks. I've a couple of weeks off also, so "maybe"
 I can tackle quite a few problems.
+
+
+## January 2024: stopped earlier
+
+Some 2023 problem were harsh due to some geometrical knowledge needed (lacking it, algorithms were hard to crack) and
+then of course we got our usual friend Dijkstra so that was the sign this was enough...
+
+
+## December 2024: here I Go again
+
+Had moved job this year and the new company has some Go interest, so took the occasion to do some Go to learn it a bit 
+better.
