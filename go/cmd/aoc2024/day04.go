@@ -15,7 +15,7 @@ type day04 struct {
 	part2  int
 }
 
-func Day04() *day04 {
+func Day04() aoc.Solver {
 	return &day04{
 		puzzle: make([]string, 0),
 	}

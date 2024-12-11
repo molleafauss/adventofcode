@@ -13,7 +13,7 @@ type day03 struct {
 	part2   int
 }
 
-func Day03() *day03 {
+func Day03() aoc.Solver {
 	return &day03{
 		enabled: true,
 	}

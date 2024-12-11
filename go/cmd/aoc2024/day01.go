@@ -12,7 +12,7 @@ type day01 struct {
 	right []int
 }
 
-func Day01() *day01 {
+func Day01() aoc.Solver {
 	return &day01{
 		left:  make([]int, 0),
 		right: make([]int, 0),

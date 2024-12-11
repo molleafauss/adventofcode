@@ -20,7 +20,7 @@ type day02 struct {
 	part2Safe int
 }
 
-func Day02() *day02 {
+func Day02() aoc.Solver {
 	return &day02{}
 }
 
