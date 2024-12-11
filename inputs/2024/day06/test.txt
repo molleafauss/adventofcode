@@ -1,5 +1,5 @@
 result part 1: 41
-result part 2: -
+result part 2: 6
 ....#.....
 .........#
 ..........
