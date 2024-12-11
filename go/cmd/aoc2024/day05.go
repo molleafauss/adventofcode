@@ -15,7 +15,7 @@ type day05 struct {
 	part2   int
 }
 
-func Day05() *day05 {
+func Day05() aoc.Solver {
 	return &day05{
 		rules:   make(map[int][]int),
 		updates: false,
