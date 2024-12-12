@@ -1,7 +1,7 @@
 package aoc.year2022;
 
-import aoc.Results;
-import aoc.Solver;
+import aoc.api.Results;
+import aoc.api.Solver;
 
 public class Day16 implements Solver {
     @Override

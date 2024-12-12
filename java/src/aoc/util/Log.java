@@ -1,4 +1,4 @@
-package aoc;
+package aoc.util;
 
 public class Log {
     private static LogLevel configuredLogLevel = LogLevel.INFO;

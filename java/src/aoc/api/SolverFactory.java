@@ -1,4 +1,4 @@
-package aoc;
+package aoc.api;
 
 public interface SolverFactory {
     String getYear();

@@ -1,4 +1,4 @@
-package aoc;
+package aoc.api;
 
 public interface Solver {
     void parse(String line);

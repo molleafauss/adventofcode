@@ -1,22 +1,25 @@
 package aoc;
 
+import aoc.api.Solver;
+import aoc.api.SolverFactory;
+import aoc.util.Log;
+import aoc.util.LogLevel;
+import aoc.year2022.Solvers;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Objects;
 
-public class Runner {
-    public Runner(LogLevel logLevel) {
-        Log.setLogLevel(logLevel);
-    }
-
-    public void run(String[] args, SolverFactory factory) throws IOException {
+public class Main {
+    public static void main(String[] args) throws IOException {
+        Log.setLogLevel(LogLevel.INFO);
         if (args.length != 1) {
-            Log.error("Missing all or day");
+            System.out.println("Please specify a day to resolve like 'day03'");
             System.exit(1);
         }
-
+        var factory = new Solvers();
         if (args[0].equals("all")) {
             solveAll(factory);
         } else {
@@ -24,7 +27,7 @@ public class Runner {
         }
     }
 
-    private void solveDay(String day, SolverFactory factory) throws IOException {
+    private static void solveDay(String day, SolverFactory factory) throws IOException {
         Log.info("== Solving %s ==", day);
 
         // assume 'input' is a directory in the current directory
@@ -44,14 +47,14 @@ public class Runner {
 
     }
 
-    private void solveAll(SolverFactory factory) throws IOException {
+    private static void solveAll(SolverFactory factory) throws IOException {
         for (int d = 1; d < 26; d++) {
             var day = String.format("day%02d", d);
             solveDay(day, factory);
         }
     }
 
-    private void solve(File input, Solver solver) throws IOException {
+    private static void solve(File input, Solver solver) throws IOException {
         String expectedPart1 = null;
         String expectedPart2 = null;
         var t0 = System.currentTimeMillis();

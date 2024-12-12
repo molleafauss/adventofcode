@@ -1,7 +1,7 @@
 package aoc.year2022;
 
-import aoc.Solver;
-import aoc.SolverFactory;
+import aoc.api.Solver;
+import aoc.api.SolverFactory;
 
 import java.util.Objects;
 
