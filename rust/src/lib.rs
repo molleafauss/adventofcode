@@ -24,6 +24,7 @@ pub trait Solver {
 fn solve(filename: &str, mut parser: Box<dyn Solver>) {
     let mut expected_part_1 = None;
     let mut expected_part_2 = None;
+    let t0 = SystemTime::now();
     for line in fs::read_to_string(filename).unwrap().lines() {
         if line.starts_with("result part 1: ") {
             expected_part_1 = Some(String::from(&line[15..]));
@@ -33,7 +34,6 @@ fn solve(filename: &str, mut parser: Box<dyn Solver>) {
             parser.parse(line);
         }
     }
-    let t0 = SystemTime::now();
     let result = parser.solve();
     let t1 = SystemTime::now();
     info!("File {filename}: {:.3}sec", t1.duration_since(t0).unwrap().as_secs_f32());
