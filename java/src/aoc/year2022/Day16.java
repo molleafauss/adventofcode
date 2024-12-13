@@ -51,16 +51,15 @@ public class Day16 implements Solver {
         Log.info("[1] Found max flow is %d: %s (%d cache hits) [%.3fsec]",
                 best_path1.total_flow, best_path1.visited, one_path.cache_hits, (t1 - t0) / 1000.0);
 
-        // part 2
-//        t0 = System.currentTimeMillis();
-//        let mut two_path = TwoPathsSolver::new();
-//        let best_path2 = two_path.find_path(&self, TwoPaths::new(START));
-//        t1 = System.currentTimeMillis();
-//        Log.info("[2] Found max flow is %d: %s / %s (%d cache hits) [%.3fsec]",
-//                best_path2.total_flow, best_path2.human_path, best_path2.ele_path, two_path.cache_hits,
-//                (t1 - t0) / 1000.0);
-//        Some((best_path1.total_flow.to_string(), best_path2.total_flow.to_string()))
-        return new Results(String.valueOf(best_path1.total_flow), null);
+        // part 2 - timed
+        t0 = System.currentTimeMillis();
+        var two_path = new TwoPathSolver();
+        var best_path2 = two_path.find_path(new TwoPath(START));
+        t1 = System.currentTimeMillis();
+        Log.info("[2] Found max flow is %d: %s / %s (%d cache hits) [%.3fsec]",
+                best_path2.total_flow, best_path2.human_path, best_path2.ele_path, two_path.cache_hits,
+                (t1 - t0) / 1000.0);
+        return new Results(String.valueOf(best_path1.total_flow), String.valueOf(best_path2.total_flow));
     }
 
     private record DistanceWrapper(String cave, int distance) {
@@ -92,13 +91,6 @@ public class Day16 implements Solver {
             distances.put(name, currentDistances);
         }
         valves_with_flow.removeFirst();
-    }
-
-    private record Out(String name, int distance){
-        @Override
-        public String toString() {
-            return String.format("('%s', %d)", name, distance);
-        }
     }
 
     private Valve get_valve(String cave) {
@@ -159,7 +151,8 @@ public class Day16 implements Solver {
         }
     }
 
-    private record OnePathKey(String name, int flow, int valves) {}
+    private record OnePathKey(String name, int elapsed, int valves) {
+    }
 
     private static class OnePath {
         List<String> visited;
@@ -206,10 +199,167 @@ public class Day16 implements Solver {
         public OnePath diff(OnePath start) {
             var visited = new ArrayList<>(this.visited.subList(start.visited.size(), this.visited.size()));
             return new OnePath(
-                visited,
-                open_valves,
-                this.elapsed - start.elapsed,
-                this.total_flow - start.total_flow);
+                    visited,
+                    open_valves,
+                    this.elapsed - start.elapsed,
+                    this.total_flow - start.total_flow);
+        }
+    }
+
+    private class TwoPathSolver {
+        int calls = 0;
+        Map<TwoPathKey, TwoPath> cache = new HashMap<>();
+        int cache_hits = 0;
+
+        public TwoPath find_path(TwoPath path) {
+            calls += 1;
+            if ((calls % 1000000) == 0) {
+                Log.info("%d calls, %d cache hits...", calls, cache_hits);
+            }
+
+            var man_pos = path.human_path.getLast();
+            var ele_pos = path.ele_path.getLast();
+            var cache_key = path.cache_key();
+
+            if (cache.containsKey(cache_key)) {
+                cache_hits += 1;
+                var cached = cache.get(cache_key);
+                return path.merge(cached);
+            }
+
+            var best_path = path;
+            for (String name : valves_with_flow) {
+                var valve = get_valve(name);
+                // try to move both human and elephant towards the next valve
+                if ((path.open_valves & valve.mask) != 0) {
+                    continue;
+                }
+                // move human
+                var distance = distances.get(man_pos).get(name);
+                var next = path.next_human(valve, distance);
+                if (next.elapsed < PART2_MINUTES) {
+                    var sub_best = find_path(next);
+                    if (sub_best.total_flow > best_path.total_flow) {
+                        best_path = sub_best;
+                    }
+                }
+
+                // move elephant
+                distance = distances.get(ele_pos).get(name);
+                next = path.next_elephant(valve, distance);
+                if (next.elapsed < PART2_MINUTES) {
+                    var sub_best = find_path(next);
+                    if (sub_best.total_flow > best_path.total_flow) {
+                        best_path = sub_best;
+                    }
+                }
+            }
+
+            cache.put(cache_key, best_path.diff(path));
+            return best_path;
+
+        }
+    }
+
+    private record TwoPathKey(String human_pos, int human_elapsed, String ele_pos, int ele_elapsed, int valves) {
+    }
+
+    private static class TwoPath {
+        List<String> human_path;
+        int human_elapsed;
+        List<String> ele_path;
+        int ele_elapsed;
+        int open_valves;
+        int elapsed;
+        int total_flow;
+
+        public TwoPath(ArrayList<String> humanPath, int humElapsed, ArrayList<String> elePath, int eleElapsed, int openValves, int elapsed, int totalFlow) {
+            this.human_path = humanPath;
+            this.human_elapsed = humElapsed;
+            this.ele_path = elePath;
+            this.ele_elapsed = eleElapsed;
+            this.open_valves = openValves;
+            this.elapsed = elapsed;
+            this.total_flow = totalFlow;
+        }
+
+        public TwoPath(String start) {
+            human_path = new ArrayList<>(List.of(start));
+            ele_path = new ArrayList<>(List.of(start));
+        }
+
+        public TwoPathKey cache_key() {
+            return new TwoPathKey(
+                    human_path.getLast(),
+                    human_elapsed,
+                    ele_path.getLast(),
+                    ele_elapsed,
+                    open_valves
+            );
+        }
+
+        public TwoPath merge(TwoPath other) {
+            var human_path = new ArrayList<>(this.human_path);
+            human_path.addAll(other.human_path);
+            var ele_path = new ArrayList<>(this.ele_path);
+            ele_path.addAll(other.ele_path);
+            return new TwoPath(
+                    human_path,
+                    this.human_elapsed + other.human_elapsed,
+                    ele_path,
+                    this.ele_elapsed + other.ele_elapsed,
+                    this.open_valves,
+                    this.elapsed + other.elapsed,
+                    this.total_flow + other.total_flow
+            );
+        }
+
+        public TwoPath next_human(Valve valve, int distance) {
+            var human_path = new ArrayList<>(this.human_path);
+            human_path.add(valve.name);
+            var ele_path = new ArrayList<>(this.ele_path);
+            var elapsed = this.human_elapsed + distance + 1;
+            var flow = (PART2_MINUTES - elapsed) * valve.flow;
+            return new TwoPath(
+                    human_path,
+                    elapsed,
+                    ele_path,
+                    this.ele_elapsed,
+                    open_valves | valve.mask,
+                    Math.max(elapsed, ele_elapsed),
+                    total_flow + flow
+            );
+        }
+
+        public TwoPath next_elephant(Valve valve, int distance) {
+            var human_path = new ArrayList<>(this.human_path);
+            var ele_path = new ArrayList<>(this.ele_path);
+            ele_path.add(valve.name);
+            var elapsed = this.ele_elapsed + distance + 1;
+            var flow = (PART2_MINUTES - elapsed) * valve.flow;
+            return new TwoPath(
+                    human_path,
+                    human_elapsed,
+                    ele_path,
+                    elapsed,
+                    open_valves | valve.mask,
+                    Math.max(elapsed, human_elapsed),
+                    total_flow + flow
+            );
+        }
+
+        public TwoPath diff(TwoPath start) {
+            var human_path = new ArrayList<>(this.human_path.subList(start.human_path.size(), this.human_path.size()));
+            var ele_path = new ArrayList<>(this.ele_path.subList(start.ele_path.size(), this.ele_path.size()));
+            return new TwoPath(
+                    human_path,
+                    human_elapsed - start.human_elapsed,
+                    ele_path,
+                    ele_elapsed - start.ele_elapsed,
+                    open_valves,
+                    elapsed - start.elapsed,
+                    total_flow - start.total_flow
+            );
         }
     }
 }
