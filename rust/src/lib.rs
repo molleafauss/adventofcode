@@ -85,7 +85,7 @@ fn solve_all(year: &str, solver_for: fn(day: &str) -> Box<dyn Solver>) {
 
 fn init_logging(year: &str, level: LevelFilter) {
     let stdout = ConsoleAppender::builder()
-        .encoder(Box::new(PatternEncoder::new("{l} | {t} | {m}{n}")))
+        .encoder(Box::new(PatternEncoder::new("{l} | {m}{n}")))
         .build();
     let config = Config::builder()
         .appender(Appender::builder().build("stdout", Box::new(stdout)))
