@@ -52,14 +52,16 @@ public class Day16 implements Solver {
                 one_path.cache.size(), (t1 - t0) / 1000.0);
 
         // part 2 - timed
-//        t0 = System.currentTimeMillis();
-//        var two_path = new TwoPathSolver(valvesWithFlow, distances);
-//        var best_path2 = two_path.find_path(new TwoPath(START));
-//        t1 = System.currentTimeMillis();
-//        Log.info("[2] Found max flow is %d: %s / %s (%d cache hits, %d calls, %d cache size) [%.3fsec]",
-//                best_path2.total_flow, best_path2.human_path, best_path2.ele_path, two_path.cache_hits,
-//                two_path.calls, two_path.cache.size(), (t1 - t0) / 1000.0);
-        return new Results(String.valueOf(best_path1.total_flow), String.valueOf(best_path1.total_flow));
+        t0 = System.currentTimeMillis();
+        var two_path = new TwoPathSolver(valvesWithFlow, distances);
+        var best_path2 = two_path.find_path(new TwoPath(start, valvesWithFlow.length));
+        t1 = System.currentTimeMillis();
+        var human_path = valvePath(best_path2.human_path);
+        var ele_path = valvePath(best_path2.ele_path);
+        Log.info("[2] Found max flow is %d: %s / %s (%d cache hits, %d calls, %d cache size) [%.3fsec]",
+                best_path2.total_flow, human_path, ele_path, two_path.cache_hits,
+                two_path.calls, two_path.cache.size(), (t1 - t0) / 1000.0);
+        return new Results(String.valueOf(best_path1.total_flow), String.valueOf(best_path2.total_flow));
     }
 
     private List<String> valvePath(byte[] visited) {
@@ -70,7 +72,7 @@ public class Day16 implements Solver {
         return path;
     }
 
-    private byte[] precacheValues() {
+    private Valve[] precacheValues() {
         ArrayList<Byte> valves_with_flow = new ArrayList<>();
         HashMap<String, Byte> nameToId = new HashMap<>();
         // add to the valves with flow and set the valve mask
@@ -92,51 +94,45 @@ public class Day16 implements Solver {
         }
 
         // create an array of bytes off the ArrayList
-        byte[] valves = new byte[valves_with_flow.size()];
+        Valve[] explore_valves = new Valve[valves_with_flow.size()];
         for (int i = 0; i < valves_with_flow.size(); i++) {
-            valves[i] = valves_with_flow.get(i);
+            explore_valves[i] = valves.get(valves_with_flow.get(i));
         }
-        return valves;
+        return explore_valves;
     }
 
-    private record DistanceWrapper(byte cave, int distance) {
+    private record DistanceWrapper(Valve cave, int distance) {
     }
 
-    private Map<Byte, Map<Byte, Byte>> calculateDistances(byte start, byte[] valvesWithFlow) {
+    private Map<Byte, Map<Byte, Byte>> calculateDistances(byte start, Valve[] valvesWithFlow) {
         // add (temporarily) the start into the valves that need to be evaluated
         Map<Byte, Map<Byte, Byte>> distances = new HashMap<>();
-        var allValves = new ArrayList<Byte>();
-        allValves.add(start);
-        for (byte valve : valvesWithFlow) {
-            allValves.add(valve);
-        }
-        for (byte id : allValves) {
+        var allValves = new ArrayList<Valve>();
+        allValves.add(valves.get(start));
+        allValves.addAll(Arrays.asList(valvesWithFlow));
+        for (Valve curr : allValves) {
             // oh, java, when will you add a simple mutable map/list/set initializer?
-            var currentDistances = new HashMap<>(Map.of(id, (byte)0));
-            var visited = new HashSet<>(Set.of(id));
-            var queue = new LinkedList<>(List.of(new DistanceWrapper(id, 0)));
+            var currentDistances = new HashMap<>(Map.of(curr.id, (byte)0));
+            var visited = new HashSet<>(Set.of(curr.id));
+            var queue = new LinkedList<>(List.of(new DistanceWrapper(curr, 0)));
             while (!queue.isEmpty()) {
                 var wrapper = queue.removeFirst();
-                var valve = valves.get(wrapper.cave);
+                var valve = wrapper.cave;
                 for (Byte next : valve.tunnels) {
                     if (visited.contains(next)) {
                         continue;
                     }
                     visited.add(next);
-                    if (allValves.stream().anyMatch(v -> v.equals(next))) {
+                    if (allValves.stream().anyMatch(v -> next.equals(v.id))) {
                         currentDistances.put(next, (byte) (wrapper.distance + 1));
                     }
-                    queue.add(new DistanceWrapper(next, wrapper.distance + 1));
+                    queue.add(new DistanceWrapper(valves.get(next), wrapper.distance + 1));
                 }
             }
-            currentDistances.remove(id);
-            distances.put(id, currentDistances);
+            currentDistances.remove(curr.id);
+            distances.put(curr.id, currentDistances);
         }
         return distances;
-    }
-
-    private Valve get_valve(String cave) {
-        return valves.stream().filter(v -> Objects.equals(cave, v.name)).findFirst().orElseThrow();
     }
 
     private static class Valve {
@@ -157,13 +153,13 @@ public class Day16 implements Solver {
     }
 
     private class OnePathSolver {
-        private final byte[] valvesWithFlow;
+        private final Valve[] valvesWithFlow;
         private final Map<Byte, Map<Byte, Byte>> distances;
         int calls = 0;
         Map<OnePathKey, OnePath> cache = new HashMap<>();
         int cache_hits = 0;
 
-        public OnePathSolver(byte[] valvesWithFlow, Map<Byte, Map<Byte, Byte>> distances) {
+        public OnePathSolver(Valve[] valvesWithFlow, Map<Byte, Map<Byte, Byte>> distances) {
             this.valvesWithFlow = valvesWithFlow;
             this.distances = distances;
         }
@@ -182,12 +178,11 @@ public class Day16 implements Solver {
             }
 
             var best_path = path;
-            for (byte id : valvesWithFlow) {
-                var valve = valves.get(id);
+            for (var valve : valvesWithFlow) {
                 if ((path.open_valves & valve.mask) != 0) {
                     continue;
                 }
-                var distance = distances.get(cave).get(id);
+                var distance = distances.get(cave).get(valve.id);
                 var next = path.next(valve, distance);
                 if (next.elapsed >= PART1_MINUTES) {
                     continue;
@@ -271,15 +266,17 @@ public class Day16 implements Solver {
     }
 
     private class TwoPathSolver {
-        private final byte[] valvesWithFlow;
+        private final Valve[] valvesWithFlow;
         private final Map<Byte, Map<Byte, Byte>> distances;
         int calls = 0;
-        Map<TwoPathKey, TwoPath> cache = new HashMap<>();
+        Map<TwoPathKey, TwoPath> cache;
         int cache_hits = 0;
 
-        public TwoPathSolver(byte[] valvesWithFlow, Map<Byte, Map<Byte, Byte>> distances) {
+        public TwoPathSolver(Valve[] valvesWithFlow, Map<Byte, Map<Byte, Byte>> distances) {
             this.valvesWithFlow = valvesWithFlow;
             this.distances = distances;
+            var cacheSize = 35000000;
+            cache = HashMap.newHashMap(cacheSize);
         }
 
         public TwoPath find_path(TwoPath path) {
@@ -288,8 +285,8 @@ public class Day16 implements Solver {
                 Log.info("%d calls, %d cache hits...", calls, cache_hits);
             }
 
-            var man_pos = path.human_path.getLast();
-            var ele_pos = path.ele_path.getLast();
+            var man_pos = path.getHumanPos();
+            var ele_pos = path.getElephantPos();
             var cache_key = path.cache_key();
 
             if (cache.containsKey(cache_key)) {
@@ -299,14 +296,13 @@ public class Day16 implements Solver {
             }
 
             var best_path = path;
-            for (byte id : valvesWithFlow) {
-                var valve = valves.get(id);
+            for (var valve : valvesWithFlow) {
                 // try to move both human and elephant towards the next valve
                 if ((path.open_valves & valve.mask) != 0) {
                     continue;
                 }
                 // move human
-                var distance = distances.get(man_pos).get(id);
+                var distance = distances.get(man_pos).get(valve.id);
                 var next = path.next_human(valve, distance);
                 if (next.elapsed < PART2_MINUTES) {
                     var sub_best = find_path(next);
@@ -316,7 +312,7 @@ public class Day16 implements Solver {
                 }
 
                 // move elephant
-                distance = distances.get(ele_pos).get(id);
+                distance = distances.get(ele_pos).get(valve.id);
                 next = path.next_elephant(valve, distance);
                 if (next.elapsed < PART2_MINUTES) {
                     var sub_best = find_path(next);
@@ -332,105 +328,135 @@ public class Day16 implements Solver {
         }
     }
 
-    private record TwoPathKey(String human_pos, int human_elapsed, String ele_pos, int ele_elapsed, int valves) {
+    private record TwoPathKey(byte human_pos, byte human_elapsed, byte ele_pos, byte ele_elapsed, int valves) {
     }
 
     private static class TwoPath {
-        List<String> human_path;
-        int human_elapsed;
-        List<String> ele_path;
-        int ele_elapsed;
+        byte[] human_path;
+        byte human_path_pos;
+        byte human_elapsed;
+        byte[] ele_path;
+        byte ele_path_pos;
+        byte ele_elapsed;
         int open_valves;
-        int elapsed;
+        byte elapsed;
         int total_flow;
 
-        public TwoPath(List<String> humanPath, int humElapsed, List<String> elePath, int eleElapsed, int openValves, int elapsed, int totalFlow) {
+        public TwoPath(byte start, int size) {
+            human_path = new byte[size + 1];
+            human_path[0] = start;
+            ele_path = new byte[size + 1];
+            ele_path[0] = start;
+        }
+
+        private TwoPath(byte[] humanPath, byte humanPathPos, byte humElapsed, byte[] elePath, byte elePathPos, byte eleElapsed, int openValves, byte elapsed, int totalFlow) {
             this.human_path = humanPath;
+            this.human_path_pos = humanPathPos;
             this.human_elapsed = humElapsed;
             this.ele_path = elePath;
+            this.ele_path_pos = elePathPos;
             this.ele_elapsed = eleElapsed;
             this.open_valves = openValves;
             this.elapsed = elapsed;
             this.total_flow = totalFlow;
         }
 
-        public TwoPath(String start) {
-            human_path = new ArrayList<>(List.of(start));
-            ele_path = new ArrayList<>(List.of(start));
-        }
-
         public TwoPathKey cache_key() {
             return new TwoPathKey(
-                    human_path.getLast(),
+                    getHumanPos(),
                     human_elapsed,
-                    ele_path.getLast(),
+                    getElephantPos(),
                     ele_elapsed,
                     open_valves
             );
         }
 
         public TwoPath merge(TwoPath other) {
-            var human_path = new ArrayList<>(this.human_path);
-            human_path.addAll(other.human_path);
-            var ele_path = new ArrayList<>(this.ele_path);
-            ele_path.addAll(other.ele_path);
+            var hum_path = new byte[this.human_path.length];
+            System.arraycopy(this.human_path, 0, hum_path, 0, this.human_path_pos + 1);
+            System.arraycopy(other.human_path, 0, hum_path, this.human_path_pos + 1, other.human_path_pos);
+            var ele_path = new byte[this.ele_path.length];
+            System.arraycopy(this.ele_path, 0, ele_path, 0, this.ele_path_pos + 1);
+            System.arraycopy(other.ele_path, 0, ele_path, this.ele_path_pos + 1, other.ele_path_pos);
             return new TwoPath(
-                    human_path,
-                    this.human_elapsed + other.human_elapsed,
+                    hum_path,
+                    (byte) (this.human_path_pos + other.human_path_pos),
+                    (byte) (this.human_elapsed + other.human_elapsed),
                     ele_path,
-                    this.ele_elapsed + other.ele_elapsed,
+                    (byte) (this.ele_path_pos + other.ele_path_pos),
+                    (byte) (this.ele_elapsed + other.ele_elapsed),
                     this.open_valves,
-                    this.elapsed + other.elapsed,
+                    (byte) (this.elapsed + other.elapsed),
                     this.total_flow + other.total_flow
             );
         }
 
         public TwoPath next_human(Valve valve, int distance) {
-            var human_path = new ArrayList<>(this.human_path);
-            human_path.add(valve.name);
-            var ele_path = new ArrayList<>(this.ele_path);
+            var hum_path = new byte[this.human_path.length];
+            System.arraycopy(this.human_path, 0, hum_path, 0, this.human_path_pos + 1);
+            hum_path[this.human_path_pos + 1] = valve.id;
+            var ele_path = new byte[this.ele_path.length];
+            System.arraycopy(this.ele_path, 0, ele_path, 0, this.ele_path_pos + 1);
             var elapsed = this.human_elapsed + distance + 1;
             var flow = (PART2_MINUTES - elapsed) * valve.flow;
             return new TwoPath(
-                    human_path,
-                    elapsed,
+                    hum_path,
+                    (byte) (human_path_pos + 1),
+                    (byte) elapsed,
                     ele_path,
+                    ele_path_pos,
                     this.ele_elapsed,
                     open_valves | valve.mask,
-                    Math.max(elapsed, ele_elapsed),
+                    (byte) Math.max(elapsed, ele_elapsed),
                     total_flow + flow
             );
         }
 
         public TwoPath next_elephant(Valve valve, int distance) {
-            var human_path = new ArrayList<>(this.human_path);
-            var ele_path = new ArrayList<>(this.ele_path);
-            ele_path.add(valve.name);
+            var hum_path = new byte[this.human_path.length];
+            System.arraycopy(this.human_path, 0, hum_path, 0, this.human_path_pos + 1);
+            var ele_path = new byte[this.ele_path.length];
+            System.arraycopy(this.ele_path, 0, ele_path, 0, this.ele_path_pos + 1);
+            ele_path[this.ele_path_pos + 1] = valve.id;
             var elapsed = this.ele_elapsed + distance + 1;
             var flow = (PART2_MINUTES - elapsed) * valve.flow;
             return new TwoPath(
-                    human_path,
+                    hum_path,
+                    human_path_pos,
                     human_elapsed,
                     ele_path,
-                    elapsed,
+                    (byte) (ele_path_pos + 1),
+                    (byte) elapsed,
                     open_valves | valve.mask,
-                    Math.max(elapsed, human_elapsed),
+                    (byte) Math.max(elapsed, human_elapsed),
                     total_flow + flow
             );
         }
 
         public TwoPath diff(TwoPath start) {
-            var human_path = new ArrayList<>(this.human_path.subList(start.human_path.size(), this.human_path.size()));
-            var ele_path = new ArrayList<>(this.ele_path.subList(start.ele_path.size(), this.ele_path.size()));
+            var human_path = new byte[this.human_path.length];
+            System.arraycopy(this.human_path, start.human_path_pos + 1, human_path, 0, this.human_path_pos - start.human_path_pos);
+            var ele_path = new byte[this.human_path.length];
+            System.arraycopy(this.ele_path, start.ele_path_pos + 1, ele_path, 0, this.ele_path_pos - start.ele_path_pos);
             return new TwoPath(
                     human_path,
-                    human_elapsed - start.human_elapsed,
+                    (byte) (this.human_path_pos - start.human_path_pos),
+                    (byte) (human_elapsed - start.human_elapsed),
                     ele_path,
-                    ele_elapsed - start.ele_elapsed,
+                    (byte) (this.ele_path_pos - start.ele_path_pos),
+                    (byte) (ele_elapsed - start.ele_elapsed),
                     open_valves,
-                    elapsed - start.elapsed,
+                    (byte) (elapsed - start.elapsed),
                     total_flow - start.total_flow
             );
+        }
+
+        public byte getHumanPos() {
+            return human_path[human_path_pos];
+        }
+
+        public byte getElephantPos() {
+            return ele_path[ele_path_pos];
         }
     }
 }
