@@ -48,17 +48,18 @@ public class Day16 implements Solver {
         var one_path = new OnePathSolver();
         var best_path1 = one_path.find_path(new OnePath(START));
         var t1 = System.currentTimeMillis();
-        Log.info("[1] Found max flow is %d: %s (%d cache hits, %d calls) [%.3fsec]",
-                best_path1.total_flow, best_path1.visited, one_path.cache_hits, one_path.calls, (t1 - t0) / 1000.0);
+        Log.info("[1] Found max flow is %d: %s (%d cache hits, %d calls, %d cache size) [%.3fsec]",
+                best_path1.total_flow, best_path1.visited, one_path.cache_hits, one_path.calls,
+                one_path.cache.size(), (t1 - t0) / 1000.0);
 
         // part 2 - timed
         t0 = System.currentTimeMillis();
         var two_path = new TwoPathSolver();
         var best_path2 = two_path.find_path(new TwoPath(START));
         t1 = System.currentTimeMillis();
-        Log.info("[2] Found max flow is %d: %s / %s (%d cache hits, %d calls) [%.3fsec]",
+        Log.info("[2] Found max flow is %d: %s / %s (%d cache hits, %d calls, %d cache size) [%.3fsec]",
                 best_path2.total_flow, best_path2.human_path, best_path2.ele_path, two_path.cache_hits,
-                two_path.calls, (t1 - t0) / 1000.0);
+                two_path.calls, two_path.cache.size(), (t1 - t0) / 1000.0);
         return new Results(String.valueOf(best_path1.total_flow), String.valueOf(best_path2.total_flow));
     }
 

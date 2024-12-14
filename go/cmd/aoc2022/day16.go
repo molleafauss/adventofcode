@@ -65,8 +65,8 @@ func (solver *day16) Solve() (*string, *string) {
 	}
 	best_path1 := one_path.find_path(solver, InitOnePath(START))
 	var delta = time.Since(t0)
-	aoc.Info("[1] Found max flow is %d: %s (%d cache hits / %d calls) [%.3fsec]",
-		best_path1.total_flow, best_path1.visited, one_path.cache_hits, one_path.calls, delta.Seconds())
+	aoc.Info("[1] Found max flow is %d: %s (%d cache hits, %d calls, %d cache size) [%.3fsec]",
+		best_path1.total_flow, best_path1.visited, one_path.cache_hits, one_path.calls, len(one_path.cache), delta.Seconds())
 
 	t0 = time.Now()
 	var two_path = TwoPathSolver{
@@ -74,9 +74,9 @@ func (solver *day16) Solve() (*string, *string) {
 	}
 	var best_path2 = two_path.find_path(solver, InitTwoPath(START))
 	delta = time.Since(t0)
-	aoc.Info("[2] Found max flow is %d: %s / %s (%d cache hits / %d calls) [%.3fsec]",
+	aoc.Info("[2] Found max flow is %d: %s / %s (%d cache hits, %d calls, %d cache size) [%.3fsec]",
 		best_path2.total_flow, best_path2.human_path, best_path2.ele_path, two_path.cache_hits, two_path.calls,
-		delta.Seconds())
+		len(two_path.cache), delta.Seconds())
 
 	part1 := strconv.Itoa(best_path1.total_flow)
 	part2 := strconv.Itoa(best_path2.total_flow)

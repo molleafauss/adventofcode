@@ -138,7 +138,7 @@ class Solution(Solver):
     def two_paths(self, path):
         self.calls += 1
         if self.calls % 1000000 == 0:
-            print(f"{self.calls} calls - {self.cache_hits} cache hits")
+            log.info(f"{self.calls} calls, {self.cache_hits} cache hits...")
 
         man_pos = path.human.visited[-1]
         ele_pos = path.elephant.visited[-1]
