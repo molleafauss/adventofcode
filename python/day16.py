@@ -83,7 +83,7 @@ class Solution(Solver):
         best_path = self.find_path(Path(["AA"], 0, 0, 0))
         t1 = time.time()
         path1_flow = best_path.total_flow
-        log.info(f"[1] Found max flow is {best_path.total_flow}: {best_path.visited} ({self.cache_hits} cache hits) [{t1 - t0:10.3}sec]")
+        log.info(f"[1] Found max flow is {best_path.total_flow}: {best_path.visited} ({self.cache_hits} cache hits, {self.calls} calls) [{t1 - t0:10.3}sec]")
 
         self.calls = 0
         self.cache_hits = 0
