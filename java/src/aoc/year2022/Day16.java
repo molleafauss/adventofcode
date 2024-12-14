@@ -46,7 +46,7 @@ public class Day16 implements Solver {
         var one_path = new OnePathSolver(valvesWithFlow, distances);
         var best_path1 = one_path.find_path(new OnePath(start, valvesWithFlow.length));
         var t1 = System.currentTimeMillis();
-        var path = valvePath(best_path1.visited);
+        var path = valvePath(best_path1.visited, best_path1.visited_pos);
         Log.info("[1] Found max flow is %d: %s (%d cache hits, %d calls, %d cache size) [%.3fsec]",
                 best_path1.total_flow, path, one_path.cache_hits, one_path.calls,
                 one_path.cache.size(), (t1 - t0) / 1000.0);
@@ -56,18 +56,18 @@ public class Day16 implements Solver {
         var two_path = new TwoPathSolver(valvesWithFlow, distances);
         var best_path2 = two_path.find_path(new TwoPath(start, valvesWithFlow.length));
         t1 = System.currentTimeMillis();
-        var human_path = valvePath(best_path2.human_path);
-        var ele_path = valvePath(best_path2.ele_path);
+        var human_path = valvePath(best_path2.human_path, best_path2.human_path_pos);
+        var ele_path = valvePath(best_path2.ele_path, best_path2.ele_path_pos);
         Log.info("[2] Found max flow is %d: %s / %s (%d cache hits, %d calls, %d cache size) [%.3fsec]",
                 best_path2.total_flow, human_path, ele_path, two_path.cache_hits,
                 two_path.calls, two_path.cache.size(), (t1 - t0) / 1000.0);
         return new Results(String.valueOf(best_path1.total_flow), String.valueOf(best_path2.total_flow));
     }
 
-    private List<String> valvePath(byte[] visited) {
+    private List<String> valvePath(byte[] visited, byte length) {
         var path = new ArrayList<String>();
-        for (byte id : visited) {
-            path.add(valves.get(id).name);
+        for (int i = 0; i <= length; i++) {
+            path.add(valves.get(visited[i]).name);
         }
         return path;
     }
