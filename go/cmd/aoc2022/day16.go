@@ -56,6 +56,7 @@ func (solver *day16) Parse(line string) {
 }
 
 func (solver *day16) Solve() (*string, *string) {
+	aoc.Info("Valves with flow: %s", solver.valvesWithFlow)
 	solver.calculateDistances()
 
 	var t0 = time.Now()
@@ -67,8 +68,19 @@ func (solver *day16) Solve() (*string, *string) {
 	aoc.Info("[1] Found max flow is %d: %s (%d cache hits / %d calls) [%.3fsec]",
 		best_path1.total_flow, best_path1.visited, one_path.cache_hits, one_path.calls, delta.Seconds())
 
+	t0 = time.Now()
+	var two_path = TwoPathSolver{
+		cache: make(map[TwoPathKey]TwoPath),
+	}
+	var best_path2 = two_path.find_path(solver, InitTwoPath(START))
+	delta = time.Since(t0)
+	aoc.Info("[2] Found max flow is %d: %s / %s (%d cache hits / %d calls) [%.3fsec]",
+		best_path2.total_flow, best_path2.human_path, best_path2.ele_path, two_path.cache_hits, two_path.calls,
+		delta.Seconds())
+
 	part1 := strconv.Itoa(best_path1.total_flow)
-	return &part1, nil
+	part2 := strconv.Itoa(best_path2.total_flow)
+	return &part1, &part2
 }
 
 func (solver *day16) calculateDistances() {
@@ -157,11 +169,23 @@ func (s *OnePathSolver) find_path(p *day16, path OnePath) OnePath {
 	return best_path
 }
 
+type OnePathKey struct {
+	name    string
+	elapsed int
+	valves  int
+}
+
 type OnePath struct {
 	visited     []string
 	open_valves int
 	elapsed     int
 	total_flow  int
+}
+
+func InitOnePath(start string) OnePath {
+	return OnePath{
+		visited: []string{start},
+	}
 }
 
 func (p *OnePath) cache_key() OnePathKey {
@@ -201,14 +225,151 @@ func (p *OnePath) diff(path OnePath) OnePath {
 	}
 }
 
-func InitOnePath(start string) OnePath {
-	return OnePath{
-		visited: []string{start},
+type TwoPathSolver struct {
+	cache_hits int
+	calls      int
+	cache      map[TwoPathKey]TwoPath
+}
+
+func (s *TwoPathSolver) find_path(solver *day16, path TwoPath) TwoPath {
+	s.calls += 1
+	if (s.calls % 1000000) == 0 {
+		aoc.Info("%d calls, %d cache hits...", s.calls, s.cache_hits)
+	}
+
+	var man_pos = path.human_path[len(path.human_path)-1]
+	var ele_pos = path.ele_path[len(path.ele_path)-1]
+	var cache_key = path.cache_key()
+
+	if cached, ok := s.cache[cache_key]; ok {
+		s.cache_hits += 1
+		return path.merge(cached)
+	}
+
+	var best_path = path
+	for _, name := range solver.valvesWithFlow {
+		var valve = solver.get_valve(name)
+		// try to move both human and elephant towards the next valve
+		if (path.open_valves & valve.mask) != 0 {
+			continue
+		}
+		// move human
+		var distance = solver.distances[man_pos][name]
+		var next = path.next_human(valve, distance)
+		if next.elapsed < PART2_MINUTES {
+			var sub_best = s.find_path(solver, next)
+			if sub_best.total_flow > best_path.total_flow {
+				best_path = sub_best
+			}
+		}
+
+		// move elephant
+		distance = solver.distances[ele_pos][name]
+		next = path.next_elephant(valve, distance)
+		if next.elapsed < PART2_MINUTES {
+			var sub_best = s.find_path(solver, next)
+			if sub_best.total_flow > best_path.total_flow {
+				best_path = sub_best
+			}
+		}
+	}
+
+	s.cache[cache_key] = best_path.diff(path)
+	return best_path
+}
+
+type TwoPathKey struct {
+	human_pos     string
+	human_elapsed int
+	ele_pos       string
+	ele_elapsed   int
+	valves        int
+}
+
+type TwoPath struct {
+	human_path    []string
+	human_elapsed int
+	ele_path      []string
+	ele_elapsed   int
+	open_valves   int
+	elapsed       int
+	total_flow    int
+}
+
+func (p *TwoPath) cache_key() TwoPathKey {
+	return TwoPathKey{
+		p.human_path[len(p.human_path)-1],
+		p.human_elapsed,
+		p.ele_path[len(p.ele_path)-1],
+		p.ele_elapsed,
+		p.open_valves,
 	}
 }
 
-type OnePathKey struct {
-	name    string
-	elapsed int
-	valves  int
+func (p *TwoPath) merge(other TwoPath) TwoPath {
+	var human_path = append(p.human_path, other.human_path...)
+	var ele_path = append(p.ele_path, other.ele_path...)
+	return TwoPath{
+		human_path,
+		p.human_elapsed + other.human_elapsed,
+		ele_path,
+		p.ele_elapsed + other.ele_elapsed,
+		p.open_valves,
+		p.elapsed + other.elapsed,
+		p.total_flow + other.total_flow,
+	}
+}
+
+func (p *TwoPath) next_human(valve *Valve, distance int) TwoPath {
+	var human_path = append(p.human_path, valve.name)
+	var ele_path = p.ele_path
+	var elapsed = p.human_elapsed + distance + 1
+	var flow = (PART2_MINUTES - elapsed) * valve.flow
+	return TwoPath{
+		human_path,
+		elapsed,
+		ele_path,
+		p.ele_elapsed,
+		p.open_valves | valve.mask,
+		max(elapsed, p.ele_elapsed),
+		p.total_flow + flow,
+	}
+
+}
+
+func (p *TwoPath) next_elephant(valve *Valve, distance int) TwoPath {
+	var human_path = p.human_path
+	var ele_path = append(p.ele_path, valve.name)
+	var elapsed = p.ele_elapsed + distance + 1
+	var flow = (PART2_MINUTES - elapsed) * valve.flow
+	return TwoPath{
+		human_path,
+		p.human_elapsed,
+		ele_path,
+		elapsed,
+		p.open_valves | valve.mask,
+		max(elapsed, p.human_elapsed),
+		p.total_flow + flow,
+	}
+}
+
+func (p *TwoPath) diff(start TwoPath) TwoPath {
+	var human_path = p.human_path[len(start.human_path):len(p.human_path)]
+	var ele_path = p.ele_path[len(start.ele_path):len(p.ele_path)]
+	return TwoPath{
+		human_path,
+		p.human_elapsed - start.human_elapsed,
+		ele_path,
+		p.ele_elapsed - start.ele_elapsed,
+		p.open_valves,
+		p.elapsed - start.elapsed,
+		p.total_flow - start.total_flow,
+	}
+}
+
+func InitTwoPath(start string) TwoPath {
+	return TwoPath{
+		human_path: []string{start},
+		ele_path:   []string{start},
+	}
 }
