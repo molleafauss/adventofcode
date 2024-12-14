@@ -273,7 +273,7 @@ public class Day16 implements Solver {
         int elapsed;
         int total_flow;
 
-        public TwoPath(ArrayList<String> humanPath, int humElapsed, ArrayList<String> elePath, int eleElapsed, int openValves, int elapsed, int totalFlow) {
+        public TwoPath(List<String> humanPath, int humElapsed, List<String> elePath, int eleElapsed, int openValves, int elapsed, int totalFlow) {
             this.human_path = humanPath;
             this.human_elapsed = humElapsed;
             this.ele_path = elePath;
