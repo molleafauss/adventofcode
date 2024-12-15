@@ -84,7 +84,7 @@ func checkPart2(solver *day04, row int, col int) {
 	for _, letters := range checks {
 		matches := 0
 		for i, dir := range directions {
-			next := center.Add(&dir)
+			next := center.Add(dir)
 			if !next.InBounds(solver.width, solver.height) {
 				break
 			}
@@ -109,7 +109,7 @@ func checkDir(solver *day04, start aoc.GridPos, dir aoc.GridPos) bool {
 	// star is already correct
 	next := start
 	for i := range SEARCH {
-		next = next.Add(&dir)
+		next = next.Add(dir)
 		if !next.InBounds(solver.width, solver.height) {
 			return false
 		}
