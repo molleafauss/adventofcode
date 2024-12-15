@@ -9,9 +9,10 @@ import (
 
 type day07 struct {
 	part1 int
+	part2 int
 }
 
-func Day07() *day07 {
+func Day07() aoc.Solver {
 	return &day07{}
 }
 
@@ -32,32 +33,64 @@ func (solver *day07) Parse(line string) {
 		}
 		ops = append(ops, val)
 	}
-	if checkOp(ops, test) {
-		aoc.Info("Found valid operation: %s", line)
-		solver.part1 += test
-	}
-}
-
-func checkOp(ops []int, test int) bool {
 	if len(ops) < 2 {
 		panic(fmt.Sprintf("Too few operands? %s", ops))
 	}
 
-	return recurseOp(ops[0]+ops[1], 2, ops, test) || recurseOp(ops[0]*ops[1], 2, ops, test)
+	var opsPart1 = []func(int, int) int{add, mul}
+	var opsPart2 = []func(int, int) int{add, mul, join}
+	if checkOp("[1]", ops, test, opsPart1) {
+		solver.part1 += test
+		solver.part2 += test
+		// no need to check with concat, what works for part 1 works for part 2
+		return
+	}
+	if checkOp("[2]", ops, test, opsPart2) {
+		solver.part2 += test
+	}
 }
 
-func recurseOp(accum int, pos int, ops []int, test int) bool {
-	// we at end with correct value?
-	if pos == len(ops) && accum == test {
-		return true
-	}
-	if pos < len(ops) {
-		return recurseOp(accum+ops[pos], pos+1, ops, test) || recurseOp(accum*ops[pos], pos+1, ops, test)
+func checkOp(phase string, vals []int, expected int, ops []func(int, int) int) bool {
+	for _, op := range ops {
+		if recurseOp(op(vals[0], vals[1]), 2, vals, ops, expected) {
+			aoc.Info("%s %d found %d", phase, vals, expected)
+			return true
+		}
 	}
 	return false
 }
 
+func recurseOp(accum int, pos int, vals []int, ops []func(int, int) int, expected int) bool {
+	// already bigger? bail
+	if accum > expected {
+		return false
+	}
+	// we at end? then return anyway, check if value is expected
+	if pos == len(vals) {
+		return accum == expected
+	}
+	for _, op := range ops {
+		if recurseOp(op(accum, vals[pos]), pos+1, vals, ops, expected) {
+			return true
+		}
+	}
+	return false
+}
+
+func add(a int, b int) int { return a + b }
+
+func mul(a int, b int) int { return a * b }
+
+func join(left int, right int) int {
+	val, err := strconv.Atoi(fmt.Sprintf("%d%d", left, right))
+	if err != nil {
+		panic(err)
+	}
+	return val
+}
+
 func (solver *day07) Solve() (*string, *string) {
 	part1 := strconv.Itoa(solver.part1)
-	return &part1, nil
+	part2 := strconv.Itoa(solver.part2)
+	return &part1, &part2
 }
