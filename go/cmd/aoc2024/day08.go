@@ -40,7 +40,7 @@ func (solver *day08) Parse(line string) {
 }
 
 func (solver *day08) Solve() (*string, *string) {
-	antinodes := map[aoc.GridPos]bool{}
+	antinodes := map[aoc.GridPos]int{}
 	for ch, antennas := range solver.antennas {
 		aoc.Info("Found %d antennas at frequency '%s'", len(antennas), []uint8{ch})
 		// check every antenna with the others
@@ -48,21 +48,47 @@ func (solver *day08) Solve() (*string, *string) {
 			for j := i + 1; j < len(antennas); j++ {
 				pos_a := antennas[i]
 				pos_b := antennas[j]
-				delta_c, delta_r := pos_a.Distance(&pos_b)
-				//
-				antinode1 := pos_a.Add(aoc.RowColToGridPos(delta_c, delta_r))
-				if antinode1.InBounds(solver.width, solver.height) {
-					aoc.Info("Antinode for %s<>%s -> %s", pos_a, pos_b, antinode1)
-					antinodes[antinode1] = true
+				// antennas are antinodes with distance 0, but don't add them if one antinode exists already
+				if _, ok := antinodes[pos_a]; !ok {
+					antinodes[pos_a] = 0
 				}
-				antinode2 := pos_b.Add(aoc.RowColToGridPos(-delta_c, -delta_r))
-				if antinode2.InBounds(solver.width, solver.height) {
-					aoc.Info("Antinode for %s<>%s -> %s", pos_a, pos_b, antinode2)
-					antinodes[antinode2] = true
+				if _, ok := antinodes[pos_b]; !ok {
+					antinodes[pos_b] = 0
+				}
+				delta_c, delta_r := pos_a.Distance(&pos_b)
+				// iterate and keep the direction until antinode is within bounds
+				iter := 1
+				antinode := pos_a
+				for {
+					antinode = antinode.Add(aoc.RowColToGridPos(delta_c, delta_r))
+					if !antinode.InBounds(solver.width, solver.height) {
+						break
+					}
+					aoc.Info("Antinode for %s<>%s -> %s  [distance %d]", pos_a, pos_b, antinode, iter)
+					antinodes[antinode] = iter
+					iter++
+				}
+				iter = 1
+				antinode = pos_b
+				for {
+					antinode = antinode.Add(aoc.RowColToGridPos(-delta_c, -delta_r))
+					if !antinode.InBounds(solver.width, solver.height) {
+						break
+					}
+					aoc.Info("Antinode for %s<>%s -> %s [distance %d]", pos_a, pos_b, antinode, iter)
+					antinodes[antinode] = iter
+					iter++
 				}
 			}
 		}
 	}
-	part1 := strconv.Itoa(len(antinodes))
-	return &part1, nil
+	distanceOne := 0
+	for _, val := range antinodes {
+		if val == 1 {
+			distanceOne++
+		}
+	}
+	part1 := strconv.Itoa(distanceOne)
+	part2 := strconv.Itoa(len(antinodes))
+	return &part1, &part2
 }
