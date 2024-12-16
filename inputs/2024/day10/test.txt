@@ -1,5 +1,5 @@
 result part 1: 36
-result part 2: -
+result part 2: 81
 89010123
 78121874
 87430965

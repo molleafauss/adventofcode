@@ -44,18 +44,23 @@ func (solver *day10) Parse(line string) {
 
 func (solver *day10) Solve() (*string, *string) {
 	score := 0
+	rating := 0
 	aoc.Info("Map is %dx%d - Found %d zeros", solver.width, solver.height, len(solver.zeros))
 	for _, start := range solver.zeros {
-		score += solver.findTrails(start)
+		s, r := solver.findTrails(start)
+		score += s
+		rating += r
 	}
 	part1 := strconv.Itoa(score)
-	return &part1, nil
+	part2 := strconv.Itoa(rating)
+	return &part1, &part2
 }
 
-func (solver *day10) findTrails(start aoc.GridPos) int {
+func (solver *day10) findTrails(start aoc.GridPos) (int, int) {
 	var queue = list.New()
 	queue.PushBack(start)
 	peaks := map[aoc.GridPos]bool{}
+	allPeaks := 0
 	for queue.Len() > 0 {
 		spot := queue.Remove(queue.Front()).(aoc.GridPos)
 		height := solver.grid[spot.Row][spot.Col]
@@ -70,12 +75,13 @@ func (solver *day10) findTrails(start aoc.GridPos) int {
 			}
 			if newHeight == 9 {
 				aoc.Debug("trail %s -> %s", start, pos)
+				allPeaks++
 				peaks[pos] = true
 				continue
 			}
 			queue.PushBack(pos)
 		}
 	}
-	aoc.Info("Found %d peaks starting from %s", len(peaks), start)
-	return len(peaks)
+	aoc.Info("Found %d peaks [%d allPeaks] starting from %s", len(peaks), allPeaks, start)
+	return len(peaks), allPeaks
 }
