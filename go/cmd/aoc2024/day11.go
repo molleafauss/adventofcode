@@ -2,7 +2,6 @@ package main
 
 import (
 	"aoc/aoc"
-	"slices"
 	"strconv"
 	"strings"
 )
@@ -25,26 +24,52 @@ func (solver *day11) Parse(line string) {
 	}
 }
 
+type key struct {
+	number int
+	level  int
+}
+
 func (solver *day11) Solve() (*string, *string) {
-	for i := 0; i < ITERATIONS; i++ {
-		for j := 0; j < len(solver.stones); j++ {
-			stone := solver.stones[j]
-			text := strconv.Itoa(stone)
-			digits := len(text)
-			if stone == 0 {
-				solver.stones[j] = 1
-			} else if (digits % 2) == 0 {
-				a, b := split(text, digits)
-				solver.stones[j] = a
-				solver.stones = slices.Insert(solver.stones, j+1, b)
-				j++
-			} else {
-				solver.stones[j] = stone * 2024
-			}
-		}
+	var cache = make(map[key]int)
+	result := 0
+	for _, num := range solver.stones {
+		result += blink(num, 25, &cache)
 	}
-	part1 := strconv.Itoa(len(solver.stones))
-	return &part1, nil
+	aoc.Info("Found part1 result: %d, cache size %d", result, len(cache))
+	part1 := strconv.Itoa(result)
+
+	result = 0
+	for _, num := range solver.stones {
+		result += blink(num, 75, &cache)
+	}
+	aoc.Info("Found part2 result: %d, cache size %d", result, len(cache))
+	part2 := strconv.Itoa(result)
+
+	return &part1, &part2
+}
+
+func blink(stone int, level int, cache *map[key]int) int {
+	if val, ok := (*cache)[key{stone, level}]; ok {
+		return val
+	}
+
+	if level == 0 {
+		return 1
+	}
+
+	text := strconv.Itoa(stone)
+	digits := len(text)
+	var res int
+	if stone == 0 {
+		res = blink(1, level-1, cache)
+	} else if (digits % 2) == 0 {
+		a, b := split(text, digits)
+		res = blink(a, level-1, cache) + blink(b, level-1, cache)
+	} else {
+		res = blink(stone*2024, level-1, cache)
+	}
+	(*cache)[key{stone, level}] = res
+	return res
 }
 
 func split(text string, digits int) (int, int) {
