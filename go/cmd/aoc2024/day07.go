@@ -34,7 +34,7 @@ func (solver *day07) Parse(line string) {
 		ops = append(ops, val)
 	}
 	if len(ops) < 2 {
-		panic(fmt.Sprintf("Too few operands? %s", ops))
+		panic(fmt.Sprintf("Too few operands? %d", ops))
 	}
 
 	var opsPart1 = []func(int, int) int{add, mul}
