@@ -1,5 +1,5 @@
 result part 1: 29436
-result part 2: -
+result part 2: 103729094227877
 Button A: X+43, Y+21
 Button B: X+16, Y+31
 Prize: X=6735, Y=9135
