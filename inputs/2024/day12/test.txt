@@ -1,5 +1,5 @@
 result part 1: 1930
-result part 2: -
+result part 2: 1206
 RRRRIICCFF
 RRRRIICCCF
 VVRRRCCFFF
