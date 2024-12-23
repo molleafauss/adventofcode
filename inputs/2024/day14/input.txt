@@ -1,5 +1,5 @@
 result part 1: 226548000
-result part 2: -
+result part 2: 7753
 p=92,72 v=-49,-72
 p=51,21 v=67,-50
 p=0,53 v=27,-81
