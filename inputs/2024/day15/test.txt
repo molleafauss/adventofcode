@@ -1,5 +1,5 @@
 result part 1: 10092
-result part 2: -
+result part 2: 9021
 ##########
 #..O..O.O#
 #......O.#
