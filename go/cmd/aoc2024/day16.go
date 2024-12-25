@@ -42,9 +42,10 @@ func (solver *day16) Parse(line string) {
 }
 
 func (solver *day16) Solve() (*string, *string) {
-	score := solver.walkMaze()
+	score, bestSpots := solver.walkMaze()
 	part1 := strconv.Itoa(score)
-	return &part1, nil
+	part2 := strconv.Itoa(bestSpots)
+	return &part1, &part2
 }
 
 type walk struct {
@@ -58,11 +59,12 @@ type position struct {
 	dir aoc.GridPos
 }
 
-func (solver *day16) walkMaze() int {
+func (solver *day16) walkMaze() (int, int) {
 	empty := solver.width*solver.height - len(solver.maze)
 	aoc.Info("Maze size: %dx%d - walls %d - empty: %d", solver.width, solver.height, len(solver.maze), empty)
 	minScore := math.MaxInt32
 	minScores := make(map[position]int)
+	bestSpots := make(map[aoc.GridPos]bool)
 	// max number of empty spaces - this might be needed for optimizations?
 	pq := make(PriorityQueue, 1)
 	pq[0] = &walk{[]aoc.GridPos{solver.start}, aoc.MOVE_R, 0}
@@ -78,6 +80,16 @@ func (solver *day16) walkMaze() int {
 		if pos == solver.end {
 			if w.score < minScore {
 				minScore = w.score
+				// reset best spots
+				clear(bestSpots)
+				for _, pos := range w.path {
+					bestSpots[pos] = true
+				}
+			} else if w.score == minScore {
+				// add path to all best spots
+				for _, pos := range w.path {
+					bestSpots[pos] = true
+				}
 			}
 			continue
 		}
@@ -118,7 +130,7 @@ func (solver *day16) walkMaze() int {
 		}
 	}
 	aoc.Info("Found end: iterations: %d - score %d", iterations, minScore)
-	return minScore
+	return minScore, len(bestSpots)
 }
 
 func opposite(a aoc.GridPos, b aoc.GridPos) bool {
