@@ -41,6 +41,8 @@ func solverFactory(day string) aoc.Solver {
 		return Day14()
 	case "day15":
 		return Day15()
+	case "day16":
+		return Day16()
 	}
 	return nil
 }
