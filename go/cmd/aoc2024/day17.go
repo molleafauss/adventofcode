@@ -41,6 +41,7 @@ func (solver *day17) Parse(line string) {
 }
 
 func (solver *day17) Solve() (*string, *string) {
+	aoc.Info("Program: %d", solver.program)
 	out := ""
 	ip := 0
 	for ip < len(solver.program) {
@@ -79,49 +80,65 @@ func (solver *day17) Solve() (*string, *string) {
 		}
 		panic(fmt.Sprintf("Invalid operand?? ip: %d - %d", ip, solver.program[ip]))
 	}
+
 	return &out, nil
 }
 
-func (solver *day17) combo(op int) int {
+func (solver *day17) combo(op int) (int, string) {
 	if op >= 0 && op <= 3 {
-		return op
+		return op, strconv.Itoa(op)
 	} else if op == 4 {
-		return solver.a
+		return solver.a, "(A=" + strconv.Itoa(solver.a) + ")"
 	} else if op == 5 {
-		return solver.b
+		return solver.b, "(B=" + strconv.Itoa(solver.b) + ")"
 	} else if op == 6 {
-		return solver.c
+		return solver.c, "(C=" + strconv.Itoa(solver.c) + ")"
 	}
 	panic(fmt.Sprintf("Invalid combo op: %d", op))
 }
 
 func (solver *day17) adv(val int) {
-	result := float64(solver.a) / math.Pow(2, float64(solver.combo(val)))
-	solver.a = int(math.Trunc(result))
+	val, text := solver.combo(val)
+	divisor := math.Pow(2, float64(val))
+	result := int(math.Trunc(float64(solver.a) / divisor))
+	aoc.Info("adv %s - %d / %d - %d", text, solver.a, divisor, result)
+	solver.a = result
 }
 
 func (solver *day17) bxl(val int) {
-	solver.b = solver.b ^ val
+	result := solver.b ^ val
+	aoc.Info("bxl %d ^ %d - %d", solver.b, val, result)
+	solver.b = result
 }
 
 func (solver *day17) bst(val int) {
-	solver.b = solver.combo(val) % 8
+	val, text := solver.combo(val)
+	result := val % 8
+	aoc.Info("bst B = %s %% 8 - %d", text, result)
+	solver.b = result
 }
 
 func (solver *day17) jnz(ip int, val int) int {
 	if solver.a == 0 {
+		aoc.Info("jnz A %d = 0 - %d -> %d", solver.a, ip, ip+2)
 		return ip + 2
 	} else {
+		aoc.Info("jnz A %d <> 0 - %d -> %d", solver.a, ip, val)
 		return val
 	}
 }
 
 func (solver *day17) bxc() {
-	solver.b = solver.b ^ solver.c
+	result := solver.b ^ solver.c
+	aoc.Info("bxc %d ^ %d - %d", solver.b, solver.c, result)
+	solver.b = result
 }
 
 func (solver *day17) out(out string, val int) string {
-	txt := strconv.Itoa(solver.combo(val) % 8)
+	val, text := solver.combo(val)
+	result := val % 8
+	aoc.Info("out %s - %d", text, result)
+	txt := strconv.Itoa(result)
 	if len(out) == 0 {
 		return txt
 	} else {
@@ -130,11 +147,17 @@ func (solver *day17) out(out string, val int) string {
 }
 
 func (solver *day17) bdv(val int) {
-	result := float64(solver.a) / math.Pow(2, float64(solver.combo(val)))
-	solver.b = int(math.Trunc(result))
+	val, text := solver.combo(val)
+	divisor := math.Pow(2, float64(val))
+	result := int(math.Trunc(float64(solver.a) / divisor))
+	aoc.Info("bdv %s - %d / %d - %d", text, solver.a, divisor, result)
+	solver.b = result
 }
 
 func (solver *day17) cdv(val int) {
-	result := float64(solver.a) / math.Pow(2, float64(solver.combo(val)))
-	solver.c = int(math.Trunc(result))
+	val, text := solver.combo(val)
+	divisor := math.Pow(2, float64(val))
+	result := int(math.Trunc(float64(solver.a) / divisor))
+	aoc.Info("cdv %s - %d / %d - %d", text, solver.a, divisor, result)
+	solver.c = result
 }
