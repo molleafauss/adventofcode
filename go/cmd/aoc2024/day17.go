@@ -45,6 +45,7 @@ func (solver *day17) Solve() (*string, *string) {
 	out := ""
 	ip := 0
 	for ip < len(solver.program) {
+		aoc.Info("A=%d, B=%d, C=%d - IP %d", solver.a, solver.b, solver.c, ip)
 		switch solver.program[ip] {
 		case 0:
 			solver.adv(solver.program[ip+1])
@@ -101,36 +102,36 @@ func (solver *day17) adv(val int) {
 	val, text := solver.combo(val)
 	divisor := math.Pow(2, float64(val))
 	result := int(math.Trunc(float64(solver.a) / divisor))
-	aoc.Info("adv %s - %d / %d - %d", text, solver.a, divisor, result)
+	aoc.Info("adv %s - A=%d / %d -> A=%d", text, solver.a, divisor, result)
 	solver.a = result
 }
 
 func (solver *day17) bxl(val int) {
 	result := solver.b ^ val
-	aoc.Info("bxl %d ^ %d - %d", solver.b, val, result)
+	aoc.Info("bxl B=%d ^ %d -> B=%d", solver.b, val, result)
 	solver.b = result
 }
 
 func (solver *day17) bst(val int) {
 	val, text := solver.combo(val)
 	result := val % 8
-	aoc.Info("bst B = %s %% 8 - %d", text, result)
+	aoc.Info("bst %s %% 8 -> B=%d", text, result)
 	solver.b = result
 }
 
 func (solver *day17) jnz(ip int, val int) int {
 	if solver.a == 0 {
-		aoc.Info("jnz A %d = 0 - %d -> %d", solver.a, ip, ip+2)
+		aoc.Info("jnz A=%d = 0 - %d -> %d", solver.a, ip, ip+2)
 		return ip + 2
 	} else {
-		aoc.Info("jnz A %d <> 0 - %d -> %d", solver.a, ip, val)
+		aoc.Info("jnz A=%d <> 0 - %d -> %d", solver.a, ip, val)
 		return val
 	}
 }
 
 func (solver *day17) bxc() {
 	result := solver.b ^ solver.c
-	aoc.Info("bxc %d ^ %d - %d", solver.b, solver.c, result)
+	aoc.Info("bxc B=%d ^ C=%d -> B=%d", solver.b, solver.c, result)
 	solver.b = result
 }
 
@@ -150,7 +151,7 @@ func (solver *day17) bdv(val int) {
 	val, text := solver.combo(val)
 	divisor := math.Pow(2, float64(val))
 	result := int(math.Trunc(float64(solver.a) / divisor))
-	aoc.Info("bdv %s - %d / %d - %d", text, solver.a, divisor, result)
+	aoc.Info("bdv %s - A=%d / %d -> B=%d", text, solver.a, divisor, result)
 	solver.b = result
 }
 
@@ -158,6 +159,6 @@ func (solver *day17) cdv(val int) {
 	val, text := solver.combo(val)
 	divisor := math.Pow(2, float64(val))
 	result := int(math.Trunc(float64(solver.a) / divisor))
-	aoc.Info("cdv %s - %d / %d - %d", text, solver.a, divisor, result)
+	aoc.Info("cdv %s - A=%d / %d -> C=%d", text, solver.a, divisor, result)
 	solver.c = result
 }
