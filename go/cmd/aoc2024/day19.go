@@ -2,14 +2,14 @@ package main
 
 import (
 	"aoc/aoc"
-	"slices"
 	"strconv"
 	"strings"
 )
 
 type day19 struct {
-	patterns        []string
-	possibleDesigns int
+	patterns []string
+	part1    int
+	part2    int
 }
 
 func Day19() aoc.Solver {
@@ -25,55 +25,39 @@ func (solver *day19) Parse(line string) {
 		for _, pattern := range solver.patterns {
 			totalSize += len(pattern)
 		}
-		aoc.Info("Found %d patterns, avg len %d", len(solver.patterns), totalSize/len(solver.patterns))
+		aoc.Info("Found %d patterns, avg len %d - %s", len(solver.patterns), totalSize/len(solver.patterns), solver.patterns)
 	} else if len(line) > 0 {
-		matching := matchPatterns(line, solver.patterns)
-		aoc.Info("Checking patterns in (len %d) %s - len matching %d", len(line), line, len(matching))
-		cache := make(map[string]bool)
-		if designFeasible(cache, matching, line) {
-			solver.possibleDesigns++
-			aoc.Info("%s is feasible (%d) - cache size: %d", line, solver.possibleDesigns, len(cache))
+		cache := make(map[string]int)
+		count := designFeasible(cache, solver.patterns, line)
+		if count > 0 {
+			solver.part1++
 		}
+		solver.part2 += count
+		aoc.Info("%s feasible in %d ways", line, count)
 	}
 }
 
-func matchPatterns(line string, patterns []string) []string {
-	// find all patterns that match at least once
-	matching := []string{}
-	for _, pattern := range patterns {
-		if strings.Contains(line, pattern) {
-			matching = append(matching, pattern)
-		}
-	}
-	// sort on longer first
-	slices.SortFunc(matching, func(a string, b string) int {
-		return len(b) - len(a)
-	})
-	return matching
-}
-
-func designFeasible(cache map[string]bool, patterns []string, design string) bool {
+func designFeasible(cache map[string]int, patterns []string, design string) int {
 	// we matched all
 	if 0 == len(design) {
-		return true
+		return 1
 	}
-	if _, exists := cache[design]; exists {
-		aoc.Info("Found feasible design for %s", design)
-		return true
+	if val, exists := cache[design]; exists {
+		return val
 	}
 	// try to keep matching a towel
+	count := 0
 	for i := range patterns {
-		if strings.HasPrefix(design, patterns[i]) && designFeasible(cache, patterns, design[len(patterns[i]):]) {
-			aoc.Info("Found feasible design for %s", design)
-			cache[design] = true
-			return true
+		if strings.HasPrefix(design, patterns[i]) {
+			count += designFeasible(cache, patterns, design[len(patterns[i]):])
 		}
 	}
-	// nothing matches here
-	return false
+	cache[design] = count
+	return count
 }
 
 func (solver *day19) Solve() (*string, *string) {
-	part1 := strconv.Itoa(solver.possibleDesigns)
-	return &part1, nil
+	part1 := strconv.Itoa(solver.part1)
+	part2 := strconv.Itoa(solver.part2)
+	return &part1, &part2
 }
