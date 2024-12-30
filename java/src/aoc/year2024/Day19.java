@@ -1,0 +1,46 @@
+package aoc.year2024;
+
+import aoc.api.Results;
+import aoc.api.Solver;
+import aoc.util.Log;
+
+import java.util.*;
+
+public class Day19 implements Solver {
+    private final List<String> patterns = new ArrayList<>();
+    private int part1;
+
+    @Override
+    public void parse(String line) {
+        if (patterns.isEmpty()) {
+            Collections.addAll(patterns, line.split(", "));
+        } else if (!line.isEmpty()) {
+            var count = makeDesign(line, new HashMap<>());
+            if (count > 0) {
+                part1++;
+            }
+        }
+    }
+
+    @Override
+    public Results solve() {
+        return new Results(String.valueOf(part1), null);
+    }
+
+    private Long makeDesign(String design, Map<String, Long> cache) {
+        Log.info("Checking design: %s", design);
+        // found a matching design
+        if (design.isEmpty()) {
+            return 1L;
+        }
+        if (!cache.containsKey(design)) {
+            var count = patterns.stream()
+                    .filter(design::startsWith)
+                    .mapToLong(it -> makeDesign(design.substring(it.length()), cache))
+                    .sum();
+            cache.put(design, count);
+            Log.info("Caching design %s - %d", design, count);
+        }
+        return cache.get(design);
+    }
+}
