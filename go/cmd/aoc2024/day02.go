@@ -16,8 +16,8 @@ const DOWN = -1
 const MAX_DELTA = 3
 
 type day02 struct {
-	part1Safe int
-	part2Safe int
+	part1 int
+	part2 int
 }
 
 func Day02() aoc.Solver {
@@ -25,42 +25,56 @@ func Day02() aoc.Solver {
 }
 
 func (solver *day02) Parse(line string) {
-	direction := FLAT
-	prev := 0
-	tolerance := 1
-	for i, val := range strings.Split(line, " ") {
-		cur, err := strconv.Atoi(val)
-		if err != nil {
-			aoc.Error("Unable to parse line: %s", line)
+	vals := strings.Split(line, " ")
+	nums := make([]int, len(vals))
+	for i, s := range vals {
+		nums[i], _ = strconv.Atoi(s)
+	}
+
+	if checkOrder(nums, -1) {
+		aoc.Info("(safe - no ignore) [%d]/[%d] %s", solver.part1, solver.part2, line)
+		solver.part1++
+		solver.part2++
+		return
+	}
+
+	for i := range nums {
+		if checkOrder(nums, i) {
+			aoc.Info("(safe - ignoring %d) [%d]/[%d] %s", nums[i], solver.part1, solver.part2, line)
+			solver.part2++
 			return
 		}
+	}
+}
 
-		if i == 0 {
-			prev = cur
+func checkOrder(nums []int, ignore int) bool {
+	direction := FLAT
+	prev := nums[0]
+	cur := -1
+	start := 1
+	if ignore == 0 {
+		prev = nums[1]
+		start = 2
+	}
+	for i := start; i < len(nums); i++ {
+		if i == ignore {
 			continue
 		}
-		if i == 1 && cur > prev {
+		cur = nums[i]
+		if direction == FLAT && cur > prev {
 			direction = UP
-		} else if i == 1 && cur < prev {
+		} else if direction == FLAT && cur < prev {
 			direction = DOWN
 		}
 
-		err = checkLevels(direction, prev, cur)
-		if err != nil && tolerance > 0 {
-			// don't move the previous "good" read and skip this bad one
-			tolerance--
-			continue
-		} else if err != nil && tolerance == 0 {
-			aoc.Warn("%s - %s", err.Error(), line)
-			return
+		err := checkLevels(direction, prev, cur)
+		if err != nil {
+			aoc.Warn("%d - %s", nums, err.Error())
+			return false
 		}
 		prev = cur
 	}
-	if tolerance > 0 {
-		solver.part1Safe += 1
-	}
-	solver.part2Safe += 1
-	aoc.Info("(safe - tolerance: %d) [%d]/[%d] %s", tolerance, solver.part1Safe, solver.part2Safe, line)
+	return true
 }
 
 func checkLevels(direction int, prev int, cur int) error {
@@ -83,7 +97,7 @@ func checkLevels(direction int, prev int, cur int) error {
 }
 
 func (solver *day02) Solve() (*string, *string) {
-	part1 := strconv.Itoa(solver.part1Safe)
-	part2 := strconv.Itoa(solver.part2Safe)
+	part1 := strconv.Itoa(solver.part1)
+	part2 := strconv.Itoa(solver.part2)
 	return &part1, &part2
 }

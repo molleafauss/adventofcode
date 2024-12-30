@@ -35,7 +35,7 @@ func (self *GridPos) MoveBy(other *GridPos) {
 }
 
 // Add creates another GridPos shifted by the given GridPos
-func (self *GridPos) Add(delta *GridPos) GridPos {
+func (self *GridPos) Add(delta GridPos) GridPos {
 	return RowColToGridPos(self.Col+delta.Col, self.Row+delta.Row)
 }
 
