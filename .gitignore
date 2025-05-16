@@ -5,3 +5,4 @@ python/__pycache__/
 
 rust/target/
 out/
+*.exe
