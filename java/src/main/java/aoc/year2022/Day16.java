@@ -31,11 +31,11 @@ public class Day16 implements Solver {
 
     @Override
     public Results solve() {
-        Log.debug("Found %d valves to open in %d minutes", valves.size(), PART1_MINUTES);
+        Log.info("Found %d valves to open in %d minutes", valves.size(), PART1_MINUTES);
 
         var valvesWithFlow = precacheValues();
 
-        Log.debug("Valves with flow: %d", valvesWithFlow.length);
+        Log.info("Valves with flow: %d", valvesWithFlow.length);
 
         byte start = valves.stream().filter(v -> v.name.equals(START)).map(v -> v.id).findFirst().orElseThrow();
         var distances = calculateDistances(start, valvesWithFlow);
@@ -284,8 +284,6 @@ public class Day16 implements Solver {
                 Log.info("%d calls, %d cache hits...", calls, cache_hits);
             }
 
-            var man_pos = path.getHumanPos();
-            var ele_pos = path.getElephantPos();
             var cache_key = path.cache_key();
 
             if (cache.containsKey(cache_key)) {
@@ -294,6 +292,8 @@ public class Day16 implements Solver {
                 return path.merge(cached);
             }
 
+            var man_pos = path.getHumanPos();
+            var ele_pos = path.getElephantPos();
             var best_path = path;
             for (var valve : valvesWithFlow) {
                 // try to move both human and elephant towards the next valve
