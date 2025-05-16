@@ -285,10 +285,9 @@ public class Day16 implements Solver {
             }
 
             var cache_key = path.cache_key();
-
-            if (cache.containsKey(cache_key)) {
+            var cached = cache.get(cache_key);
+            if (cached != null) {
                 cache_hits += 1;
-                var cached = cache.get(cache_key);
                 return path.merge(cached);
             }
 
