@@ -4,11 +4,16 @@ import aoc.api.Results;
 import aoc.api.Solver;
 import aoc.util.Log;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class Day16 implements Solver {
 
@@ -86,6 +91,7 @@ public class Day16 implements Solver {
                 valve.id = 0;
             }
         }
+        // always add the START valve as first
         valves_with_flow.addFirst(valves.get(START));
 
         calculateDistances(valves_with_flow);
@@ -97,8 +103,7 @@ public class Day16 implements Solver {
     }
 
     private void calculateDistances(List<Valve> valvesWithFlow) {
-        // recreate a map associating connection between valves using names;
-        // maybe valves need to be just kept by name instead of in a list?
+        // create a map associating valves and their connections;
         var tunnels = makeTunnelMap();
 
         for (Valve curr : valvesWithFlow) {
