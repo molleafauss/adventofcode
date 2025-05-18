@@ -49,9 +49,9 @@ public class Day16 implements Solver {
         // part 1 - timed
         var t0 = System.currentTimeMillis();
         var one_path = new OnePathSolver(valvesWithFlow);
-        var best_path1 = one_path.find_path(new OnePath(valvesWithFlow.size()));
+        var best_path1 = one_path.find_path(new OnePath(valves.get(START)));
         var t1 = System.currentTimeMillis();
-        var path = valvePath(valvesWithFlow, best_path1.visited, best_path1.visited_pos);
+        var path = best_path1.visited.stream().map(v -> v.name).toList();
         Log.info("[1] Found max flow is %d: %s (%d cache hits, %d calls, %d cache size) [%.3fsec]",
                 best_path1.total_flow, path, one_path.cache_hits, one_path.calls,
                 one_path.cache.size(), (t1 - t0) / 1000.0);
@@ -87,8 +87,6 @@ public class Day16 implements Solver {
                 valves_with_flow.add(valve);
                 // id = 0 will be the START valve
                 valve.id = (byte) valves_with_flow.size();
-            } else if (valve.name.equals(START)) {
-                valve.id = 0;
             }
         }
         // always add the START valve as first
@@ -140,7 +138,7 @@ public class Day16 implements Solver {
 }
 
 class Valve {
-    byte id = -1;
+    byte id = 0;
     byte[] tunnels;
     final String name;
     final int flow;
@@ -175,8 +173,7 @@ class OnePathSolver {
             return path.merge(cached);
         }
 
-        var cave = path.getLast();
-        var currValve = valvesWithFlow.get(cave);
+        var currValve = path.getPos();
 
         var best_path = path;
         for (var valve : valvesWithFlow) {
@@ -203,70 +200,62 @@ class OnePathSolver {
     }
 }
 
-record OnePathKey(byte pos, byte elapsed, int valves) {
+record OnePathKey(String name, int elapsed, int valves) {
 }
 
 class OnePath {
-    byte[] visited;
-    byte visited_pos;
+    List<Valve> visited;
     int open_valves;
-    byte elapsed;
+    int elapsed;
     int total_flow;
 
-    public OnePath(int size) {
-        visited = new byte[size + 1];
-        visited[0] = 0;
+    public OnePath(Valve start) {
+        visited = new ArrayList<>(List.of(start));
     }
 
-    private OnePath(byte[] visited, byte visited_pos, int openValves, byte elapsed, int total_flow) {
+    public OnePath(ArrayList<Valve> visited, int openValves, int elapsed, int total_flow) {
         this.visited = visited;
-        this.visited_pos = visited_pos;
         this.open_valves = openValves;
         this.elapsed = elapsed;
         this.total_flow = total_flow;
     }
 
     public OnePathKey cache_key() {
-        return new OnePathKey(getLast(), elapsed, open_valves);
+        return new OnePathKey(getPos().name, elapsed, open_valves);
     }
 
     public OnePath merge(OnePath other) {
-        var visited = new byte[this.visited.length];
-        System.arraycopy(this.visited, 0, visited, 0, this.visited_pos + 1);
-        System.arraycopy(other.visited, 0, visited, this.visited_pos + 1, other.visited_pos);
+        var visited = new ArrayList<>(this.visited);
+        visited.addAll(other.visited);
         return new OnePath(visited,
-                (byte) (this.visited_pos + other.visited_pos),
                 open_valves,
-                (byte) (elapsed + other.elapsed),
+                elapsed + other.elapsed,
                 total_flow + other.total_flow);
     }
 
     public OnePath next(Valve valve, byte distance) {
-        var visited = Arrays.copyOf(this.visited, this.visited.length);
-        visited[this.visited_pos + 1] = valve.id;
+        var visited = new ArrayList<>(this.visited);
+        visited.add(valve);
         var elapsed = this.elapsed + distance + 1;
         var flow = (Day16.PART1_MINUTES - elapsed) * valve.flow;
         return new OnePath(
                 visited,
-                (byte) (visited_pos + 1),
                 open_valves | valve.mask,
-                (byte) elapsed,
+                elapsed,
                 total_flow + flow);
     }
 
     public OnePath diff(OnePath start) {
-        var visited = new byte[this.visited.length];
-        System.arraycopy(this.visited, start.visited_pos + 1, visited, 0, this.visited_pos - start.visited_pos);
+        var visited = new ArrayList<>(this.visited.subList(start.visited.size(), this.visited.size()));
         return new OnePath(
                 visited,
-                (byte) (this.visited_pos - start.visited_pos),
                 open_valves,
-                (byte) (this.elapsed - start.elapsed),
+                this.elapsed - start.elapsed,
                 this.total_flow - start.total_flow);
     }
 
-    public byte getLast() {
-        return visited[visited_pos];
+    public Valve getPos() {
+        return visited.getLast();
     }
 }
 
