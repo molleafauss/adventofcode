@@ -106,7 +106,7 @@ public class Day16 implements Solver {
 
         for (Valve curr : valvesWithFlow) {
             // oh, java, when will you add a simple mutable map/list/set initializer?
-            curr.tunnels = new byte[valvesWithFlow.size() + 1];
+            curr.tunnels = new byte[valvesWithFlow.size()];
             var visited = new HashSet<>(Set.of(curr.name));
             var queue = new ArrayList<DistanceWrapper>();
             queue.add(new DistanceWrapper(curr, 0));
