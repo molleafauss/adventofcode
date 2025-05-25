@@ -80,8 +80,10 @@ func (solver *day16) Solve() (*string, *string) {
 	}
 	var bestPath2 = twoPath.findPath(InitTwoPath(len(valvesWithFlow)))
 	delta = time.Since(t0)
+	var humPath = writePath(valvesWithFlow, bestPath2.humanPath, bestPath2.humanPos)
+	var elePath = writePath(valvesWithFlow, bestPath2.elePath, bestPath2.elePos)
 	aoc.Info("[2] Found max flow is %d: %s / %s (%d cache hits, %d calls, %d cache size) [%.3fsec]",
-		bestPath2.totalFlow, bestPath2.humanPath, bestPath2.elePath, twoPath.cacheHits, twoPath.calls,
+		bestPath2.totalFlow, humPath, elePath, twoPath.cacheHits, twoPath.calls,
 		len(twoPath.cache), delta.Seconds())
 
 	part1 := strconv.Itoa(bestPath1.totalFlow)
@@ -143,6 +145,14 @@ func (solver *day16) makePath(visited []*Valve) string {
 	var path = "["
 	for _, valve := range visited {
 		path += valve.name + ","
+	}
+	return path[:len(path)-1] + "]"
+}
+
+func writePath(valvesWithFlow []*Valve, visited []uint8, pos uint8) string {
+	var path = "["
+	for i := 0; i <= int(pos); i++ {
+		path += valvesWithFlow[visited[i]].name + ","
 	}
 	return path[:len(path)-1] + "]"
 }
