@@ -2,7 +2,7 @@
 
 namespace adventofcode
 {
-    // Simple Advent of Code C# runner
+    // Advent of Code C# runner
     class Program
     {
         static int Main(string[] args)
@@ -154,12 +154,12 @@ namespace adventofcode
             if (part1 == expected1)
                 Console.WriteLine($"PART 1 - OK (expected {expected1})");
             else
-                Console.WriteLine($"PART 1 - MISMATCH expected {expected1} actual {part1}");
+                Console.WriteLine($"PART 1 - ERROR expected {expected1} actual {part1}");
 
             if (part2 == expected2)
                 Console.WriteLine($"PART 2 - OK (expected {expected2})");
             else
-                Console.WriteLine($"PART 2 - MISMATCH expected {expected2} actual {part2}");
+                Console.WriteLine($"PART 2 - ERROR expected {expected2} actual {part2}");
         }
     }
 }
