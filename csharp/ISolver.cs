@@ -3,11 +3,10 @@ namespace adventofcode
 {
     public interface ISolver
     {
-        // Day identifier like "day01"
-        string DayId { get; }
+        // Parse a line of the input
+        void Parse(string input);
 
-        // Solve receives the whole input (contents of the file) and returns tuple of part1 and part2.
-        // If a part is not applicable, return null for that part.
-        (string? part1, string? part2) Solve(string input);
+        // Solve the puzzle and return the results for part 1 and part 2
+        (string? part1, string? part2) Solve();
     }
 }

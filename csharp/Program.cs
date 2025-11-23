@@ -1,4 +1,4 @@
-﻿using System;
+﻿using adventofcode.year2025;
 
 namespace adventofcode
 {
@@ -65,7 +65,7 @@ namespace adventofcode
             {
                 if (dayArg.Equals("all", StringComparison.OrdinalIgnoreCase))
                 {
-                    return solveAll(year);
+                    SolveAll(year);
                 }
 
                 if (!dayArg.StartsWith("day"))
@@ -74,24 +74,14 @@ namespace adventofcode
                     return -1;
                 }
 
-                int dayNum = int.Parse(dayArg);
-                return solveDay(year, dayNum);
+                SolveDay(year, dayArg);
             }
             catch (Exception ex)
             {
                 Console.Error.WriteLine("Unhandled error: " + ex);
                 return -1;
             }
-        }
-
-        private static int solveDay(int year, int dayNum)
-        {
-            throw new NotImplementedException();
-        }
-
-        private static int solveAll(int year)
-        {
-            throw new NotImplementedException();
+            return 0;
         }
 
         static void PrintHelp()
@@ -101,6 +91,75 @@ namespace adventofcode
             Console.WriteLine("day   : dayNN (e.g. day03) solve specific day");
             Console.WriteLine("all   : solve all available days");
             Console.WriteLine("--year, -y : optional year (defaults to most recent AoC year based on current date)");
+        }
+
+        private static void SolveAll(int year)
+        {
+            foreach (var day in Enumerable.Range(1, 25))
+            {
+                SolveDay(year, $"day{day:D2}");
+            }
+        }
+
+        private static ISolver CreateSolver(int year, string dayNum)
+        {
+            return new Day01();
+        }
+
+        private static void SolveDay(int year, string dayNum)
+        {
+            var solver = CreateSolver(year, dayNum);
+            Console.WriteLine($"== Solving {dayNum} for {year} ==");
+
+            // test file
+            string testPath = Path.Combine("inputs", year.ToString(), dayNum, "test.txt");
+            if (!File.Exists(testPath))
+            {
+                throw new Exception($"Test file missing: {testPath})");
+            }
+
+            Console.WriteLine($"== Solving {year} - {dayNum} ==");
+            Solve(testPath, solver);
+
+            // input file
+            string inputPath = Path.Combine("inputs", year.ToString(), dayNum, "input.txt");
+            if (!File.Exists(inputPath))
+            {
+                throw new Exception($"Puzzle file missing: {inputPath})");
+            }
+            Solve(inputPath, solver);
+        }
+
+        private static void Solve(string filePath, ISolver solver)
+        {
+            string? expected1 = null;
+            string? expected2 = null;
+            foreach (var l in File.ReadAllLines(filePath))
+            {
+                if (l.StartsWith("result part 1:"))
+                {
+                    expected1 = l.Substring("result part 1:".Length).Trim();
+                }
+                else if (l.StartsWith("result part 2:"))
+                {
+                    expected2 = l.Substring("result part 2:".Length).Trim();
+                }
+                else
+                {
+                    solver.Parse(l);
+                }
+            }
+            var (part1, part2) = solver.Solve();
+            
+            if (part1 == expected1)
+                Console.WriteLine($"PART 1 - OK (expected {expected1})");
+            else
+                Console.WriteLine($"PART 1 - MISMATCH expected {expected1} actual {part1}");
+
+            if (part2 == expected2)
+                Console.WriteLine($"PART 2 - OK (expected {expected2})");
+            else
+                Console.WriteLine($"PART 2 - MISMATCH expected {expected2} actual {part2}");
         }
     }
 }
