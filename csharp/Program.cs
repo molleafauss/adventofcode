@@ -1,4 +1,5 @@
-﻿using adventofcode.year2025;
+﻿using System.Diagnostics;
+using adventofcode.year2025;
 
 namespace adventofcode
 {
@@ -108,17 +109,15 @@ namespace adventofcode
 
         private static void SolveDay(int year, string dayNum)
         {
-            var solver = CreateSolver(year, dayNum);
-            Console.WriteLine($"== Solving {dayNum} for {year} ==");
+            Console.WriteLine($"== Solving {year} - {dayNum} ==");
 
+            var solver = CreateSolver(year, dayNum);
             // test file
             string testPath = Path.Combine("inputs", year.ToString(), dayNum, "test.txt");
             if (!File.Exists(testPath))
             {
                 throw new Exception($"Test file missing: {testPath})");
             }
-
-            Console.WriteLine($"== Solving {year} - {dayNum} ==");
             Solve(testPath, solver);
 
             // re-create solver
@@ -136,6 +135,7 @@ namespace adventofcode
         {
             string? expected1 = null;
             string? expected2 = null;
+            var sw = Stopwatch.StartNew();
             foreach (var l in File.ReadAllLines(filePath))
             {
                 if (l.StartsWith("result part 1:"))
@@ -152,6 +152,9 @@ namespace adventofcode
                 }
             }
             var (part1, part2) = solver.Solve();
+            sw.Stop();
+            Console.WriteLine($"{filePath} - solved in {sw.Elapsed}");
+
             
             if (part1 == expected1)
                 Console.WriteLine($"PART 1 - OK (expected {expected1})");
