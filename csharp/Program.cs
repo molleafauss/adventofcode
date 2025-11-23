@@ -121,6 +121,8 @@ namespace adventofcode
             Console.WriteLine($"== Solving {year} - {dayNum} ==");
             Solve(testPath, solver);
 
+            // re-create solver
+            solver = CreateSolver(year, dayNum);
             // input file
             string inputPath = Path.Combine("inputs", year.ToString(), dayNum, "input.txt");
             if (!File.Exists(inputPath))
