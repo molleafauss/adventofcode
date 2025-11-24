@@ -9,7 +9,7 @@ namespace adventofcode
         {
             if (args.Length == 0)
             {
-                Console.Error.WriteLine("Usage: adventofcode <day|all> [--year <YYYY>]");
+                PrintHelp();
                 return -1;
             }
 

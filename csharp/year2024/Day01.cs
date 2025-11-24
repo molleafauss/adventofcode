@@ -1,4 +1,4 @@
-namespace adventofcode.year2025
+namespace adventofcode.year2024
 {
     public class Day01 : ISolver
     {
