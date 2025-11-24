@@ -10,7 +10,7 @@ namespace adventofcode
         {
             if (args.Length == 0)
             {
-                Console.Error.WriteLine("Usage: aoc <day|all> [--year <YYYY>]");
+                Console.Error.WriteLine("Usage: adventofcode <day|all> [--year <YYYY>]");
                 return -1;
             }
 
@@ -87,11 +87,16 @@ namespace adventofcode
 
         static void PrintHelp()
         {
-            Console.WriteLine("Usage: aoc <dayNN|all> [--year <YYYY>]");
+            Console.WriteLine("Usage: adventofcode <dayNN|all> [--year <YYYY>]");
             Console.WriteLine();
             Console.WriteLine("day   : dayNN (e.g. day03) solve specific day");
             Console.WriteLine("all   : solve all available days");
             Console.WriteLine("--year, -y : optional year (defaults to most recent AoC year based on current date)");
+        }
+
+        private static ISolver CreateSolver(int year, string dayNum)
+        {
+            return new Day01();
         }
 
         private static void SolveAll(int year)
@@ -100,11 +105,6 @@ namespace adventofcode
             {
                 SolveDay(year, $"day{day:D2}");
             }
-        }
-
-        private static ISolver CreateSolver(int year, string dayNum)
-        {
-            return new Day01();
         }
 
         private static void SolveDay(int year, string dayNum)
@@ -153,7 +153,7 @@ namespace adventofcode
             }
             var (part1, part2) = solver.Solve();
             sw.Stop();
-            Console.WriteLine($"{filePath} - solved in {sw.Elapsed}");
+            Console.WriteLine($"{filePath} - solved in {PrintElapsed(sw.Elapsed)}");
 
             
             if (part1 == expected1)
@@ -165,6 +165,19 @@ namespace adventofcode
                 Console.WriteLine($"PART 2 - OK (expected {expected2})");
             else
                 Console.WriteLine($"PART 2 - ERROR expected {expected2} actual {part2}");
+        }
+
+        private static string PrintElapsed(TimeSpan elapsed)
+        {
+            if (elapsed.TotalMilliseconds > 1000)
+            {
+                return $"{elapsed.TotalSeconds:F2}s";
+            }
+            if (elapsed.TotalMicroseconds > 1000)
+            {
+                return $"{elapsed.TotalMilliseconds:F2}ms";
+            }
+            return elapsed.TotalNanoseconds > 1000 ? $"{elapsed.TotalMicroseconds:F2}us" : $"{elapsed.TotalNanoseconds:F0}ns";
         }
     }
 }
