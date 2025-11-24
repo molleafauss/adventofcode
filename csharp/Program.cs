@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using adventofcode.year2025;
 
 namespace adventofcode
 {
@@ -96,7 +95,19 @@ namespace adventofcode
 
         private static ISolver CreateSolver(int year, string dayNum)
         {
-            return new Day01();
+            // Capitalize first character: "day03" -> "Day03"
+            string fullName = $"adventofcode.year{year}.{char.ToUpper(dayNum[0])}{dayNum[1..]}";
+        
+            // Find the type in loaded assemblies
+            Type? type = typeof(Program).Assembly.GetType(fullName, false, true);
+            if (type == null)
+            {
+                throw new ArgumentException($"Solver type not found: {fullName}");
+            }
+            if (!typeof(ISolver).IsAssignableFrom(type))
+                throw new Exception($"{fullName} does not implement ISolver");
+            return (ISolver)Activator.CreateInstance(type)!;
+        
         }
 
         private static void SolveAll(int year)
