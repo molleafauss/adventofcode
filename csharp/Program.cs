@@ -6,7 +6,7 @@ using Spectre.Console.Cli;
 namespace adventofcode
 {
     // Advent of Code C# runner
-    class Program(int year, string day, string inputDir)
+    class Program
     {
         private sealed class Settings : CommandSettings
         {
@@ -14,7 +14,7 @@ namespace adventofcode
             [CommandOption("--year <YEAR>")]
             public string Year { get; }
 
-            [Description("Day to solve (specified as 'dayNN' or 'all' to solve all days in sequence")]
+            [Description("Day to solve (specified as 'dayNN' or 'all' to solve all days in sequence)")]
             [CommandArgument(0, "<DAY>")]
             public string Day { get; }
             
@@ -22,11 +22,11 @@ namespace adventofcode
             [CommandOption("--inputs <INPUT_DIR>")]
             public DirectoryInfo InputDir { get; }
 
-            public Settings(string? year, string day, string inputDir)
+            public Settings(string? year, string day, DirectoryInfo? inputDir)
             {
                 Year = year ?? GetDefaultYear();
                 Day = day;
-                InputDir = string.IsNullOrEmpty(inputDir) ? new DirectoryInfo(Directory.GetCurrentDirectory()) : new DirectoryInfo(inputDir);
+                InputDir = inputDir ?? new DirectoryInfo(Directory.GetCurrentDirectory());
             }
             
             public override ValidationResult Validate()
@@ -40,11 +40,16 @@ namespace adventofcode
                 return ValidationResult.Success();
             }
 
-            private string GetDefaultYear()
+            private static string GetDefaultYear()
             {
                 var now = DateTime.Now;
                 return ((now.Month >= 12) ? now.Year : now.Year - 1).ToString();
             }
+        }
+
+        static int Main(string[] args)
+        {
+            return new CommandApp<AocCommand>().Run(args);
         }
 
         private class AocCommand : Command<Settings>
@@ -53,31 +58,49 @@ namespace adventofcode
             {
                 if (settings.Day.Equals("all", StringComparison.OrdinalIgnoreCase))
                 {
-                    SolveAll(settings.Year);
+                    SolveAll(settings.InputDir, settings.Year);
                 }
                 else
                 {
-                    SolveDay(settings.Year, settings.Day);
+                    SolveDay(settings.InputDir, settings.Year, settings.Day);
                 }
                 
                 return 0;
             }
         }
 
-
-        static int Main(string[] args)
+        private static void SolveAll(DirectoryInfo inputDir, string year)
         {
-            var app = new CommandApp<AocCommand>();
-
-            app.Configure(config =>
+            foreach (var day in Enumerable.Range(1, 25))
             {
-                config.AddCommand<AocCommand>("aoc")
-                    .WithDescription("Advent of Code solver")
-                    .WithExample("aoc", "day03", "--year", "2023")
-                    .WithExample("aoc", "all");
-            });
+                SolveDay(inputDir, year, $"day{day:D2}");
+            }
+        }
 
-            return app.Run(args);
+        private static void SolveDay(DirectoryInfo inputDir, string year, string dayNum)
+        {
+            Console.WriteLine($"== Solving {year} - {dayNum} ==");
+
+            var solver = CreateSolver(year, dayNum);
+            // test file
+            string testPath = Path.Combine(inputDir.FullName, year, dayNum, "test.txt");
+            if (!File.Exists(testPath))
+            {
+                throw new Exception($"Test file missing: {testPath})");
+            }
+
+            Solve(testPath, solver);
+
+            // re-create solver
+            solver = CreateSolver(year, dayNum);
+            // input file
+            string inputPath = Path.Combine(inputDir.FullName, year, dayNum, "input.txt");
+            if (!File.Exists(inputPath))
+            {
+                throw new Exception($"Puzzle file missing: {inputPath})");
+            }
+
+            Solve(inputPath, solver);
         }
 
         private static ISolver CreateSolver(string year, string dayNum)
@@ -95,40 +118,6 @@ namespace adventofcode
             if (!typeof(ISolver).IsAssignableFrom(type))
                 throw new Exception($"{fullName} does not implement ISolver");
             return (ISolver)Activator.CreateInstance(type)!;
-        }
-
-        private static void SolveAll(string year)
-        {
-            foreach (var day in Enumerable.Range(1, 25))
-            {
-                SolveDay(year, $"day{day:D2}");
-            }
-        }
-
-        private static void SolveDay(string year, string dayNum)
-        {
-            Console.WriteLine($"== Solving {year} - {dayNum} ==");
-
-            var solver = CreateSolver(year, dayNum);
-            // test file
-            string testPath = Path.Combine("inputs", year, dayNum, "test.txt");
-            if (!File.Exists(testPath))
-            {
-                throw new Exception($"Test file missing: {testPath})");
-            }
-
-            Solve(testPath, solver);
-
-            // re-create solver
-            solver = CreateSolver(year, dayNum);
-            // input file
-            string inputPath = Path.Combine("inputs", year, dayNum, "input.txt");
-            if (!File.Exists(inputPath))
-            {
-                throw new Exception($"Puzzle file missing: {inputPath})");
-            }
-
-            Solve(inputPath, solver);
         }
 
         private static void Solve(string filePath, ISolver solver)
