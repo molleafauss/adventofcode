@@ -6,6 +6,9 @@ import aoc.util.Log;
 
 import java.util.*;
 
+/* Found this java solution in one of the leaderboards. It's very easy and I could not come up with
+ * a solution.
+ */
 public class Day19 implements Solver {
     private final List<String> patterns = new ArrayList<>();
     private int part1;

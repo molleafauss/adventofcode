@@ -4,7 +4,7 @@ import aoc.api.Solver;
 import aoc.api.SolverFactory;
 import aoc.util.Log;
 import aoc.util.LogLevel;
-import aoc.year2022.Solvers;
+import aoc.year2024.Solvers;
 
 import java.io.File;
 import java.io.IOException;
