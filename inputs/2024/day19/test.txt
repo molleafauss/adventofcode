@@ -1,0 +1,12 @@
+result part 1: 6
+result part 2: 16
+r, wr, b, g, bwu, rb, gb, br
+
+brwrr
+bggr
+gbbr
+rrbgbr
+ubwu
+bwurrg
+brgr
+bbrgwb

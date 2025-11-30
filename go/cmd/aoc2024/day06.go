@@ -87,7 +87,7 @@ func walkMap(solver *day06) bool {
 		}
 		walked[gp] = struct{}{}
 
-		nextPos := startPos.Add(&dirs[guardDir])
+		nextPos := startPos.Add(dirs[guardDir])
 		inBounds := nextPos.InBounds(solver.width, solver.height)
 		if inBounds && solver.room[nextPos.Row][nextPos.Col] == "#" {
 			// rotate and continue
