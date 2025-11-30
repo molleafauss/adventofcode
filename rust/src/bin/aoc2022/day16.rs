@@ -375,14 +375,6 @@ impl TwoPaths {
     }
 
     fn diff(&self, start: &TwoPaths) -> TwoPaths {
-        if self.human_pos < start.human_pos {
-            panic!("Impossible condition: new human pos is less than start: {} = {}", 
-                   self.human_pos, start.human_pos);
-        }
-        if self.ele_pos < start.ele_pos {
-            panic!("Impossible condition: new elephant pos is less than start: {} = {}",
-                   self.ele_pos, start.ele_pos);
-        }
         let mut human_path = vec![0; self.human_path.len()];
         let hum_extra_walked = self.human_pos - start.human_pos;
         if hum_extra_walked > 0 {
@@ -449,10 +441,11 @@ impl TwoPathsSolver<'_> {
             if valve.flow == 0 {
                 return ;
             }
-            // try to move both human and elephant towards the next valve
+            // ignore valves already open
             if (path.open_valves & valve.mask) != 0 {
                 return ;
             }
+            // try to move both human and elephant towards the next valve
             // move human
             let distance = man_valve.tunnels[valve.id as usize];
             let next = path.next_human(valve, distance);

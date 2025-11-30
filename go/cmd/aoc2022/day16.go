@@ -286,10 +286,11 @@ func (s *TwoPathSolver) findPath(path TwoPath) TwoPath {
 		if valve.flow == 0 {
 			continue
 		}
-		// try to move both human and elephant towards the next valve
+		// ignore valves already open
 		if (path.openValves & valve.mask) != 0 {
 			continue
 		}
+		// try to move both human and elephant towards the next valve
 		// move human
 		var distance = manValve.tunnels[valve.id]
 		var next = path.nextHuman(valve, distance)
