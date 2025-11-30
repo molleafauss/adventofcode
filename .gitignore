@@ -5,3 +5,6 @@ python/__pycache__/
 
 rust/target/
 out/
+
+csharp/bin/
+csharp/obj/
