@@ -83,7 +83,7 @@ class Solution(Solver):
         best_path = self.find_path(Path(["AA"], 0, 0, 0))
         t1 = time.time()
         path1_flow = best_path.total_flow
-        log.info(f"[1] Found max flow is {best_path.total_flow}: {best_path.visited} ({self.cache_hits} cache hits) [{t1 - t0:10.3}sec]")
+        log.info(f"[1] Found max flow is {best_path.total_flow}: {best_path.visited} ({self.cache_hits} cache hits, {self.calls} calls, {len(self.cache)} cache size) [{t1 - t0:10.3}sec]")
 
         self.calls = 0
         self.cache_hits = 0
@@ -92,7 +92,7 @@ class Solution(Solver):
         best_path = self.two_paths(BiPath(Pos(['AA'], 0), Pos(['AA'], 0), 0, 0, 0))
         t1 = time.time()
         path2_flow = best_path.total_flow
-        log.info(f"[2] Found max flow is {best_path.total_flow}: {best_path.human} / {best_path.elephant} ({self.cache_hits} cache hits) [{t1 - t0:10.3f}sec]")
+        log.info(f"[2] Found max flow is {best_path.total_flow}: {best_path.human} / {best_path.elephant} ({self.cache_hits} cache hits, {self.calls} calls, {len(self.cache)} cache size) [{t1 - t0:10.3f}sec]")
         return str(path1_flow), str(path2_flow)
 
     def find_path(self, path):
@@ -138,7 +138,7 @@ class Solution(Solver):
     def two_paths(self, path):
         self.calls += 1
         if self.calls % 1000000 == 0:
-            print(f"{self.calls} calls - {self.cache_hits} cache hits")
+            log.info(f"{self.calls} calls, {self.cache_hits} cache hits...")
 
         man_pos = path.human.visited[-1]
         ele_pos = path.elephant.visited[-1]

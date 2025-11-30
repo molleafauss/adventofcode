@@ -96,17 +96,18 @@ impl Solver for Solution {
         let mut one_path = OnePathSolver::new();
         let best_path1 = one_path.find_path(&self, OnePath::new(START));
         let t1 = SystemTime::now();
-        info!("[1] Found max flow is {}: {:?} ({} cache hits) [{:.3}sec]",
-                 best_path1.total_flow, best_path1.visited, one_path.cache_hits, t1.duration_since(t0).unwrap().as_secs_f32());
+        info!("[1] Found max flow is {}: {:?} ({} cache hits, {} calls, {} cache size) [{:.3}sec]",
+                 best_path1.total_flow, best_path1.visited, one_path.cache_hits, one_path.calls,
+                 one_path.cache.len(), t1.duration_since(t0).unwrap().as_secs_f32());
 
         // part 2
         let t0 = SystemTime::now();
         let mut two_path = TwoPathsSolver::new();
         let best_path2 = two_path.find_path(&self, TwoPaths::new(START));
         let t1 = SystemTime::now();
-        info!("[2] Found max flow is {}: {:?} / {:?} ({} cache hits) [{:.3}sec]",
+        info!("[2] Found max flow is {}: {:?} / {:?} ({} cache hits, {} calls, {} cache size) [{:.3}sec]",
                  best_path2.total_flow, best_path2.human_path, best_path2.ele_path, two_path.cache_hits,
-                 t1.duration_since(t0).unwrap().as_secs_f32());
+                 two_path.calls, two_path.cache.len(), t1.duration_since(t0).unwrap().as_secs_f32());
         Some((best_path1.total_flow.to_string(), best_path2.total_flow.to_string()))
     }
 }
@@ -213,7 +214,7 @@ impl OnePathSolver {
     fn find_path(&mut self, data: &Solution, path: OnePath) -> OnePath {
         self.calls += 1;
         if (self.calls % 1000000) == 0 {
-            println!("{} calls, {} cache hits...", self.calls, self.cache_hits)
+            info!("{} calls, {} cache hits...", self.calls, self.cache_hits)
         }
         let cave = path.visited.last().unwrap();
         let cache_key = path.cache_key();
@@ -368,7 +369,7 @@ impl TwoPathsSolver {
     fn find_path(&mut self, data: &Solution, path: TwoPaths) -> TwoPaths {
         self.calls += 1;
         if (self.calls % 1000000) == 0 {
-            println!("{} calls, {} cache hits...", self.calls, self.cache_hits)
+            info!("{} calls, {} cache hits...", self.calls, self.cache_hits)
         }
         let man_pos = path.human_path.last().unwrap();
         let ele_pos = path.ele_path.last().unwrap();

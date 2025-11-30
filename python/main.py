@@ -41,8 +41,8 @@ def solve_all():
 
 
 def solve_day(day):
-    logging.basicConfig(stream=sys.stdout, format="%(levelname)s | %(name)s | %(message)s", level=logging.INFO)
-    logging.getLogger("day").setLevel(logging.WARN)
+    logging.basicConfig(stream=sys.stdout, format="%(levelname)s | %(message)s", level=logging.INFO)
+    logging.getLogger("day").setLevel(logging.INFO)
     logging.info(f"== Solving {day} ==")
     module = __import__(day)
     # test input
