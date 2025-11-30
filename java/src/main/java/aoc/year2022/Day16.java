@@ -1,6 +1,5 @@
 package aoc.year2022;
 
-import aoc.api.Results;
 import aoc.api.Solver;
 import aoc.util.Log;
 
