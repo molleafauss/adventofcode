@@ -2,7 +2,7 @@ package aoc;
 
 import aoc.api.Solver;
 import aoc.util.Log;
-import aoc.util.LogLevel;
+import aoc.util.Log.Level;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.IDefaultValueProvider;
@@ -67,7 +67,7 @@ public class Main implements Callable<Integer> {
     public Integer call() throws Exception {
         validateInputDir();
 
-        Log.setLogLevel(debug ? LogLevel.DEBUG : LogLevel.INFO);
+        Log.setLogLevel(debug ? Level.DEBUG : Level.INFO);
 
         if (dayArg.equals("all")) {
             solveAll();
