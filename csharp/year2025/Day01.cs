@@ -60,7 +60,7 @@ namespace adventofcode.year2025
                 key2 = 1;
             }
 
-            Log.Info($"{input} {_dial} => {next} [{key1},{key2}]");
+            Log.Debug($"{input} {_dial} => {next} [{key1},{key2}]");
             _dial = next;
             _part1 += key1;
             _part2 += key2;

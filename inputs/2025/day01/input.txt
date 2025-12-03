@@ -1,5 +1,5 @@
 result part 1: 1139
-result part 2: 6676
+result part 2: 6684
 R1
 R25
 R50
