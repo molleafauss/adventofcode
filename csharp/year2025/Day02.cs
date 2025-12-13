@@ -15,61 +15,56 @@ namespace adventofcode.year2025
                 var min = long.Parse(parts[0]);
                 var max = long.Parse(parts[1]);
 
-                foreach (var num in InvalidNumbersInRange(min, max))
+                FindInvalidNumbersInRange(min, max);
+            }
+        }
+
+        public void FindInvalidNumbersInRange(long min, long max)
+        {
+            // invalid numbers are made up of sequences of digits repeated as many times as the
+            // number length.
+            Log.Info($"Searching for invalid numbers in range [{min}, {max}]");
+            for (var num = min; num <= max; num++)
+            {
+                var numStr = num.ToString();
+                var digits = numStr.Length;
+                for (var i = 2; i <= digits; i++)
                 {
-                    _part1 += num;
+                    // if the number can't be split in blocks of size i, then we ignore this split
+                    if (digits % i != 0)
+                    {
+                        continue;
+                    }
+                    var blockSize = digits / i;
+                    if (!FindRepetitions(numStr, blockSize))
+                    {
+                        continue;
+                    }
+                    Log.Info($"Found invalid number: {num} (part1 {i == 2})");
+                    if (i == 2)
+                    {
+                        _part1 += num;
+                    }
+                    _part2 += num;
+                    // this is invalid, don't continue checking
+                    break;
                 }
             }
         }
 
-        public static IEnumerable<long> InvalidNumbersInRange(long min, long max)
+        private bool FindRepetitions(string strNum, int blockSize)
         {
-            // invalid numbers are made up of sequences of digits repeated twice.
-            // so if both min and max are made up of an odd number of digits no invalid number exist
-            var minDigits = min.ToString().Length;
-            var maxDigits = max.ToString().Length;
-            if (minDigits % 2 == 1 && maxDigits % 2 == 1)
+            var block = strNum.Substring(0, blockSize);
+            var l = blockSize;
+            while (l + blockSize <= strNum.Length)
             {
-                return [];
-            }
-            
-            // number from which to start: take the first half of the start of the range or the next
-            // power of 10.
-            long start;
-            if (minDigits % 2 == 0)
-            {
-                start = long.Parse(min.ToString().Substring(0, minDigits / 2));
-            }
-            else
-            {
-                start = (long)Math.Pow(10, minDigits >> 1);
-            }
-
-            long end;
-            if (maxDigits % 2 == 0)
-            {
-                end = long.Parse(max.ToString().Substring(0, maxDigits / 2));
-            }
-            else
-            {
-                end = (long)Math.Pow(10, maxDigits >> 1) - 1;
-            }
-            Log.Info($"range {min},{max} => [{start},{end}]");
-
-            var result = new List<long>();
-            
-            for (var d = start; d <= end; d++)
-            {
-                //use numbers instead of string concatenation
-                var num = long.Parse($"{d}{d}");
-                if (num >= min && num <= max)
+                if (block != strNum.Substring(l, blockSize))
                 {
-                    Log.Info($"Invalid num: {num}");
-                    result.Add(num);
+                    return false;
                 }
+                l += blockSize;
             }
-
-            return result;
+            return true;
         }
 
         public (string? part1, string? part2) Solve()
