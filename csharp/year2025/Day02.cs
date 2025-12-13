@@ -36,29 +36,29 @@ namespace adventofcode.year2025
                         continue;
                     }
                     var blockSize = digits / i;
-                    if (!FindRepetitions(numStr, blockSize))
+                    if (!IsInvalidNumber(numStr, blockSize))
                     {
                         continue;
                     }
-                    Log.Info($"Found invalid number: {num} (part1 {i == 2})");
+                    Log.Debug($"Found invalid number: {num} (part1 {i == 2})");
                     if (i == 2)
                     {
                         _part1 += num;
                     }
                     _part2 += num;
-                    // this is invalid, don't continue checking
+                    // this number is invalid, don't continue checking
                     break;
                 }
             }
         }
 
-        private bool FindRepetitions(string strNum, int blockSize)
+        private static bool IsInvalidNumber(string strNum, int blockSize)
         {
-            var block = strNum.Substring(0, blockSize);
+            var block = strNum[..blockSize];
             var l = blockSize;
             while (l + blockSize <= strNum.Length)
             {
-                if (block != strNum.Substring(l, blockSize))
+                if (block != strNum[l..blockSize])
                 {
                     return false;
                 }
