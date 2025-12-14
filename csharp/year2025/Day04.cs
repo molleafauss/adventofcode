@@ -21,32 +21,35 @@ namespace adventofcode.year2025
 
         public (string? part1, string? part2) Solve()
         {
-            var height = _map.Count;
-            for (var row = 0; row < height; row++)
+            while (true)
             {
-                for (var col = 0; col < _width; col++)
+                var removable = Enumerable
+                    .Range(0, _map.Count)
+                    .SelectMany(row => Enumerable.Range(0, _width)
+                        .Where(col => _map[row][col] == '@')
+                        .Select(col => (row, col, GridPos.AllSurrounding
+                            .Select(dir => new GridPos(col, row).Add(dir))
+                            .Count(next =>
+                                next.InBounds(_width, _map.Count) &&
+                                _map[next.Row][next.Col] == '@'))))
+                    .Where(tup => tup.Item3 < 4)
+                    .ToList();
+                if (removable.Count == 0)
                 {
-                    if (_map[row][col] != '@')
-                    {
-                        continue;
-                    }
-                    var pos = new GridPos(col, row);
-                    var surrounding = 0;
-                    foreach (var dir in GridPos.AllSurrounding)
-                    {
-                        var next = pos.Add(dir);
-                        if (next.InBounds(_width, height) && _map[next.Row][next.Col] == '@')
-                        {
-                            surrounding++;
-                        }
-                    }
-                    Log.Info($"({row},{col}) {pos} => {surrounding}");
-                    if (surrounding < 4)
-                    {
-                        _part1++;
-                    }
+                    break;
+                }
+                if (_part1 == 0)
+                {
+                    _part1 = removable.Count;
+                }
+                _part2 += removable.Count;
+                // remove all removable
+                foreach (var (row, col, count) in removable)
+                {
+                    _map[row][col] = '.';
                 }
             }
+            
             return (_part1.ToString(), _part2.ToString());
         }
     }
