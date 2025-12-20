@@ -8,7 +8,8 @@ namespace adventofcode.year2025
         private long _part2 = 0;
         private int _width = 0;
         private int _height = 0;
-        private ISet<GridPos> _splitters = new HashSet<GridPos>();
+        // organize splitter in a list, per row, mapping (col, hit) 
+        private List<(int, bool)[]> _splitters = [];
         private GridPos? _start;
 
         public void Parse(string input)
@@ -22,77 +23,74 @@ namespace adventofcode.year2025
                 throw new ArgumentException($"Illegal input length on line {_height * 1}: {input.Length} expected {_width}");
             }
 
-            var is_start = input.IndexOf('S');
-            if (is_start != -1 && _start == null)
+            var startPos = input.IndexOf('S');
+            if (startPos != -1 && _start == null)
             {
-                _start = new GridPos(is_start, _height);
+                _start = new GridPos(startPos, _height);
             }
-            else if (is_start != -1 && _start != null)
+            else if (startPos != -1 && _start != null)
             {
                 throw new ArgumentException($"Found second start on line {_height * 1}");
             }
 
-            var p = 0;
-            while (p < input.Length)
-            {
-                var c = input.IndexOf('^', p);
-                if (c == -1)
-                {
-                    break;
-                }
-                _splitters.Add(new GridPos(c, _height));
-                p = c + 1;
-            }
-
+            _splitters.Add(Enumerable.Range(0, input.Length)
+                .Where(i => input[i] == '^')
+                .Select(i => (i, false))
+                .ToArray());
             _height++;
         }
 
         public (string? part1, string? part2) Solve()
         {
             Log.Info($"Found {_splitters.Count} splitters");
-            
-            // find splits, starting from start and always going down
-            var beams = new Queue<GridPos>();
-            beams.Enqueue(_start);
-            // avoid duplicate paths
-            var paths = new HashSet<GridPos>();
-            while (beams.Count > 0)
+
+            RunBeam();
+                        
+            return (_part1.ToString(), _part2.ToString());
+        }
+
+        private void RunBeam()
+        {
+            var beams = Enumerable.Repeat(0L, _width).ToArray();
+            beams[_start.Col] = 1;
+            for (var row = _start.Row; row < _height; row++)
             {
-                var beam = beams.Dequeue();
-                if (paths.Contains(beam))
+                var splitters = _splitters[row];
+                if (splitters.Length == 0)
                 {
-                    // seen this already - ignore
                     continue;
                 }
-                paths.Add(beam);
-                var next = beam.Add(GridPos.MoveU);
-                if (!next.InBounds(_width, _height))
+                // find splitters in this row, see how many beams get hit, and build the next beams row
+                for (var i = 0; i < splitters.Length; i++)
                 {
-                    // ignore if we're out of the grid
-                    continue;
-                }
-                if (!_splitters.Contains(next))
-                {
-                    beams.Enqueue(next);
-                    continue;
-                }
-                // we split here
-                _part1++;
-                var splitted = next.Add(GridPos.MoveR);
-                if (!paths.Contains(next))
-                {
-                    beams.Enqueue(splitted);
-                    Log.Info($"Splitting -> {beam} -> {splitted} (splitter at {next})");
-                }
-                splitted = next.Add(GridPos.MoveL);
-                if (!paths.Contains(next))
-                {
-                    beams.Enqueue(splitted);
-                    Log.Info($"Splitting -> {beam} -> {splitted} (splitter at {next})");
+                    var splitterPos = splitters[i].Item1;
+                    if (beams[splitterPos] == 0)
+                    {
+                        // no beam, continue
+                        continue;
+                    }
+                    // hit the splitter, mark it
+                    splitters[i].Item2 = true;
+                    // add the number beam at the splitter position in the before and after positions
+                    // unless they're out of bounds
+                    var curbeams =  beams[splitterPos];
+                    beams[splitterPos] = 0;
+                    if (splitterPos > 0)
+                    {
+                        beams[splitterPos - 1] += curbeams;
+                    }
+                    if (splitterPos + 1 < _width)
+                    {
+                        beams[splitterPos + 1] += curbeams;
+                    }
                 }
             }
             
-            return (_part1.ToString(), _part2.ToString());
+            // part 1 is the count of splitter hit
+            _part1 = _splitters.Sum(spl => spl.Count(s => s.Item2));
+            
+            // part 2 is just the count of the beams at the end
+            _part2 = beams.Sum();
         }
     }
 }
