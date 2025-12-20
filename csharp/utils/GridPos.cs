@@ -1,6 +1,6 @@
 ﻿namespace adventofcode.utils;
 
-public class GridPos(int Col, int Row)
+public class GridPos(int col, int row)
 {
     public static readonly GridPos MoveU = new(0, 1);
     public static readonly GridPos MoveD = new(0, -1);
@@ -13,8 +13,8 @@ public class GridPos(int Col, int Row)
     public static readonly GridPos[] AllOrthogonal = [MoveU, MoveR, MoveD, MoveL];
     public static readonly GridPos[] AllSurrounding = [MoveU, MoveUr, MoveR, MoveDr, MoveD, MoveDl, MoveL, MoveUl];
 
-    public int Col { get; private set; } = Col;
-    public int Row { get; private set; } = Row;
+    public int Col { get; private set; } = col;
+    public int Row { get; private set; } = row;
 
     public GridPos Distance(GridPos other) => new(Col - other.Col, Row - other.Row);
 
@@ -30,4 +30,19 @@ public class GridPos(int Col, int Row)
 
     public bool InBounds(int width, int height) =>
         Col >= 0 && Col < width && Row >= 0 && Row < height;
+
+    public override bool Equals(object? obj)
+    {
+        return obj is GridPos pos && pos.Col == Col && pos.Row == Row;
+    }
+
+    protected bool Equals(GridPos other)
+    {
+        return Col == other.Col && Row == other.Row;
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(Col, Row);
+    }
 }
