@@ -1,12 +1,13 @@
 using adventofcode.utils;
+using Spectre.Console.Cli;
 
 namespace adventofcode.year2025
 {
     public class Day08 : ISolver
     {
-        private class JunctionBox(int x, int y, int z)
+        private class JunctionBox(long x, long y, long z)
         {
-            public readonly (int, int, int) Pos = (x, y, z);
+            public readonly (long, long, long) Pos = (x, y, z);
             public int Circuit = -1;
         }
 
@@ -29,7 +30,7 @@ namespace adventofcode.year2025
 
         public (string? part1, string? part2) Solve()
         {
-            Log.Info($"Found {_boxes.Count} boxes, {_connections} iterations");
+            Log.Info($"Found {_boxes.Count} boxes, {_connections} max connections, {_distances.Count} distances");
             CalculateDistances();
             MakeCircuits();
             return (_part1.ToString(), _part2.ToString());
@@ -55,46 +56,44 @@ namespace adventofcode.year2025
         private void MakeCircuits()
         {
             List<List<int>> circuits = [];
-            while (_connections > 0 && _distances.Count > 0)
+            for(var conn = 0; conn < _distances.Count; conn++)
             {
-                _connections--;
                 // take the shortest distance and see the two boxes and add them to a circuit
                 // if none are part of a circuit, create a new one
                 // if one is part of a circuit and the other is not, just add the other
                 // if both are part of the same circuit, don't do anything
-                // if both are part of different circuits, fail
-                var (i, j, _) = _distances[0];
-                _distances.RemoveAt(0);
+                // if both are part of different circuits, merge them
+                var (i, j, _) = _distances[conn];
 
                 if (_boxes[i].Circuit == -1 && _boxes[j].Circuit == -1)
                 {
-                    Log.Info($"[{_connections}] Adding {_boxes[i].Pos} to circuit {circuits.Count}");
+                    Log.Debug($"[{conn}] Adding {_boxes[i].Pos} to circuit {circuits.Count}");
                     _boxes[i].Circuit = circuits.Count;
-                    Log.Info($"[{_connections}] Adding {_boxes[j].Pos} to circuit {circuits.Count}");
+                    Log.Debug($"[{conn}] Adding {_boxes[j].Pos} to circuit {circuits.Count}");
                     _boxes[j].Circuit = circuits.Count;
                     circuits.Add([i, j]);
                 }
                 else if (_boxes[i].Circuit != -1 && _boxes[j].Circuit == -1)
                 {
-                    Log.Info($"[{_connections}] Adding {_boxes[j].Pos} to circuit {_boxes[i].Circuit}");
+                    Log.Debug($"[{conn}] Adding {_boxes[j].Pos} to circuit {_boxes[i].Circuit}");
                     _boxes[j].Circuit = _boxes[i].Circuit;
                     circuits[_boxes[i].Circuit].Add(j);
                 }
                 else if (_boxes[i].Circuit == -1 && _boxes[j].Circuit != -1)
                 {
-                    Log.Info($"[{_connections}] Adding {_boxes[i].Pos} to circuit {_boxes[j].Circuit}");
+                    Log.Debug($"[{conn}] Adding {_boxes[i].Pos} to circuit {_boxes[j].Circuit}");
                     _boxes[i].Circuit = _boxes[j].Circuit;
                     circuits[_boxes[j].Circuit].Add(i);
                 }
                 else if (_boxes[i].Circuit != -1 && _boxes[i].Circuit == _boxes[j].Circuit)
                 {
                     // nothing to do - connection already made
-                    Log.Info($"[{_connections}] {_boxes[i].Pos} and {_boxes[j].Pos} already belong to same circuit ({_boxes[i].Circuit})");
+                    Log.Debug($"[{conn}] {_boxes[i].Pos} and {_boxes[j].Pos} already belong to same circuit ({_boxes[i].Circuit})");
                 }
                 else
                 {
                     // TODO Merge circuits here!!
-                    Log.Info($"[{_connections}] Merging circuits: {_boxes[i].Pos}/{_boxes[i].Circuit} <> {_boxes[j].Pos}/{_boxes[j].Circuit}");
+                    Log.Debug($"[{conn}] Merging circuits: {_boxes[i].Pos}/{_boxes[i].Circuit} <> {_boxes[j].Pos}/{_boxes[j].Circuit}");
                     // hardcode merge j into i and make j empty
                     var c = _boxes[j].Circuit;
                     foreach (var k in circuits[c])
@@ -104,7 +103,25 @@ namespace adventofcode.year2025
                     }
                     circuits[c] = [];
                 }
+
+                if (conn == _connections - 1)
+                {
+                    CalculatePart1(circuits[..]);
+                }
+
+                if (_boxes.Select(box => box.Circuit).Distinct().Count() == 1)
+                {
+                    Log.Info($"{conn} Found all connected circuits - last two {_boxes[i].Pos} - {_boxes[j].Pos}");
+                    _part2 = _boxes[i].Pos.Item1 * _boxes[j].Pos.Item1;
+                    return;
+                }
             }
+
+            throw new Exception($"Finished distances without connecting all boxes!");
+        }
+
+        private void CalculatePart1(List<List<int>> circuits)
+        {
             circuits.Sort((a, b) => b.Count.CompareTo(a.Count));
             
             // multiply the length of the first 3 circuits

@@ -1,4 +1,5 @@
 result part 1: 40
+result part 2: 25272
 connections: 10
 162,817,812
 57,618,57
