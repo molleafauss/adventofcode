@@ -1,5 +1,4 @@
 using adventofcode.utils;
-using Spectre.Console.Cli;
 
 namespace adventofcode.year2025
 {
