@@ -40,13 +40,14 @@ public class Day06 : ISolver
             var accum = op == "*" ? 1L : 0L;
             foreach (var val in converted)
             {
-                if (op == "+")
+                switch (op)
                 {
-                    accum += val[idx];
-                }
-                else if (op == "*")
-                {
-                    accum *= val[idx];
+                    case "+":
+                        accum += val[idx];
+                        break;
+                    case "*":
+                        accum *= val[idx];
+                        break;
                 }
             }
             _part1 += accum;
@@ -84,29 +85,16 @@ public class Day06 : ISolver
         List<long> factors = [];
         for (var i = end; i >= start; i--)
         {
-            var num = 0L;
-            foreach (var val in _numbers)
-            {
-                if (val[i] != ' ')
-                {
-                    num = num * 10 + (val[i] - '0');
-                }
-            }
+            var num = _numbers.Where(val => val[i] != ' ')
+                .Aggregate(0L, (current, val) => current * 10 + (val[i] - '0'));
             factors.Add(num);
         }
 
-        if (ops[start] == '+')
-        {
-            return factors.Sum();
-        }
-        else
-        {
-            return factors.Aggregate(1L, (a, b) => a * b);
-        }
+        return ops[start] == '+' ? factors.Sum() : factors.Aggregate(1L, (a, b) => a * b);
     }
 
     public (string? part1, string? part2) Solve()
     {
-        return (_part1.ToString(), _part2.ToString());
+        return ($"{_part1}", $"{_part2}");
     }
 }

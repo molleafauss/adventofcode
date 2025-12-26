@@ -13,13 +13,13 @@ public class Day10 : ISolver
         _part1 += SwitchLights(machine);
     }
 
-    private long SwitchLights(Machine machine)
+    private static long SwitchLights(Machine machine)
     {
         // "randomly" click buttons to see if we can find the right configuration
         var minClicks = int.MaxValue;
         var queue = new Queue<(int, char[])>();
         queue.Enqueue((1, Enumerable.Repeat('.', machine.Lights.Length).ToArray()));
-        while (queue.Any())
+        while (queue.Count != 0)
         {
             var (clicks, status) = queue.Dequeue();
             if (clicks >= minClicks)
@@ -53,31 +53,31 @@ public class Day10 : ISolver
 
     public (string? part1, string? part2) Solve()
     {
-        return (_part1.ToString(), _part2.ToString());
+        return ($"{_part1}", $"{_part2}");
     }
 
-    public class Machine
+    private class Machine
     {
-        public string Lights;
-        public string Joltage;
-        public List<int[]> Buttons = [];
+        public readonly string Lights;
+        public readonly string Joltage;
+        public readonly List<int[]> Buttons = [];
         public Machine(string input)
         {
-            if (!input.StartsWith("[") || input.IndexOf("]") == -1)
+            if (!input.StartsWith('[') || !input.Contains(']'))
             {
                 throw new Exception($"Invalid machine config - wrong lights configs: {input}");
             }
-            var lightsEnd = input.IndexOf("]");
-            Lights = input.Substring(1, lightsEnd - 1);
-            var joltageStart = input.IndexOf("{");
-            if (joltageStart == -1 || !input.EndsWith("}"))
+            var lightsEnd = input.IndexOf(']');
+            Lights = input[1..lightsEnd];
+            var joltageStart = input.IndexOf('{');
+            if (joltageStart == -1 || !input.EndsWith('}'))
             {
                 throw new Exception($"Invalid machine config - wrong joltage config: {input}");
             }
             Joltage = input[(joltageStart + 1)..^1];
             foreach (var block in input[(lightsEnd + 2)..(joltageStart - 1)].Split(" "))
             {
-                Buttons.Add(block[1..^1].Split(",").Select(p => int.Parse(p)).ToArray());
+                Buttons.Add(block[1..^1].Split(",").Select(int.Parse).ToArray());
             }
         }
     }

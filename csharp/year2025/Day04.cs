@@ -7,7 +7,7 @@ public class Day04 : ISolver
     private long _part1;
     private long _part2;
     private int _width;
-    private readonly List<char[]> _map = new();
+    private readonly List<char[]> _map = [];
         
     public void Parse(string input)
     {
@@ -50,6 +50,6 @@ public class Day04 : ISolver
             }
         }
             
-        return (_part1.ToString(), _part2.ToString());
+        return ($"{_part1}", $"{_part2}");
     }
 }

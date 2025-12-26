@@ -6,7 +6,7 @@ public class Day09 : ISolver
 {
     private long _part1;
     private long _part2;
-    private List<GridPos> _marks = [];
+    private readonly List<GridPos> _marks = [];
 
     public void Parse(string input)
     {
@@ -26,7 +26,7 @@ public class Day09 : ISolver
                 _part1 = Math.Max(area, _part1);
             }
         }
-        return (_part1.ToString(), _part2.ToString());
+        return ($"{_part1}", $"{_part2}");
     }
 
 }

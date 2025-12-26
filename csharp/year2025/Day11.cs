@@ -9,7 +9,7 @@ public class Day11 : ISolver
     private long _part2;
 
     // name -> connections
-    private Dictionary<string, string[]> _devices = new();
+    private readonly Dictionary<string, string[]> _devices = new();
 
     public void Parse(string input)
     {
@@ -26,10 +26,10 @@ public class Day11 : ISolver
         _part1 = new Finder(_devices, []).CountPaths("you", []);
         _part2 = new Finder(_devices, ["dac", "fft"])
             .CountPaths("svr", Enumerable.Repeat(false, 2).ToArray());
-        return (_part1.ToString(), _part2.ToString());
+        return ($"{_part1}", $"{_part2}");
     }
 
-    public class Step(string from, bool[] found)
+    private class Step(string from, bool[] found)
     {
         private string From { get; } = from;
         private bool[] Found { get; } = found;
@@ -42,12 +42,7 @@ public class Day11 : ISolver
 
         public override int GetHashCode()
         {
-            var hash = From.GetHashCode();
-            foreach (var b in Found)
-            {
-                hash = HashCode.Combine(hash, b);
-            }
-            return hash;
+            return Found.Aggregate(From.GetHashCode(), HashCode.Combine);
         }
 
         public override string ToString()
@@ -56,7 +51,7 @@ public class Day11 : ISolver
         }
     }
 
-    public class Finder(Dictionary<string, string[]> devices, List<string> required)
+    private class Finder(Dictionary<string, string[]> devices, List<string> required)
     {
         private readonly Dictionary<Step, long> _cache = new();
         private long _calls;

@@ -25,11 +25,12 @@ public class Day05 : ISolver
             var ingredient = long.Parse(input);
             foreach (var (min, max) in _ingredientRanges)
             {
-                if (ingredient >= min && ingredient <= max)
+                if (ingredient < min || ingredient > max)
                 {
-                    _part1 += 1;
-                    return;
+                    continue;
                 }
+                _part1 += 1;
+                return;
             }
         }
     }
@@ -53,6 +54,6 @@ public class Day05 : ISolver
             _ingredientRanges.Insert(i, collapsedRange);
         }
             
-        return (_part1.ToString(), _part2.ToString());
+        return ($"{_part1}", $"{_part2}");
     }
 }

@@ -32,14 +32,14 @@ public class Day08 : ISolver
         CalculateDistances();
         Log.Info($"Found {_boxes.Count} boxes, {_connections} max connections, {_distances.Count} distances");
         MakeCircuits();
-        return (_part1.ToString(), _part2.ToString());
+        return ($"{_part1}", $"{_part2}");
     }
 
     private void CalculateDistances()
     {
-        for (int i = 0; i < _boxes.Count; i++)
+        for (var i = 0; i < _boxes.Count; i++)
         {
-            for (int j = i + 1; j < _boxes.Count; j++)
+            for (var j = i + 1; j < _boxes.Count; j++)
             {
                 var distance = Math.Sqrt(
                     Math.Pow(_boxes[i].Pos.Item1 - _boxes[j].Pos.Item1, 2) +
@@ -107,15 +107,16 @@ public class Day08 : ISolver
                 CalculatePart1(circuits[..]);
             }
 
-            if (_boxes.Select(box => box.Circuit).Distinct().Count() == 1)
+            if (_boxes.Select(box => box.Circuit).Distinct().Count() != 1)
             {
-                Log.Info($"{conn} Found all connected circuits - last two {_boxes[i].Pos} - {_boxes[j].Pos}");
-                _part2 = _boxes[i].Pos.Item1 * _boxes[j].Pos.Item1;
-                return;
+                continue;
             }
+            Log.Info($"{conn} Found all connected circuits - last two {_boxes[i].Pos} - {_boxes[j].Pos}");
+            _part2 = _boxes[i].Pos.Item1 * _boxes[j].Pos.Item1;
+            return;
         }
 
-        throw new Exception($"Finished distances without connecting all boxes!");
+        throw new Exception("Finished distances without connecting all boxes!");
     }
 
     private void CalculatePart1(List<List<int>> circuits)

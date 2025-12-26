@@ -1,5 +1,3 @@
-using adventofcode.utils;
-
 namespace adventofcode.year2025;
 
 public class Day03 : ISolver
@@ -15,7 +13,7 @@ public class Day03 : ISolver
         _part2 += jolt;
     }
 
-    private long FindLargestJolt(string input, int size)
+    private static long FindLargestJolt(string input, int size)
     {
         // start from the last "size" digits and then proceed "backward": take the highest digit
         // and find the highest (if present) in the positions from 0 to Length - size, then do
@@ -41,13 +39,13 @@ public class Day03 : ISolver
 
     public (string? part1, string? part2) Solve()
     {
-        return (_part1.ToString(), _part2.ToString());
+        return ($"{_part1}", $"{_part2}");
     }
 }
 
-record Digit(int Value, int Position);
+internal record Digit(int Value, int Position);
 
-class Jolt
+internal class Jolt
 {
     internal long Value { get; private set; }
     internal readonly Digit[] Digits;
@@ -66,10 +64,7 @@ class Jolt
     public override string ToString()
     {
         var rv = $"{Value} [";
-        foreach (var d in Digits)
-        {
-            rv += $" {d.Value}({d.Position}),";
-        }
+        rv = Digits.Aggregate(rv, (current, d) => current + $" {d.Value}({d.Position}),");
         return rv + "]";
     }
 

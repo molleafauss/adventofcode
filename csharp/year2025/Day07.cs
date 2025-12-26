@@ -9,7 +9,7 @@ public class Day07 : ISolver
     private int _width;
     private int _height;
     // organize splitter in a list, per row, mapping (col, hit) 
-    private List<(int, bool)[]> _splitters = [];
+    private readonly List<(int, bool)[]> _splitters = [];
     private GridPos? _start;
 
     public void Parse(string input)
@@ -46,13 +46,13 @@ public class Day07 : ISolver
 
         RunBeam();
                         
-        return (_part1.ToString(), _part2.ToString());
+        return ($"{_part1}", $"{_part2}");
     }
 
     private void RunBeam()
     {
         var beams = Enumerable.Repeat(0L, _width).ToArray();
-        beams[_start.Col] = 1;
+        beams[_start!.Col] = 1;
         for (var row = _start.Row; row < _height; row++)
         {
             var splitters = _splitters[row];

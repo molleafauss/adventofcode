@@ -25,7 +25,7 @@ public class Day02 : ISolver
         // number length.
         for (var num = min; num <= max; num++)
         {
-            var numStr = num.ToString();
+            var numStr = $"{num}";
             var digits = numStr.Length;
             for (var i = 2; i <= digits; i++)
             {
@@ -68,6 +68,6 @@ public class Day02 : ISolver
 
     public (string? part1, string? part2) Solve()
     {
-        return (_part1.ToString(), _part2.ToString());
+        return ($"{_part1}", $"{_part2}");
     }
 }

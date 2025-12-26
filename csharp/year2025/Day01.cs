@@ -11,11 +11,11 @@ public class Day01 : ISolver
     public void Parse(string input)
     {
         int dir;
-        if (input.StartsWith("L"))
+        if (input.StartsWith('L'))
         {
             dir = -1;
         }
-        else if (input.StartsWith("R"))
+        else if (input.StartsWith('R'))
         {
             dir = 1;
         }
@@ -32,15 +32,16 @@ public class Day01 : ISolver
             _part2 += q;
             steps = r;
         }
-        var next = _dial + (dir * steps);
+        var next = _dial + dir * steps;
 
-        if (next > 99)
+        switch (next)
         {
-            next -= 100;
-        }
-        else if (next < 0)
-        {
-            next += 100;
+            case > 99:
+                next -= 100;
+                break;
+            case < 0:
+                next += 100;
+                break;
         }
             
         // if after the move we are at 0, increment part1
@@ -68,6 +69,6 @@ public class Day01 : ISolver
 
     public (string? part1, string? part2) Solve()
     {
-        return (_part1.ToString(), _part2.ToString());
+        return ($"{_part1}", $"{_part2}");
     }
 }
