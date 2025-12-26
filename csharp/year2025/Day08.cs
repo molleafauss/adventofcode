@@ -91,7 +91,6 @@ public class Day08 : ISolver
             }
             else
             {
-                // TODO Merge circuits here!!
                 Log.Debug($"[{conn}] Merging circuits: {_boxes[i].Pos}/{_boxes[i].Circuit} <> {_boxes[j].Pos}/{_boxes[j].Circuit}");
                 // hardcode merge j into i and make j empty
                 var c = _boxes[j].Circuit;
