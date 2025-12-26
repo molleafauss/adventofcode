@@ -24,7 +24,6 @@ public class Day11 : ISolver
     public (string? part1, string? part2) Solve()
     {
         _part1 = new Finder(_devices, []).CountPaths("you", []);
-        Log.Info($"Finished part1: {_part1}");
         _part2 = new Finder(_devices, ["dac", "fft"])
             .CountPaths("svr", Enumerable.Repeat(false, 2).ToArray());
         return (_part1.ToString(), _part2.ToString());
@@ -96,10 +95,10 @@ public class Day11 : ISolver
                     }
                     continue;
                 }
-                Log.Info($"Exploring: {from} -> {conn} {string.Join(",", newFound)}");
+                Log.Debug($"Exploring: {from} -> {conn} {string.Join(",", newFound)}");
                 numPaths += CountPaths(conn, newFound);
             }
-            Log.Info($"{from}: {numPaths}");
+            Log.Debug($"{from}: {numPaths}");
             _cache.Add(newStep, numPaths);
             return numPaths;
         }

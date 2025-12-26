@@ -10,10 +10,8 @@ public class Day03 : ISolver
     public void Parse(string input)
     {
         var jolt = FindLargestJolt(input, 2);
-        Log.Info($"J2 => {jolt}");
         _part1 += jolt; 
         jolt = FindLargestJolt(input, 12);
-        Log.Info($"J12 => {jolt}");
         _part2 += jolt;
     }
 
