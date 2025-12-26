@@ -58,7 +58,7 @@ public class Day02 : ISolver
         var l = blockSize;
         while (l + blockSize <= strNum.Length)
         {
-            if (block != strNum[l..blockSize])
+            if (block != strNum[l..(l+blockSize)])
             {
                 return false;
             }
