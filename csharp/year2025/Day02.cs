@@ -23,7 +23,6 @@ public class Day02 : ISolver
     {
         // invalid numbers are made up of sequences of digits repeated as many times as the
         // number length.
-        Log.Info($"Searching for invalid numbers in range [{min}, {max}]");
         for (var num = min; num <= max; num++)
         {
             var numStr = num.ToString();

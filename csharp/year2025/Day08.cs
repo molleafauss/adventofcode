@@ -29,8 +29,8 @@ public class Day08 : ISolver
 
     public (string? part1, string? part2) Solve()
     {
-        Log.Info($"Found {_boxes.Count} boxes, {_connections} max connections, {_distances.Count} distances");
         CalculateDistances();
+        Log.Info($"Found {_boxes.Count} boxes, {_connections} max connections, {_distances.Count} distances");
         MakeCircuits();
         return (_part1.ToString(), _part2.ToString());
     }

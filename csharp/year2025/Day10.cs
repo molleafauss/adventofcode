@@ -47,7 +47,7 @@ public class Day10 : ISolver
                 }
             }
         }
-        Log.Info($"Matched {machine.Lights} in {minClicks} clicks");
+        Log.Debug($"Matched {machine.Lights} in {minClicks} clicks");
         return minClicks;
     }
 
