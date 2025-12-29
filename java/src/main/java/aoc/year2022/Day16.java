@@ -213,7 +213,7 @@ class OnePath {
         visited = new ArrayList<>(List.of(start));
     }
 
-    public OnePath(ArrayList<Valve> visited, int openValves, int elapsed, int totalFlow) {
+    public OnePath(List<Valve> visited, int openValves, int elapsed, int totalFlow) {
         this.visited = visited;
         this.openValves = openValves;
         this.elapsed = elapsed;
