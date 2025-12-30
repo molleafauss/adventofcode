@@ -1,12 +1,6 @@
-// What did I learn?
-// using a Vec instead of a HashSet for storing the valves, considering the valves are "few", is
-// O(N) on string search faster than calculating a hash - need to see difference (maybe store ids/position
-// in vector)
-// Had to split the implementation in two structs as the cache_key is different.
-// Part 2 time - 9min vs 30ish (python)
-// TODO - Possible optimization: index valves/distances into a Vec by position, search always
-// directly by index (should save some time)
-// apparently is slower than python?
+// Optimised version of day16:
+// - no more string cloning
+// - all primitives and array indexing
 
 use std::cmp::max;
 use std::collections::{HashMap, HashSet};
