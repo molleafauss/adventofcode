@@ -16,6 +16,9 @@ public class Solvers implements SolverFactory {
         if (Objects.equals(day, "day16")) {
             return new Day16();
         }
+        else if (Objects.equals(day, "day16opt")) {
+            return new Day16opt();
+        }
         throw new UnsupportedOperationException("Unknown day: " + day);
     }
 }

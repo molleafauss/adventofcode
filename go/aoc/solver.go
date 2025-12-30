@@ -23,10 +23,11 @@ func solveAll(year string, factory SolverFactory) {
 }
 
 func solveDay(year string, day string, factory SolverFactory) {
+	data := day[:5]
 	Info("== Solving %s ==", day)
 
 	// assume 'input' is a directory in the current directory
-	testFile := fmt.Sprintf("inputs/%s/%s/test.txt", year, day)
+	testFile := fmt.Sprintf("inputs/%s/%s/test.txt", year, data)
 	// check if solver return anything
 	solver := factory(day)
 	if solver == nil {
@@ -35,7 +36,7 @@ func solveDay(year string, day string, factory SolverFactory) {
 	}
 	solve(testFile, solver)
 
-	inputFile := fmt.Sprintf("inputs/%s/%s/input.txt", year, day)
+	inputFile := fmt.Sprintf("inputs/%s/%s/input.txt", year, data)
 	solve(inputFile, factory(day))
 }
 

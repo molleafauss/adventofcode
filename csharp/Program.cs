@@ -34,7 +34,7 @@ namespace adventofcode
                 if (!InputDir.Exists)
                     return ValidationResult.Error("provided input directory does not exist");
                 
-                if (Day != "all" && !System.Text.RegularExpressions.Regex.IsMatch(Day, @"^day\d{2}$"))
+                if (Day != "all" && !System.Text.RegularExpressions.Regex.IsMatch(Day, @"^day\d{2}"))
                     return ValidationResult.Error("day argument must be 'all' or in the format 'dayNN' where NN is the day number");
                 
                 return ValidationResult.Success();
@@ -80,10 +80,11 @@ namespace adventofcode
         private static void SolveDay(DirectoryInfo inputDir, string year, string dayNum)
         {
             Console.WriteLine($"== Solving {year} - {dayNum} ==");
+            var data = dayNum[..5];
 
             var solver = CreateSolver(year, dayNum);
             // test file
-            string testPath = Path.Combine(inputDir.FullName, year, dayNum, "test.txt");
+            string testPath = Path.Combine(inputDir.FullName, year, data, "test.txt");
             if (!File.Exists(testPath))
             {
                 throw new Exception($"Test file missing: {testPath})");
@@ -94,7 +95,7 @@ namespace adventofcode
             // re-create solver
             solver = CreateSolver(year, dayNum);
             // input file
-            string inputPath = Path.Combine(inputDir.FullName, year, dayNum, "input.txt");
+            string inputPath = Path.Combine(inputDir.FullName, year, data, "input.txt");
             if (!File.Exists(inputPath))
             {
                 throw new Exception($"Puzzle file missing: {inputPath})");

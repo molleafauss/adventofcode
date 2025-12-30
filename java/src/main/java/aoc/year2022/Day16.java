@@ -38,9 +38,6 @@ public class Day16 implements Solver {
     @Override
     public Results solve() {
         Log.debug("Found %d valves to open in %d minutes", valves.size(), PART1_MINUTES);
-        Log.debug("Valves with flow: %d => %d possible paths",
-                // TODO: is there a factorial method?
-                valves_with_flow.size(), -valves_with_flow.size());
         calculateDistances();
 
         // part 1 - timed
