@@ -28,17 +28,18 @@ public class Main {
     }
 
     private static void solveDay(String day, SolverFactory factory) throws IOException {
-        Log.info("== Solving %s ==", day);
+        String data = day.substring(0, 5);
+        Log.info("== Solving %s ==", data );
 
         // assume 'input' is a directory in the current directory
-        var testFile = new File("inputs/%s/%s/test.txt".formatted(factory.getYear(), day));
+        var testFile = new File("inputs/%s/%s/test.txt".formatted(factory.getYear(), data ));
         if (!testFile.exists()) {
             Log.error("ERROR: test file %s does not exist", testFile);
             System.exit(-1);
         }
         solve(testFile, factory.createSolver(day));
 
-        var inputFile = new File("inputs/%s/%s/input.txt".formatted(factory.getYear(), day));
+        var inputFile = new File("inputs/%s/%s/input.txt".formatted(factory.getYear(), data ));
         if (!inputFile.exists()) {
             Log.error("ERROR: input file %s does not exist".formatted(inputFile));
             System.exit(-1);
