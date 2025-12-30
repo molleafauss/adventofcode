@@ -7,7 +7,4 @@ public interface Solver {
 
     /** Solve the puzzle and return the results for part 1 and part 2 */
     Results solve();
-
-    record Results(String part1, String part2) {
-    }
 }
