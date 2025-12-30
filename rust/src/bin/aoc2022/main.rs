@@ -23,6 +23,7 @@ mod day22;
 mod day23;
 mod day24;
 mod day25;
+mod day16opt;
 
 use log::LevelFilter;
 use adventofcode::Solver;
@@ -45,6 +46,7 @@ fn solver_for(day: &str) -> Box<dyn Solver> {
         "day14" => Box::new(day14::Solution::new()),
         "day15" => Box::new(day15::Solution::new()),
         "day16" => Box::new(day16::Solution::new()),
+        "day16opt" => Box::new(day16opt::Solution::new()),
         "day17" => Box::new(day17::Solution::new()),
         "day18" => Box::new(day18::Solution::new()),
         "day19" => Box::new(day19::Solution::new()),

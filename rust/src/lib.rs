@@ -59,17 +59,18 @@ fn solve(filename: &str, mut parser: Box<dyn Solver>) {
 }
 
 fn solve_day(year: &str, day: String, solver_for: fn(day: &str) -> Box<dyn Solver>) {
-    info!("== Solving {day} ==");
+    let data = &day[..5];
+    info!("== Solving {data} ==");
 
     // assume 'input' is a directory in the current directory
-    let test_file = format!("inputs/{year}/{day}/test.txt");
+    let test_file = format!("inputs/{year}/{data}/test.txt");
     if !Path::new(&test_file).exists() {
         error!("ERROR: test file {test_file} does not exist");
         exit(-1);
     }
     solve(&test_file, solver_for(&day));
 
-    let input_file = format!("inputs/{year}/{day}/input.txt");
+    let input_file = format!("inputs/{year}/{data}/input.txt");
     if !Path::new(&input_file).exists() {
         error!("ERROR: input file {input_file} does not exist");
         exit(-1);
