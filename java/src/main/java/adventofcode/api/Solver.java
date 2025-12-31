@@ -1,4 +1,4 @@
-package aoc.api;
+package adventofcode.api;
 
 public interface Solver {
 

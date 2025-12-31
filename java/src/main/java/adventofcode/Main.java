@@ -1,8 +1,8 @@
-package aoc;
+package adventofcode;
 
-import aoc.api.Solver;
-import aoc.util.Log;
-import aoc.util.Log.Level;
+import adventofcode.api.Solver;
+import adventofcode.util.Log;
+import adventofcode.util.Log.Level;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.IDefaultValueProvider;
@@ -20,7 +20,7 @@ import java.time.LocalDate;
 import java.util.Objects;
 import java.util.concurrent.Callable;
 
-@Command(name = "aoc", mixinStandardHelpOptions = true, defaultValueProvider =
+@Command(name = "adventofcode", mixinStandardHelpOptions = true, defaultValueProvider =
         Main.DefaultValues.class,
         description = "Solves Advent of Code puzzles")
 public class Main implements Callable<Integer> {
@@ -108,7 +108,8 @@ public class Main implements Callable<Integer> {
     }
 
     private Solver createSolver(String day) {
-        String className = "aoc.year%s.%s%s".formatted(year, Character.toUpperCase(day.charAt(0)), day.substring(1));
+        String className = "adventofcode.year%s.%s%s".formatted(year,
+                Character.toUpperCase(day.charAt(0)), day.substring(1));
         try {
             return (Solver) Class.forName(className).getDeclaredConstructor().newInstance();
         } catch (ReflectiveOperationException e) {

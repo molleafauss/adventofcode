@@ -1,4 +1,4 @@
-package aoc.util;
+package adventofcode.util;
 
 public class Log {
     public enum Level {
