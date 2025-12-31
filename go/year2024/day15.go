@@ -1,6 +1,7 @@
 package main
 
 import (
+	"adventofcode/utils"
 	"aoc/aoc"
 	"container/list"
 	"fmt"
@@ -143,16 +144,18 @@ type day15 struct {
 	bigWarehouse   warehouse
 }
 
-func Day15() aoc.Solver {
-	return &day15{
-		smallWarehouse: warehouse{
-			goods: make(map[aoc.GridPos]byte),
-		},
-		bigWarehouse: warehouse{
-			goods: make(map[aoc.GridPos]byte),
-		},
-		parsed: true,
-	}
+func init() {
+	utils.RegisterSolver("2022", "day15", func() utils.Solver {
+		return &day15{
+			smallWarehouse: warehouse{
+				goods: make(map[aoc.GridPos]byte),
+			},
+			bigWarehouse: warehouse{
+				goods: make(map[aoc.GridPos]byte),
+			},
+			parsed: true,
+		}
+	})
 }
 
 func (solver *day15) Parse(line string) {

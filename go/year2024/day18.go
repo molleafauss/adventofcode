@@ -1,6 +1,7 @@
 package main
 
 import (
+	"adventofcode/utils"
 	"aoc/aoc"
 	"container/list"
 	"fmt"
@@ -19,13 +20,15 @@ type day18 struct {
 	time    int
 }
 
-func Day18() aoc.Solver {
-	return &day18{
-		falling: make([]aoc.GridPos, 0),
-		width:   GRID_SIZE + 1,
-		height:  GRID_SIZE + 1,
-		time:    CORRUPTION_TIME,
-	}
+func init() {
+	utils.RegisterSolver("2022", "day18", func() utils.Solver {
+		return &day18{
+			falling: make([]aoc.GridPos, 0),
+			width:   GRID_SIZE + 1,
+			height:  GRID_SIZE + 1,
+			time:    CORRUPTION_TIME,
+		}
+	})
 }
 
 func (solver *day18) Parse(line string) {

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"adventofcode/utils"
 	"aoc/aoc"
 	"math/big"
 	"regexp"
@@ -17,10 +18,12 @@ type day13 struct {
 	machines []claw
 }
 
-func Day13() aoc.Solver {
-	return &day13{
-		machines: []claw{},
-	}
+func init() {
+	utils.RegisterSolver("2022", "day13", func() utils.Solver {
+		return &day13{
+			machines: []claw{},
+		}
+	})
 }
 
 var RE_BUTTON = regexp.MustCompile("Button (.): X\\+(\\d+), Y\\+(\\d+)")

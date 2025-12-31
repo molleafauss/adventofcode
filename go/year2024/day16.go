@@ -1,6 +1,7 @@
 package main
 
 import (
+	"adventofcode/utils"
 	"aoc/aoc"
 	"container/heap"
 	"math"
@@ -16,10 +17,12 @@ type day16 struct {
 	height int
 }
 
-func Day16() aoc.Solver {
-	return &day16{
-		maze: make(map[aoc.GridPos]bool),
-	}
+func init() {
+	utils.RegisterSolver("2022", "day16", func() utils.Solver {
+		return &day16{
+			maze: make(map[aoc.GridPos]bool),
+		}
+	})
 }
 
 func (solver *day16) Parse(line string) {

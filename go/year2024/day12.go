@@ -1,6 +1,7 @@
 package main
 
 import (
+	"adventofcode/utils"
 	"aoc/aoc"
 	"container/list"
 	"fmt"
@@ -18,10 +19,12 @@ type day12 struct {
 	height int
 }
 
-func Day12() aoc.Solver {
-	return &day12{
-		grid: make([][]plot, 0),
-	}
+func init() {
+	utils.RegisterSolver("2022", "day12", func() utils.Solver {
+		return &day12{
+			grid: make([][]plot, 0),
+		}
+	})
 }
 
 func (solver *day12) Parse(line string) {

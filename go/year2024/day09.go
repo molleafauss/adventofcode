@@ -1,6 +1,7 @@
 package main
 
 import (
+	"adventofcode/utils"
 	"aoc/aoc"
 	"fmt"
 	"slices"
@@ -18,8 +19,10 @@ type day09 struct {
 	diskSize int
 }
 
-func Day09() aoc.Solver {
-	return &day09{}
+func init() {
+	utils.RegisterSolver("2022", "day09", func() utils.Solver {
+		return &day09{}
+	})
 }
 
 func (solver *day09) Parse(line string) {

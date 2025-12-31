@@ -1,6 +1,7 @@
 package main
 
 import (
+	"adventofcode/utils"
 	"aoc/aoc"
 	"strconv"
 	"strings"
@@ -10,8 +11,10 @@ type day11 struct {
 	stones []int
 }
 
-func Day11() aoc.Solver {
-	return &day11{}
+func init() {
+	utils.RegisterSolver("2022", "day11", func() utils.Solver {
+		return &day11{}
+	})
 }
 
 const ITERATIONS = 25

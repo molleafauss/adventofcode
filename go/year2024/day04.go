@@ -1,6 +1,7 @@
 package main
 
 import (
+	"adventofcode/utils"
 	"aoc/aoc"
 	"fmt"
 	"strconv"
@@ -15,10 +16,12 @@ type day04 struct {
 	part2  int
 }
 
-func Day04() aoc.Solver {
-	return &day04{
-		puzzle: make([]string, 0),
-	}
+func init() {
+	utils.RegisterSolver("2022", "day04", func() utils.Solver {
+		return &day04{
+			puzzle: make([]string, 0),
+		}
+	})
 }
 
 func (solver *day04) Parse(line string) {

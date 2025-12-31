@@ -1,6 +1,7 @@
 package main
 
 import (
+	"adventofcode/utils"
 	"aoc/aoc"
 	"fmt"
 	"regexp"
@@ -18,12 +19,14 @@ type robot struct {
 	vel   aoc.GridPos
 }
 
-func Day14() aoc.Solver {
-	return &day14{
-		robots: []robot{},
-		width:  DEFAULT_WIDTH,
-		height: DEFAULT_HEIGHT,
-	}
+func init() {
+	utils.RegisterSolver("2022", "day14", func() utils.Solver {
+		return &day14{
+			robots: []robot{},
+			width:  DEFAULT_WIDTH,
+			height: DEFAULT_HEIGHT,
+		}
+	})
 }
 
 var RE_ROBOT = regexp.MustCompile(`p=(\d+),(\d+) v=(-?\d+),(-?\d+)`)
