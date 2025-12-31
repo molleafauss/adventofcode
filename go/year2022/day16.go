@@ -1,4 +1,4 @@
-package main
+package year2022
 
 import (
 	"aoc/aoc"
@@ -16,12 +16,14 @@ type day16 struct {
 	distances      map[string]map[string]int
 }
 
-func Day16() *day16 {
-	return &day16{
-		valves:         []Valve{},
-		valvesWithFlow: []string{},
-		distances:      map[string]map[string]int{},
-	}
+func init() {
+	aoc.RegisterSolver("2022", "day16", func() aoc.Solver {
+		return &day16{
+			valves:         []Valve{},
+			valvesWithFlow: []string{},
+			distances:      map[string]map[string]int{},
+		}
+	})
 }
 
 var RE_VALVE = regexp.MustCompile("Valve (\\S+) has flow rate=(\\d+); tunnels? leads? to valves? (.*)")
