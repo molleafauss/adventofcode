@@ -12,7 +12,7 @@ type day11 struct {
 }
 
 func init() {
-	utils.RegisterSolver("2022", "day11", func() utils.Solver {
+	utils.RegisterSolver("2024", "day11", func() utils.Solver {
 		return &day11{}
 	})
 }
@@ -38,14 +38,14 @@ func (solver *day11) Solve() (*string, *string) {
 	for _, num := range solver.stones {
 		result += blink(num, 25, &cache)
 	}
-	aoc.Info("Found part1 result: %d, cache size %d", result, len(cache))
+	utils.Info("Found part1 result: %d, cache size %d", result, len(cache))
 	part1 := strconv.Itoa(result)
 
 	result = 0
 	for _, num := range solver.stones {
 		result += blink(num, 75, &cache)
 	}
-	aoc.Info("Found part2 result: %d, cache size %d", result, len(cache))
+	utils.Info("Found part2 result: %d, cache size %d", result, len(cache))
 	part2 := strconv.Itoa(result)
 
 	return &part1, &part2

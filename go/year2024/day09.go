@@ -20,7 +20,7 @@ type day09 struct {
 }
 
 func init() {
-	utils.RegisterSolver("2022", "day09", func() utils.Solver {
+	utils.RegisterSolver("2024", "day09", func() utils.Solver {
 		return &day09{}
 	})
 }
@@ -44,7 +44,7 @@ func (solver *day09) Parse(line string) {
 		disk = append(disk, files{id, totalLen, totalLen + val})
 		totalLen += val
 	}
-	aoc.Info("Found total len: %d", totalLen)
+	utils.Info("Found total len: %d", totalLen)
 	solver.disk = disk
 	solver.diskSize = totalLen
 }
@@ -75,7 +75,7 @@ func makeDisk(files []files, size int) []int {
 			disk[p] = f.id
 		}
 	}
-	aoc.Debug("Disk Map before defrag: %v", disk)
+	utils.Debug("Disk Map before defrag: %v", disk)
 	return disk
 }
 
@@ -98,7 +98,7 @@ func defragBasic(disk []int) []int {
 		begin++
 		end--
 	}
-	aoc.Debug("Disk Map after defrag: %v", disk)
+	utils.Debug("Disk Map after defrag: %v", disk)
 	return disk
 }
 
@@ -110,7 +110,7 @@ func checksum(disk []int) int {
 		}
 		checksum += val * i
 	}
-	aoc.Info("Checksum: %d", checksum)
+	utils.Info("Checksum: %d", checksum)
 	return checksum
 }
 
@@ -130,7 +130,7 @@ func defragFat(fat []files) {
 			// no more stuff to do
 			break
 		}
-		aoc.Info("Trying to move file %d [start %d end %d]", fileId, start, end)
+		utils.Info("Trying to move file %d [start %d end %d]", fileId, start, end)
 		fileEntry := &fat[end]
 		fileLength := fileEntry.end - fileEntry.start
 		space := start
@@ -138,7 +138,7 @@ func defragFat(fat []files) {
 			// not found any space - pass on to next
 			if space > end {
 				fileId--
-				aoc.Info("Not moving file %d - no space found (start %d, space %d, end %d)", fileEntry.id, start, space, end)
+				utils.Info("Not moving file %d - no space found (start %d, space %d, end %d)", fileEntry.id, start, space, end)
 				break
 			}
 			blankEntry := &fat[space]
@@ -153,7 +153,7 @@ func defragFat(fat []files) {
 				continue
 			}
 			if fileLength == blankLength {
-				aoc.Info("Moving file %d [full] -> [%d,%d]  (start %d, space %d, end %d)", fileEntry.id, blankEntry.start, blankEntry.end, start, space, end)
+				utils.Info("Moving file %d [full] -> [%d,%d]  (start %d, space %d, end %d)", fileEntry.id, blankEntry.start, blankEntry.end, start, space, end)
 				// if file fits exactly, I should just swap the ids between the two
 				fileEntry.id, blankEntry.id = blankEntry.id, fileEntry.id
 				// move start only if we found space there
@@ -161,7 +161,7 @@ func defragFat(fat []files) {
 			} else {
 				// insert a new entry, reduce the size of the blank space
 				movedFile := files{fileEntry.id, blankEntry.start, blankEntry.start + fileLength}
-				aoc.Info("Moving file %d [part] -> [%d,%d]  (start %d, space %d, end %d)", movedFile.id, movedFile.start, movedFile.end, start, space, end)
+				utils.Info("Moving file %d [part] -> [%d,%d]  (start %d, space %d, end %d)", movedFile.id, movedFile.start, movedFile.end, start, space, end)
 				blankEntry.start = blankEntry.start + fileLength
 				fileEntry.id = -1
 				fat = slices.Insert(fat, space, movedFile)
@@ -182,7 +182,7 @@ func checksumFat(fat []files) int {
 		if file.id == -1 {
 			continue
 		}
-		aoc.Info("Adding %v to checksum", file)
+		utils.Info("Adding %v to checksum", file)
 		for p := file.start; p < file.end; p++ {
 			checksum += file.id * p
 		}

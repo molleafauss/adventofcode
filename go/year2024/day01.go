@@ -2,7 +2,6 @@ package main
 
 import (
 	"adventofcode/utils"
-	"aoc/aoc"
 	"slices"
 	"strconv"
 	"strings"
@@ -14,7 +13,7 @@ type day01 struct {
 }
 
 func init() {
-	utils.RegisterSolver("2022", "day01", func() utils.Solver {
+	utils.RegisterSolver("2024", "day01", func() utils.Solver {
 		return &day01{
 			left:  make([]int, 0),
 			right: make([]int, 0),
@@ -37,9 +36,9 @@ func (solver *day01) Parse(line string) {
 }
 
 func (solver *day01) Solve() (*string, *string) {
-	aoc.Info("location sizes %d/%d", len(solver.left), len(solver.right))
+	utils.Info("location sizes %d/%d", len(solver.left), len(solver.right))
 	if len(solver.left) != len(solver.right) {
-		aoc.Error("location sizes are uneven??")
+		utils.Error("location sizes are uneven??")
 		return nil, nil
 	}
 	slices.Sort(solver.left)

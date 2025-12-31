@@ -15,20 +15,20 @@ type day03 struct {
 }
 
 func init() {
-	utils.RegisterSolver("2022", "day03", func() utils.Solver {
+	utils.RegisterSolver("2024", "day03", func() utils.Solver {
 		return &day03{enabled: true}
 	})
 }
 
 func (solver *day03) Parse(line string) {
-	aoc.Info("Parsing line: (%d) %s", len(line), line)
+	utils.Info("Parsing line: (%d) %s", len(line), line)
 	for _, match := range MATCHER.FindAllString(line, -1) {
 		if match == "do()" {
-			aoc.Info("Enabling parser")
+			utils.Info("Enabling parser")
 			solver.enabled = true
 			continue
 		} else if match == "don't()" {
-			aoc.Info("Disabling parser")
+			utils.Info("Disabling parser")
 			solver.enabled = false
 			continue
 		}
@@ -38,7 +38,7 @@ func (solver *day03) Parse(line string) {
 		if solver.enabled {
 			solver.part2 += val
 		}
-		aoc.Info("Found multiplication %s -> %d (enabled? %v) | part1 %d | part2 %d",
+		utils.Info("Found multiplication %s -> %d (enabled? %v) | part1 %d | part2 %d",
 			match, val, solver.enabled, solver.part1, solver.part2)
 	}
 }
@@ -47,25 +47,25 @@ var MATCHER = regexp.MustCompile("mul\\(\\d+,\\d+\\)|do\\(\\)|don't\\(\\)")
 
 func multiply(match string) int {
 	if !strings.HasPrefix(match, "mul(") {
-		aoc.Warn("Wrong mul match? %s", match)
+		utils.Warn("Wrong mul match? %s", match)
 		return 0
 	} else if !strings.HasSuffix(match, ")") {
-		aoc.Warn("Wrong mul match? %s", match)
+		utils.Warn("Wrong mul match? %s", match)
 		return 0
 	}
 	parts := strings.Split(match[4:len(match)-1], ",")
 	if len(parts) != 2 {
-		aoc.Warn("Wrong mul match - no 2 parts? %s", match)
+		utils.Warn("Wrong mul match - no 2 parts? %s", match)
 		return 0
 	}
 	x, err := strconv.Atoi(parts[0])
 	if err != nil || x > 1000 {
-		aoc.Warn("Invalid 1st operand? %s", match)
+		utils.Warn("Invalid 1st operand? %s", match)
 		return 0
 	}
 	y, err := strconv.Atoi(parts[1])
 	if err != nil || y > 1000 {
-		aoc.Warn("Invalid 2st operand? %s", match)
+		utils.Warn("Invalid 2st operand? %s", match)
 		return 0
 	}
 	return x * y

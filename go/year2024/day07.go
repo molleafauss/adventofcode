@@ -14,7 +14,7 @@ type day07 struct {
 }
 
 func init() {
-	utils.RegisterSolver("2022", "day07", func() utils.Solver {
+	utils.RegisterSolver("2024", "day07", func() utils.Solver {
 		return &day07{}
 	})
 }
@@ -56,7 +56,7 @@ func (solver *day07) Parse(line string) {
 func checkOp(phase string, vals []int, expected int, ops []func(int, int) int) bool {
 	for _, op := range ops {
 		if recurseOp(op(vals[0], vals[1]), 2, vals, ops, expected) {
-			aoc.Info("%s %d found %d", phase, vals, expected)
+			utils.Info("%s %d found %d", phase, vals, expected)
 			return true
 		}
 	}

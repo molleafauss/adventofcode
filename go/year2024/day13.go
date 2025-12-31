@@ -9,9 +9,9 @@ import (
 )
 
 type claw struct {
-	buttonA aoc.GridPos
-	buttonB aoc.GridPos
-	prize   aoc.GridPos
+	buttonA utils.GridPos
+	buttonB utils.GridPos
+	prize   utils.GridPos
 }
 
 type day13 struct {
@@ -19,7 +19,7 @@ type day13 struct {
 }
 
 func init() {
-	utils.RegisterSolver("2022", "day13", func() utils.Solver {
+	utils.RegisterSolver("2024", "day13", func() utils.Solver {
 		return &day13{
 			machines: []claw{},
 		}
@@ -41,7 +41,7 @@ func (solver *day13) Parse(line string) {
 		buttonName := matches[1]
 		x, _ := strconv.Atoi(matches[2])
 		y, _ := strconv.Atoi(matches[3])
-		delta := aoc.RowColToGridPos(x, y)
+		delta := utils.RowColToGridPos(x, y)
 		if buttonName == "A" {
 			solver.machines = append(solver.machines, claw{
 				buttonA: delta,
@@ -56,7 +56,7 @@ func (solver *day13) Parse(line string) {
 	if matches != nil && len(matches) == 3 {
 		x, _ := strconv.Atoi(matches[1])
 		y, _ := strconv.Atoi(matches[2])
-		delta := aoc.RowColToGridPos(x, y)
+		delta := utils.RowColToGridPos(x, y)
 		solver.machines[len(solver.machines)-1].prize = delta
 		return
 	}

@@ -14,34 +14,34 @@ const BOX_LEFT = 3
 const BOX_RIGHT = 4
 
 type warehouse struct {
-	robot  aoc.GridPos
-	goods  map[aoc.GridPos]byte
+	robot  utils.GridPos
+	goods  map[utils.GridPos]byte
 	width  int
 	height int
 }
 
 func (w *warehouse) doProgram(program string) int {
-	aoc.Info("Robot start: %s instructions: %d", w.robot, len(program))
+	utils.Info("Robot start: %s instructions: %d", w.robot, len(program))
 
 	for i := range program {
 		switch program[i] {
 		case '^':
-			w.moveRobot(aoc.MOVE_D)
+			w.moveRobot(utils.MOVE_D)
 		case '>':
-			w.moveRobot(aoc.MOVE_R)
+			w.moveRobot(utils.MOVE_R)
 		case 'v':
-			w.moveRobot(aoc.MOVE_U)
+			w.moveRobot(utils.MOVE_U)
 		case '<':
-			w.moveRobot(aoc.MOVE_L)
+			w.moveRobot(utils.MOVE_L)
 		}
 	}
 
-	aoc.Info("End map")
+	utils.Info("End map")
 	w.printMap()
 	return calculateGps(w.goods)
 }
 
-func (w *warehouse) moveRobot(dir aoc.GridPos) {
+func (w *warehouse) moveRobot(dir utils.GridPos) {
 	next := w.robot.Add(dir)
 	val, exists := w.goods[next]
 	if !exists {
@@ -54,12 +54,12 @@ func (w *warehouse) moveRobot(dir aoc.GridPos) {
 		return
 	}
 	// map all moved good (and what they were)
-	movedGoods := make(map[aoc.GridPos]byte)
+	movedGoods := make(map[utils.GridPos]byte)
 	queue := list.New()
 	queue.PushBack(next)
 	// examine the list of goods to push
 	for queue.Len() > 0 {
-		pos := queue.Remove(queue.Front()).(aoc.GridPos)
+		pos := queue.Remove(queue.Front()).(utils.GridPos)
 		val, exists := w.goods[pos]
 		switch {
 		case !exists:
@@ -73,29 +73,29 @@ func (w *warehouse) moveRobot(dir aoc.GridPos) {
 			// check next space
 			queue.PushBack(pos.Add(dir))
 		case val == BOX_LEFT:
-			if dir == aoc.MOVE_L {
+			if dir == utils.MOVE_L {
 				// if I want to move left it should always happen that I am pushing a RIGHT box side
 				panic("Found move left by pushing a LEFT box side???")
 			}
 			movedGoods[pos] = BOX_LEFT
-			if dir != aoc.MOVE_R {
+			if dir != utils.MOVE_R {
 				// don't add the right position (again) if we're moving in that direction
 				queue.PushBack(pos.Add(dir))
 			}
-			nextRight := pos.Add(aoc.MOVE_R)
+			nextRight := pos.Add(utils.MOVE_R)
 			movedGoods[nextRight] = BOX_RIGHT
 			queue.PushBack(nextRight.Add(dir))
 		case val == BOX_RIGHT:
-			if dir == aoc.MOVE_R {
+			if dir == utils.MOVE_R {
 				// if I want to move right it should always happen that I am pushing a LEFT box side
 				panic("Found move right by pushing a RIGHT box side???")
 			}
 			movedGoods[pos] = BOX_RIGHT
-			if dir != aoc.MOVE_L {
+			if dir != utils.MOVE_L {
 				// don't add the left slot (again) if we're moving in that direction
 				queue.PushBack(pos.Add(dir))
 			}
-			nextLeft := pos.Add(aoc.MOVE_L)
+			nextLeft := pos.Add(utils.MOVE_L)
 			movedGoods[nextLeft] = BOX_LEFT
 			queue.PushBack(nextLeft.Add(dir))
 		}
@@ -114,7 +114,7 @@ func (w *warehouse) printMap() {
 	for row := range w.height {
 		line := ""
 		for col := range w.width {
-			pos := aoc.RowColToGridPos(col, row)
+			pos := utils.RowColToGridPos(col, row)
 			if pos == w.robot {
 				line += "@"
 				continue
@@ -145,13 +145,13 @@ type day15 struct {
 }
 
 func init() {
-	utils.RegisterSolver("2022", "day15", func() utils.Solver {
+	utils.RegisterSolver("2024", "day15", func() utils.Solver {
 		return &day15{
 			smallWarehouse: warehouse{
-				goods: make(map[aoc.GridPos]byte),
+				goods: make(map[utils.GridPos]byte),
 			},
 			bigWarehouse: warehouse{
-				goods: make(map[aoc.GridPos]byte),
+				goods: make(map[utils.GridPos]byte),
 			},
 			parsed: true,
 		}
@@ -180,16 +180,16 @@ func (solver *day15) addGoods(line string) {
 	for i := range line {
 		switch line[i] {
 		case '#':
-			solver.smallWarehouse.goods[aoc.RowColToGridPos(i, solver.smallWarehouse.height)] = WALL
-			solver.bigWarehouse.goods[aoc.RowColToGridPos(i*2, solver.bigWarehouse.height)] = WALL
-			solver.bigWarehouse.goods[aoc.RowColToGridPos(i*2+1, solver.bigWarehouse.height)] = WALL
+			solver.smallWarehouse.goods[utils.RowColToGridPos(i, solver.smallWarehouse.height)] = WALL
+			solver.bigWarehouse.goods[utils.RowColToGridPos(i*2, solver.bigWarehouse.height)] = WALL
+			solver.bigWarehouse.goods[utils.RowColToGridPos(i*2+1, solver.bigWarehouse.height)] = WALL
 		case 'O':
-			solver.smallWarehouse.goods[aoc.RowColToGridPos(i, solver.smallWarehouse.height)] = GOOD
-			solver.bigWarehouse.goods[aoc.RowColToGridPos(i*2, solver.bigWarehouse.height)] = BOX_LEFT
-			solver.bigWarehouse.goods[aoc.RowColToGridPos(i*2+1, solver.bigWarehouse.height)] = BOX_RIGHT
+			solver.smallWarehouse.goods[utils.RowColToGridPos(i, solver.smallWarehouse.height)] = GOOD
+			solver.bigWarehouse.goods[utils.RowColToGridPos(i*2, solver.bigWarehouse.height)] = BOX_LEFT
+			solver.bigWarehouse.goods[utils.RowColToGridPos(i*2+1, solver.bigWarehouse.height)] = BOX_RIGHT
 		case '@':
-			solver.smallWarehouse.robot = aoc.RowColToGridPos(i, solver.smallWarehouse.height)
-			solver.bigWarehouse.robot = aoc.RowColToGridPos(i*2, solver.smallWarehouse.height)
+			solver.smallWarehouse.robot = utils.RowColToGridPos(i, solver.smallWarehouse.height)
+			solver.bigWarehouse.robot = utils.RowColToGridPos(i*2, solver.smallWarehouse.height)
 		}
 	}
 	solver.smallWarehouse.height++
@@ -202,7 +202,7 @@ func (solver *day15) Solve() (*string, *string) {
 	return &part1, &part2
 }
 
-func calculateGps(warehouse map[aoc.GridPos]byte) int {
+func calculateGps(warehouse map[utils.GridPos]byte) int {
 	gps := 0
 	for pos := range warehouse {
 		if warehouse[pos] == GOOD || warehouse[pos] == BOX_LEFT {

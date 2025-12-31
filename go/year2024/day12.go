@@ -20,7 +20,7 @@ type day12 struct {
 }
 
 func init() {
-	utils.RegisterSolver("2022", "day12", func() utils.Solver {
+	utils.RegisterSolver("2024", "day12", func() utils.Solver {
 		return &day12{
 			grid: make([][]plot, 0),
 		}
@@ -41,7 +41,7 @@ func (solver *day12) Parse(line string) {
 }
 
 func (solver *day12) Solve() (*string, *string) {
-	aoc.Info("Map is %dx%d", solver.width, solver.height)
+	utils.Info("Map is %dx%d", solver.width, solver.height)
 	price1 := 0
 	price2 := 0
 	// starting from 0,0 we keep iterating until we find a non-visited space
@@ -53,7 +53,7 @@ func (solver *day12) Solve() (*string, *string) {
 		fence := solver.plotFence(start)
 		price1 += fence.area * fence.perimeter
 		price2 += fence.area * fence.sides
-		aoc.Info("Found plot '%s': area %d, perimeter %d, sides %d => prices %d/%d (%d/%d total)", fence.plot, fence.area,
+		utils.Info("Found plot '%s': area %d, perimeter %d, sides %d => prices %d/%d (%d/%d total)", fence.plot, fence.area,
 			fence.perimeter, fence.sides, fence.area*fence.perimeter, fence.area*fence.sides, price1, price2)
 	}
 	part1 := strconv.Itoa(price1)
@@ -61,11 +61,11 @@ func (solver *day12) Solve() (*string, *string) {
 	return &part1, &part2
 }
 
-func (solver *day12) findNextToVisit() *aoc.GridPos {
+func (solver *day12) findNextToVisit() *utils.GridPos {
 	for row := 0; row < solver.height; row++ {
 		for col := 0; col < solver.width; col++ {
 			if !solver.grid[row][col].visited {
-				pos := aoc.RowColToGridPos(col, row)
+				pos := utils.RowColToGridPos(col, row)
 				return &pos
 			}
 		}
@@ -80,15 +80,15 @@ type fence struct {
 	sides     int
 }
 
-func (solver *day12) plotFence(start *aoc.GridPos) fence {
+func (solver *day12) plotFence(start *utils.GridPos) fence {
 	queue := list.New()
 	queue.PushBack(*start)
 	plot := solver.grid[start.Row][start.Col].name
-	visited := map[aoc.GridPos]bool{}
+	visited := map[utils.GridPos]bool{}
 	area := 0
 	perimeter := 0
 	for queue.Len() > 0 {
-		pos := queue.Remove(queue.Front()).(aoc.GridPos)
+		pos := queue.Remove(queue.Front()).(utils.GridPos)
 		if visited[pos] {
 			continue
 		}
@@ -96,7 +96,7 @@ func (solver *day12) plotFence(start *aoc.GridPos) fence {
 		visited[pos] = true
 		area++
 		perimeter += 4
-		for _, dir := range aoc.ALL_ORTHOGONAL {
+		for _, dir := range utils.ALL_ORTHOGONAL {
 			next := pos.Add(dir)
 			if !next.InBounds(solver.width, solver.height) {
 				continue
@@ -117,14 +117,14 @@ func (solver *day12) plotFence(start *aoc.GridPos) fence {
 }
 
 // precalculated "corner" checks
-var DIRS = [4][3]aoc.GridPos{
-	{aoc.MOVE_D, aoc.MOVE_DR, aoc.MOVE_R},
-	{aoc.MOVE_R, aoc.MOVE_UR, aoc.MOVE_U},
-	{aoc.MOVE_U, aoc.MOVE_UL, aoc.MOVE_L},
-	{aoc.MOVE_L, aoc.MOVE_DL, aoc.MOVE_D},
+var DIRS = [4][3]utils.GridPos{
+	{utils.MOVE_D, utils.MOVE_DR, utils.MOVE_R},
+	{utils.MOVE_R, utils.MOVE_UR, utils.MOVE_U},
+	{utils.MOVE_U, utils.MOVE_UL, utils.MOVE_L},
+	{utils.MOVE_L, utils.MOVE_DL, utils.MOVE_D},
 }
 
-func countSides(shape map[aoc.GridPos]bool) int {
+func countSides(shape map[utils.GridPos]bool) int {
 	// special cases - 1 or 2 is always 4 sides, however arranged
 	if len(shape) == 1 || len(shape) == 2 {
 		return 4
@@ -142,7 +142,7 @@ func countSides(shape map[aoc.GridPos]bool) int {
 	return corners
 }
 
-func countCorners(point aoc.GridPos, shape *map[aoc.GridPos]bool) int {
+func countCorners(point utils.GridPos, shape *map[utils.GridPos]bool) int {
 	corners := 0
 	for _, dirs := range DIRS {
 		_, has1 := (*shape)[point.Add(dirs[0])]
@@ -151,7 +151,7 @@ func countCorners(point aoc.GridPos, shape *map[aoc.GridPos]bool) int {
 		// 1) x .     2) x x     3) . x
 		//    . .        x .        x . (touching corners)
 		if (!has1 && !has2 && !has3) || (has1 && !has2 && has3) || (!has1 && has2 && !has3) {
-			aoc.Info("Corner found: %s - %s [%v %v %v]", point, dirs, has1, has2, has3)
+			utils.Info("Corner found: %s - %s [%v %v %v]", point, dirs, has1, has2, has3)
 			corners++
 		}
 	}

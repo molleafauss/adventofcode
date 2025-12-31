@@ -17,7 +17,7 @@ type day05 struct {
 }
 
 func init() {
-	utils.RegisterSolver("2022", "day05", func() utils.Solver {
+	utils.RegisterSolver("2024", "day05", func() utils.Solver {
 		return &day05{
 			rules:   make(map[int][]int),
 			updates: false,
@@ -66,7 +66,7 @@ func checkUpdate(solver *day05, line string) {
 		current := numbers[i]
 		rules := solver.rules[numbers[i]]
 		if rules == nil {
-			aoc.Debug("pos [%d] No rules for %d", i, current)
+			utils.Debug("pos [%d] No rules for %d", i, current)
 			i++
 			continue
 		}
@@ -75,7 +75,7 @@ func checkUpdate(solver *day05, line string) {
 			if slices.Index(rules, prev) != -1 {
 				// if a rule is violated, rearrange the numbers by placing the current in the expected order, and reset
 				// i to the swapped position
-				aoc.Debug("%s violates rules %d before %d", line, current, prev)
+				utils.Debug("%s violates rules %d before %d", line, current, prev)
 				numbers[j], numbers[i] = numbers[i], numbers[j]
 				i = j - 1
 				swaps++
@@ -86,11 +86,11 @@ func checkUpdate(solver *day05, line string) {
 	}
 	if swaps == 0 {
 		solver.part1 += part1
-		aoc.Info("[1] Sequence is ok: %s - middle %d - part 1 %d", line, part1, solver.part1)
+		utils.Info("[1] Sequence is ok: %s - middle %d - part 1 %d", line, part1, solver.part1)
 	} else {
 		middle := findMiddle(numbers)
 		solver.part2 += findMiddle(numbers)
-		aoc.Info("[2] Sequence had %d swaps - new middle is %d - final sequence %v", swaps, middle, numbers)
+		utils.Info("[2] Sequence had %d swaps - new middle is %d - final sequence %v", swaps, middle, numbers)
 	}
 }
 

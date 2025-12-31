@@ -17,7 +17,7 @@ type day17 struct {
 }
 
 func init() {
-	utils.RegisterSolver("2022", "day17", func() utils.Solver {
+	utils.RegisterSolver("2024", "day17", func() utils.Solver {
 		return &day17{
 			program: make([]int, 0),
 		}
@@ -44,11 +44,11 @@ func (solver *day17) Parse(line string) {
 }
 
 func (solver *day17) Solve() (*string, *string) {
-	aoc.Info("Program: %d", solver.program)
+	utils.Info("Program: %d", solver.program)
 	out := ""
 	ip := 0
 	for ip < len(solver.program) {
-		aoc.Info("A=%d, B=%d, C=%d - IP %d", solver.a, solver.b, solver.c, ip)
+		utils.Info("A=%d, B=%d, C=%d - IP %d", solver.a, solver.b, solver.c, ip)
 		switch solver.program[ip] {
 		case 0:
 			solver.adv(solver.program[ip+1])
@@ -105,43 +105,43 @@ func (solver *day17) adv(val int) {
 	val, text := solver.combo(val)
 	divisor := math.Pow(2, float64(val))
 	result := int(math.Trunc(float64(solver.a) / divisor))
-	aoc.Info("adv %s - A=%d / %d -> A=%d", text, solver.a, divisor, result)
+	utils.Info("adv %s - A=%d / %d -> A=%d", text, solver.a, divisor, result)
 	solver.a = result
 }
 
 func (solver *day17) bxl(val int) {
 	result := solver.b ^ val
-	aoc.Info("bxl B=%d ^ %d -> B=%d", solver.b, val, result)
+	utils.Info("bxl B=%d ^ %d -> B=%d", solver.b, val, result)
 	solver.b = result
 }
 
 func (solver *day17) bst(val int) {
 	val, text := solver.combo(val)
 	result := val % 8
-	aoc.Info("bst %s %% 8 -> B=%d", text, result)
+	utils.Info("bst %s %% 8 -> B=%d", text, result)
 	solver.b = result
 }
 
 func (solver *day17) jnz(ip int, val int) int {
 	if solver.a == 0 {
-		aoc.Info("jnz A=%d = 0 - %d -> %d", solver.a, ip, ip+2)
+		utils.Info("jnz A=%d = 0 - %d -> %d", solver.a, ip, ip+2)
 		return ip + 2
 	} else {
-		aoc.Info("jnz A=%d <> 0 - %d -> %d", solver.a, ip, val)
+		utils.Info("jnz A=%d <> 0 - %d -> %d", solver.a, ip, val)
 		return val
 	}
 }
 
 func (solver *day17) bxc() {
 	result := solver.b ^ solver.c
-	aoc.Info("bxc B=%d ^ C=%d -> B=%d", solver.b, solver.c, result)
+	utils.Info("bxc B=%d ^ C=%d -> B=%d", solver.b, solver.c, result)
 	solver.b = result
 }
 
 func (solver *day17) out(out string, val int) string {
 	val, text := solver.combo(val)
 	result := val % 8
-	aoc.Info("out %s - %d", text, result)
+	utils.Info("out %s - %d", text, result)
 	txt := strconv.Itoa(result)
 	if len(out) == 0 {
 		return txt
@@ -154,7 +154,7 @@ func (solver *day17) bdv(val int) {
 	val, text := solver.combo(val)
 	divisor := math.Pow(2, float64(val))
 	result := int(math.Trunc(float64(solver.a) / divisor))
-	aoc.Info("bdv %s - A=%d / %d -> B=%d", text, solver.a, divisor, result)
+	utils.Info("bdv %s - A=%d / %d -> B=%d", text, solver.a, divisor, result)
 	solver.b = result
 }
 
@@ -162,6 +162,6 @@ func (solver *day17) cdv(val int) {
 	val, text := solver.combo(val)
 	divisor := math.Pow(2, float64(val))
 	result := int(math.Trunc(float64(solver.a) / divisor))
-	aoc.Info("cdv %s - A=%d / %d -> C=%d", text, solver.a, divisor, result)
+	utils.Info("cdv %s - A=%d / %d -> C=%d", text, solver.a, divisor, result)
 	solver.c = result
 }
