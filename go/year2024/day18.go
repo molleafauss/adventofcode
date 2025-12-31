@@ -1,8 +1,7 @@
-package main
+package year2024
 
 import (
 	"adventofcode/utils"
-	"aoc/aoc"
 	"container/list"
 	"fmt"
 	"slices"

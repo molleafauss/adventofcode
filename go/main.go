@@ -4,6 +4,7 @@ import (
 	"adventofcode/utils"
 	// register all solvers
 	_ "adventofcode/year2022"
+	_ "adventofcode/year2024"
 	"bufio"
 	"fmt"
 	"os"
