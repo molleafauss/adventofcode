@@ -1,4 +1,4 @@
-package aoc.util;
+package adventofcode.util;
 
 import java.util.HashMap;
 import java.util.Map;

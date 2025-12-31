@@ -3,6 +3,8 @@ using System.Diagnostics;
 using Spectre.Console;
 using Spectre.Console.Cli;
 
+using adventofcode.utils;
+
 namespace adventofcode
 {
     // Advent of Code C# runner
@@ -22,11 +24,16 @@ namespace adventofcode
             [CommandOption("--inputs <INPUT_DIR>")]
             public DirectoryInfo InputDir { get; }
 
-            public Settings(string? year, string day, DirectoryInfo? inputDir)
+            [Description("Enables debug logs")]
+            [CommandOption("--debug")]
+            public bool Debug { get; }
+
+            public Settings(string? year, string day, DirectoryInfo? inputDir, bool? debug)
             {
                 Year = year ?? GetDefaultYear();
                 Day = day;
                 InputDir = inputDir ?? new DirectoryInfo(Directory.GetCurrentDirectory());
+                Debug = debug ?? false;
             }
             
             public override ValidationResult Validate()
@@ -56,6 +63,8 @@ namespace adventofcode
         {
             public override int Execute(CommandContext context, Settings settings, CancellationToken cancellationToken)
             {
+                Log.SetLevel(settings.Debug ? LogLevel.Debug : LogLevel.Info);
+
                 if (settings.Day.Equals("all", StringComparison.OrdinalIgnoreCase))
                 {
                     SolveAll(settings.InputDir, settings.Year);

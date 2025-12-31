@@ -1,8 +1,8 @@
-package aoc.year2022;
+package adventofcode.year2022;
 
-import aoc.api.Results;
-import aoc.api.Solver;
-import aoc.util.Log;
+import adventofcode.api.Results;
+import adventofcode.api.Solver;
+import adventofcode.util.Log;
 
 import java.util.ArrayList;
 import java.util.Arrays;
