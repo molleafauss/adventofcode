@@ -1,19 +1,23 @@
-use std::{env, fs};
+use std::fs;
 use std::path::Path;
 use std::process::exit;
 use std::time::SystemTime;
 use chrono::{Datelike, Local};
-use adventofcode::{get_solver, Solver, SOLVERS};
+use adventofcode::{get_solver, Solver};
 use clap::Parser;
-use log::{debug, error, info, warn, LevelFilter};
+use log::{error, info, warn, LevelFilter};
 use log4rs::append::console::ConsoleAppender;
 use log4rs::Config;
-use log4rs::config::{Appender, Logger, Root};
+use log4rs::config::{Appender, Root};
 use log4rs::encode::pattern::PatternEncoder;
-// mod year_template;
+mod year2021;
+mod year2022;
+mod year2023;
 
 fn register_all_solvers() {
-    // year_template::register_solvers();
+    year2021::register_solvers();
+    year2022::register_solvers();
+    year2023::register_solvers();
 }
 
 /// Solves Advent of Code puzzles
@@ -87,7 +91,7 @@ impl Aoc {
             exit(-1);
         }
         let solver = get_solver(&year.to_string(), day);
-        if (solver.is_none()) {
+        if solver.is_none() {
             error!("ERROR: no solver for {year}/{day}");
             exit(-1);
         }
