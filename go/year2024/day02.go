@@ -1,7 +1,7 @@
-package main
+package year2024
 
 import (
-	"aoc/aoc"
+	"adventofcode/utils"
 	"fmt"
 	"strconv"
 	"strings"
@@ -20,8 +20,10 @@ type day02 struct {
 	part2 int
 }
 
-func Day02() aoc.Solver {
-	return &day02{}
+func init() {
+	utils.RegisterSolver("2024", "day02", func() utils.Solver {
+		return &day02{}
+	})
 }
 
 func (solver *day02) Parse(line string) {
@@ -32,7 +34,7 @@ func (solver *day02) Parse(line string) {
 	}
 
 	if checkOrder(nums, -1) {
-		aoc.Info("(safe - no ignore) [%d]/[%d] %s", solver.part1, solver.part2, line)
+		utils.Info("(safe - no ignore) [%d]/[%d] %s", solver.part1, solver.part2, line)
 		solver.part1++
 		solver.part2++
 		return
@@ -40,7 +42,7 @@ func (solver *day02) Parse(line string) {
 
 	for i := range nums {
 		if checkOrder(nums, i) {
-			aoc.Info("(safe - ignoring %d) [%d]/[%d] %s", nums[i], solver.part1, solver.part2, line)
+			utils.Info("(safe - ignoring %d) [%d]/[%d] %s", nums[i], solver.part1, solver.part2, line)
 			solver.part2++
 			return
 		}
@@ -69,7 +71,7 @@ func checkOrder(nums []int, ignore int) bool {
 
 		err := checkLevels(direction, prev, cur)
 		if err != nil {
-			aoc.Warn("%d - %s", nums, err.Error())
+			utils.Warn("%d - %s", nums, err.Error())
 			return false
 		}
 		prev = cur

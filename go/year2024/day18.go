@@ -1,7 +1,7 @@
-package main
+package year2024
 
 import (
-	"aoc/aoc"
+	"adventofcode/utils"
 	"container/list"
 	"fmt"
 	"slices"
@@ -13,19 +13,21 @@ const GRID_SIZE = 70
 const CORRUPTION_TIME = 1024
 
 type day18 struct {
-	falling []aoc.GridPos
+	falling []utils.GridPos
 	width   int
 	height  int
 	time    int
 }
 
-func Day18() aoc.Solver {
-	return &day18{
-		falling: make([]aoc.GridPos, 0),
-		width:   GRID_SIZE + 1,
-		height:  GRID_SIZE + 1,
-		time:    CORRUPTION_TIME,
-	}
+func init() {
+	utils.RegisterSolver("2024", "day18", func() utils.Solver {
+		return &day18{
+			falling: make([]utils.GridPos, 0),
+			width:   GRID_SIZE + 1,
+			height:  GRID_SIZE + 1,
+			time:    CORRUPTION_TIME,
+		}
+	})
 }
 
 func (solver *day18) Parse(line string) {
@@ -49,21 +51,21 @@ func (solver *day18) Parse(line string) {
 	parts := strings.Split(line, ",")
 	x, _ := strconv.Atoi(parts[0])
 	y, _ := strconv.Atoi(parts[1])
-	solver.falling = append(solver.falling, aoc.GridPos{x, y})
+	solver.falling = append(solver.falling, utils.GridPos{x, y})
 }
 
 type memoryWalk struct {
-	pos  aoc.GridPos
+	pos  utils.GridPos
 	cost int
 }
 
 func (solver *day18) Solve() (*string, *string) {
-	aoc.Info("Solving on %dx%d grid, limit corruption to %d/%d", solver.width, solver.height, solver.time, len(solver.falling))
+	utils.Info("Solving on %dx%d grid, limit corruption to %d/%d", solver.width, solver.height, solver.time, len(solver.falling))
 	minSteps := solver.findExit(solver.time)
 	maxTime := solver.time
 	for ; maxTime < len(solver.falling); maxTime++ {
 		exit := solver.findExit(maxTime)
-		aoc.Info("Found exit for %d at %d", maxTime, exit)
+		utils.Info("Found exit for %d at %d", maxTime, exit)
 		if exit == -1 {
 			break
 		}
@@ -74,9 +76,9 @@ func (solver *day18) Solve() (*string, *string) {
 }
 
 func (solver *day18) findExit(time int) int {
-	start := aoc.GridPos{0, 0}
-	end := aoc.GridPos{solver.width - 1, solver.height - 1}
-	visited := make(map[aoc.GridPos]bool)
+	start := utils.GridPos{0, 0}
+	end := utils.GridPos{solver.width - 1, solver.height - 1}
+	visited := make(map[utils.GridPos]bool)
 	queue := list.New()
 	queue.PushBack(memoryWalk{start, 0})
 	iterations := 0
@@ -91,7 +93,7 @@ func (solver *day18) findExit(time int) int {
 			continue
 		}
 		visited[mw.pos] = true
-		for _, dir := range aoc.ALL_ORTHOGONAL {
+		for _, dir := range utils.ALL_ORTHOGONAL {
 			next := mw.pos.Add(dir)
 			if !next.InBounds(solver.width, solver.height) {
 				continue

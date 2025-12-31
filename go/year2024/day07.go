@@ -1,7 +1,7 @@
-package main
+package year2024
 
 import (
-	"aoc/aoc"
+	"adventofcode/utils"
 	"fmt"
 	"strconv"
 	"strings"
@@ -12,8 +12,10 @@ type day07 struct {
 	part2 int
 }
 
-func Day07() aoc.Solver {
-	return &day07{}
+func init() {
+	utils.RegisterSolver("2024", "day07", func() utils.Solver {
+		return &day07{}
+	})
 }
 
 func (solver *day07) Parse(line string) {
@@ -53,7 +55,7 @@ func (solver *day07) Parse(line string) {
 func checkOp(phase string, vals []int, expected int, ops []func(int, int) int) bool {
 	for _, op := range ops {
 		if recurseOp(op(vals[0], vals[1]), 2, vals, ops, expected) {
-			aoc.Info("%s %d found %d", phase, vals, expected)
+			utils.Info("%s %d found %d", phase, vals, expected)
 			return true
 		}
 	}

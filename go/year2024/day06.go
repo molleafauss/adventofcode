@@ -1,22 +1,24 @@
-package main
+package year2024
 
 import (
-	"aoc/aoc"
+	"adventofcode/utils"
 	"strconv"
 	"strings"
 )
 
 type day06 struct {
 	room     [][]string
-	startPos aoc.GridPos
+	startPos utils.GridPos
 	width    int
 	height   int
 }
 
-func Day06() aoc.Solver {
-	return &day06{
-		room: make([][]string, 0),
-	}
+func init() {
+	utils.RegisterSolver("2024", "day06", func() utils.Solver {
+		return &day06{
+			room: make([][]string, 0),
+		}
+	})
 }
 
 func (solver *day06) Parse(line string) {
@@ -24,7 +26,7 @@ func (solver *day06) Parse(line string) {
 
 	pos := strings.Index(line, "^")
 	if pos != -1 {
-		solver.startPos = aoc.RowColToGridPos(pos, solver.height)
+		solver.startPos = utils.RowColToGridPos(pos, solver.height)
 	}
 
 	solver.height++
@@ -35,21 +37,21 @@ func (solver *day06) Parse(line string) {
 	}
 }
 
-var dirs = [4]aoc.GridPos{aoc.MOVE_D, aoc.MOVE_R, aoc.MOVE_U, aoc.MOVE_L}
+var dirs = [4]utils.GridPos{utils.MOVE_D, utils.MOVE_R, utils.MOVE_U, utils.MOVE_L}
 
 func (solver *day06) Solve() (*string, *string) {
-	aoc.Info("Guard starting at position %v - map is (%dx%d)", solver.startPos, solver.width, solver.height)
+	utils.Info("Guard starting at position %v - map is (%dx%d)", solver.startPos, solver.width, solver.height)
 	// keep looping until the guard doesn't gtfo
 	walkMap(solver)
 
 	// count all X on the map - for part 2 save them all as position for possible obstruction
 	walked := 0
-	obstructions := make([]aoc.GridPos, 0)
+	obstructions := make([]utils.GridPos, 0)
 	for row := 0; row < solver.height; row++ {
 		for col := 0; col < solver.width; col++ {
 			if solver.room[row][col] == "X" {
 				walked += 1
-				obstructions = append(obstructions, aoc.RowColToGridPos(col, row))
+				obstructions = append(obstructions, utils.RowColToGridPos(col, row))
 			}
 		}
 	}
@@ -58,7 +60,7 @@ func (solver *day06) Solve() (*string, *string) {
 	for _, o := range obstructions {
 		solver.room[o.Row][o.Col] = "#"
 		if walkMap(solver) {
-			aoc.Info("Guard will loop if obstruction placed at %v", o)
+			utils.Info("Guard will loop if obstruction placed at %v", o)
 			looping += 1
 		}
 		solver.room[o.Row][o.Col] = "."
@@ -70,7 +72,7 @@ func (solver *day06) Solve() (*string, *string) {
 }
 
 type GuardPosition struct {
-	position  aoc.GridPos
+	position  utils.GridPos
 	direction int
 }
 
@@ -82,7 +84,7 @@ func walkMap(solver *day06) bool {
 	for {
 		gp := GuardPosition{position: startPos, direction: guardDir}
 		if _, ok := walked[gp]; ok {
-			aoc.Info("Guard will loop after %d steps", len(walked))
+			utils.Info("Guard will loop after %d steps", len(walked))
 			return true
 		}
 		walked[gp] = struct{}{}
@@ -97,7 +99,7 @@ func walkMap(solver *day06) bool {
 			}
 			continue
 		}
-		aoc.Debug("Guard moving to %v", nextPos)
+		utils.Debug("Guard moving to %v", nextPos)
 		// mark current guard pos as X and move to next
 		solver.room[startPos.Row][startPos.Col] = "X"
 		if !inBounds {

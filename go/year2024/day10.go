@@ -1,7 +1,7 @@
-package main
+package year2024
 
 import (
-	"aoc/aoc"
+	"adventofcode/utils"
 	"container/list"
 	"fmt"
 	"strconv"
@@ -11,14 +11,16 @@ type day10 struct {
 	width  int
 	height int
 	grid   [][]int
-	zeros  []aoc.GridPos
+	zeros  []utils.GridPos
 }
 
-func Day10() aoc.Solver {
-	return &day10{
-		grid:  [][]int{},
-		zeros: []aoc.GridPos{},
-	}
+func init() {
+	utils.RegisterSolver("2024", "day10", func() utils.Solver {
+		return &day10{
+			grid:  [][]int{},
+			zeros: []utils.GridPos{},
+		}
+	})
 }
 
 func (solver *day10) Parse(line string) {
@@ -35,7 +37,7 @@ func (solver *day10) Parse(line string) {
 		}
 		row[i] = val
 		if val == 0 {
-			solver.zeros = append(solver.zeros, aoc.GridPos{i, solver.height})
+			solver.zeros = append(solver.zeros, utils.GridPos{i, solver.height})
 		}
 	}
 	solver.grid = append(solver.grid, row)
@@ -45,7 +47,7 @@ func (solver *day10) Parse(line string) {
 func (solver *day10) Solve() (*string, *string) {
 	score := 0
 	rating := 0
-	aoc.Info("Map is %dx%d - Found %d zeros", solver.width, solver.height, len(solver.zeros))
+	utils.Info("Map is %dx%d - Found %d zeros", solver.width, solver.height, len(solver.zeros))
 	for _, start := range solver.zeros {
 		s, r := solver.findTrails(start)
 		score += s
@@ -56,15 +58,15 @@ func (solver *day10) Solve() (*string, *string) {
 	return &part1, &part2
 }
 
-func (solver *day10) findTrails(start aoc.GridPos) (int, int) {
+func (solver *day10) findTrails(start utils.GridPos) (int, int) {
 	var queue = list.New()
 	queue.PushBack(start)
-	peaks := map[aoc.GridPos]bool{}
+	peaks := map[utils.GridPos]bool{}
 	allPeaks := 0
 	for queue.Len() > 0 {
-		spot := queue.Remove(queue.Front()).(aoc.GridPos)
+		spot := queue.Remove(queue.Front()).(utils.GridPos)
 		height := solver.grid[spot.Row][spot.Col]
-		for _, dir := range aoc.ALL_ORTHOGONAL {
+		for _, dir := range utils.ALL_ORTHOGONAL {
 			pos := spot.Add(dir)
 			if !pos.InBounds(solver.width, solver.height) {
 				continue
@@ -74,7 +76,7 @@ func (solver *day10) findTrails(start aoc.GridPos) (int, int) {
 				continue
 			}
 			if newHeight == 9 {
-				aoc.Debug("trail %s -> %s", start, pos)
+				utils.Debug("trail %s -> %s", start, pos)
 				allPeaks++
 				peaks[pos] = true
 				continue
@@ -82,6 +84,6 @@ func (solver *day10) findTrails(start aoc.GridPos) (int, int) {
 			queue.PushBack(pos)
 		}
 	}
-	aoc.Info("Found %d peaks [%d allPeaks] starting from %s", len(peaks), allPeaks, start)
+	utils.Info("Found %d peaks [%d allPeaks] starting from %s", len(peaks), allPeaks, start)
 	return len(peaks), allPeaks
 }

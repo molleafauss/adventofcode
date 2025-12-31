@@ -1,7 +1,7 @@
-package main
+package year2024
 
 import (
-	"aoc/aoc"
+	"adventofcode/utils"
 	"fmt"
 	"strconv"
 )
@@ -15,10 +15,12 @@ type day04 struct {
 	part2  int
 }
 
-func Day04() aoc.Solver {
-	return &day04{
-		puzzle: make([]string, 0),
-	}
+func init() {
+	utils.RegisterSolver("2024", "day04", func() utils.Solver {
+		return &day04{
+			puzzle: make([]string, 0),
+		}
+	})
 }
 
 func (solver *day04) Parse(line string) {
@@ -49,16 +51,16 @@ func (solver *day04) Solve() (*string, *string) {
 
 func checkPart1(solver *day04, row int, col int) {
 	// navigate all directions
-	for _, dir := range aoc.ALL_SURROUNDING {
-		start := aoc.RowColToGridPos(col, row)
+	for _, dir := range utils.ALL_SURROUNDING {
+		start := utils.RowColToGridPos(col, row)
 		if checkDir(solver, start, dir) {
 			solver.part1 += 1
-			aoc.Info("[%d] Found word at %v -> %v", solver.part1, start, dir)
+			utils.Info("[%d] Found word at %v -> %v", solver.part1, start, dir)
 		}
 	}
 }
 
-var directions = []aoc.GridPos{aoc.MOVE_DL, aoc.MOVE_DR, aoc.MOVE_UR, aoc.MOVE_UL}
+var directions = []utils.GridPos{utils.MOVE_DL, utils.MOVE_DR, utils.MOVE_UR, utils.MOVE_UL}
 
 var checks = []string{
 	// M.M
@@ -80,7 +82,7 @@ var checks = []string{
 }
 
 func checkPart2(solver *day04, row int, col int) {
-	center := aoc.RowColToGridPos(col, row)
+	center := utils.RowColToGridPos(col, row)
 	for _, letters := range checks {
 		matches := 0
 		for i, dir := range directions {
@@ -98,14 +100,14 @@ func checkPart2(solver *day04, row int, col int) {
 		}
 		// if all match we have a winner
 		solver.part2 += 1
-		aoc.Info("[%d] Found X-MAS at %v", solver.part2, center)
+		utils.Info("[%d] Found X-MAS at %v", solver.part2, center)
 		return
 	}
 }
 
 const SEARCH = "MAS"
 
-func checkDir(solver *day04, start aoc.GridPos, dir aoc.GridPos) bool {
+func checkDir(solver *day04, start utils.GridPos, dir utils.GridPos) bool {
 	// star is already correct
 	next := start
 	for i := range SEARCH {

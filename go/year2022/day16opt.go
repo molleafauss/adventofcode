@@ -1,8 +1,10 @@
-// TODO - this is reusing some of the code from day16 - refactor common parts
-package main
+// TODO - this is reusing some of the code from day16 - separate common parts,
+//
+//	each day should be independent
+package year2022
 
 import (
-	"aoc/aoc"
+	"adventofcode/utils"
 	"container/list"
 	"fmt"
 	"slices"
@@ -16,11 +18,13 @@ type day16opt struct {
 	connection map[string][]string
 }
 
-func Day16opt() aoc.Solver {
-	return &day16opt{
-		valves:     make(map[string]*Valve2),
-		connection: make(map[string][]string),
-	}
+func init() {
+	utils.RegisterSolver("2022", "day16opt", func() utils.Solver {
+		return &day16opt{
+			valves:     make(map[string]*Valve2),
+			connection: make(map[string][]string),
+		}
+	})
 }
 
 func (solver *day16opt) Parse(line string) {
@@ -45,11 +49,11 @@ func (solver *day16opt) Parse(line string) {
 }
 
 func (solver *day16opt) Solve() (*string, *string) {
-	aoc.Info("Found %d valves to open in %d minutes", len(solver.valves), PART1_MINUTES)
+	utils.Info("Found %d valves to open in %d minutes", len(solver.valves), PART1_MINUTES)
 
 	var valvesWithFlow = solver.calculateDistances()
 
-	aoc.Info("Valves with flow: %d", len(valvesWithFlow))
+	utils.Info("Valves with flow: %d", len(valvesWithFlow))
 
 	start, ok := solver.valves[START]
 	if !ok {
@@ -63,7 +67,7 @@ func (solver *day16opt) Solve() (*string, *string) {
 	bestPath1 := onePath.findPath(OnePath2{visited: []*Valve2{start}})
 	var delta = time.Since(t0)
 	var valvePath = solver.makePath(bestPath1.visited)
-	aoc.Info("[1] Found max flow is %d: %s (%d cache hits, %d calls, %d cache size) [%.3fsec]",
+	utils.Info("[1] Found max flow is %d: %s (%d cache hits, %d calls, %d cache size) [%.3fsec]",
 		bestPath1.totalFlow, valvePath, onePath.cacheHits, onePath.calls, len(onePath.cache),
 		delta.Seconds())
 
@@ -76,7 +80,7 @@ func (solver *day16opt) Solve() (*string, *string) {
 	delta = time.Since(t0)
 	var humPath = writePath(valvesWithFlow, bestPath2.humanPath, bestPath2.humanPos)
 	var elePath = writePath(valvesWithFlow, bestPath2.elePath, bestPath2.elePos)
-	aoc.Info("[2] Found max flow is %d: %s / %s (%d cache hits, %d calls, %d cache size) [%.3fsec]",
+	utils.Info("[2] Found max flow is %d: %s / %s (%d cache hits, %d calls, %d cache size) [%.3fsec]",
 		bestPath2.totalFlow, humPath, elePath, twoPath.cacheHits, twoPath.calls,
 		len(twoPath.cache), delta.Seconds())
 
@@ -129,7 +133,7 @@ func (solver *day16opt) calculateDistances() []*Valve2 {
 				queue.PushBack(&distanceWrapper{next.name, wrapper.distance + 1})
 			}
 		}
-		aoc.Info("Distances for %s: %v", curr.name, curr.tunnels)
+		utils.Info("Distances for %s: %v", curr.name, curr.tunnels)
 	}
 
 	return valvesWithFlow
@@ -169,7 +173,7 @@ type OnePathSolver2 struct {
 func (s *OnePathSolver2) findPath(path OnePath2) OnePath2 {
 	s.calls += 1
 	if (s.calls % 1000000) == 0 {
-		aoc.Info("%d calls, %d cache hits...", s.calls, s.cacheHits)
+		utils.Info("%d calls, %d cache hits...", s.calls, s.cacheHits)
 	}
 	var cacheKey = path.cacheKey()
 	if cached, ok := s.cache[cacheKey]; ok {
@@ -261,7 +265,7 @@ type TwoPathSolver2 struct {
 func (s *TwoPathSolver2) findPath(path TwoPath2) TwoPath2 {
 	s.calls += 1
 	if (s.calls % 1000000) == 0 {
-		aoc.Info("%d calls, %d cache hits...", s.calls, s.cacheHits)
+		utils.Info("%d calls, %d cache hits...", s.calls, s.cacheHits)
 	}
 
 	var cacheKey = path.cacheKey()

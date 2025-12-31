@@ -1,7 +1,7 @@
-package main
+package year2024
 
 import (
-	"aoc/aoc"
+	"adventofcode/utils"
 	"container/heap"
 	"math"
 	"slices"
@@ -9,17 +9,19 @@ import (
 )
 
 type day16 struct {
-	start  aoc.GridPos
-	end    aoc.GridPos
-	maze   map[aoc.GridPos]bool
+	start  utils.GridPos
+	end    utils.GridPos
+	maze   map[utils.GridPos]bool
 	width  int
 	height int
 }
 
-func Day16() aoc.Solver {
-	return &day16{
-		maze: make(map[aoc.GridPos]bool),
-	}
+func init() {
+	utils.RegisterSolver("2024", "day16", func() utils.Solver {
+		return &day16{
+			maze: make(map[utils.GridPos]bool),
+		}
+	})
 }
 
 func (solver *day16) Parse(line string) {
@@ -31,11 +33,11 @@ func (solver *day16) Parse(line string) {
 	for i := range line {
 		switch line[i] {
 		case '#':
-			solver.maze[aoc.RowColToGridPos(i, solver.height)] = true
+			solver.maze[utils.RowColToGridPos(i, solver.height)] = true
 		case 'S':
-			solver.start = aoc.RowColToGridPos(i, solver.height)
+			solver.start = utils.RowColToGridPos(i, solver.height)
 		case 'E':
-			solver.end = aoc.RowColToGridPos(i, solver.height)
+			solver.end = utils.RowColToGridPos(i, solver.height)
 		}
 	}
 	solver.height++
@@ -49,25 +51,25 @@ func (solver *day16) Solve() (*string, *string) {
 }
 
 type walk struct {
-	path  []aoc.GridPos
-	dir   aoc.GridPos
+	path  []utils.GridPos
+	dir   utils.GridPos
 	score int
 }
 
 type position struct {
-	pos aoc.GridPos
-	dir aoc.GridPos
+	pos utils.GridPos
+	dir utils.GridPos
 }
 
 func (solver *day16) walkMaze() (int, int) {
 	empty := solver.width*solver.height - len(solver.maze)
-	aoc.Info("Maze size: %dx%d - walls %d - empty: %d", solver.width, solver.height, len(solver.maze), empty)
+	utils.Info("Maze size: %dx%d - walls %d - empty: %d", solver.width, solver.height, len(solver.maze), empty)
 	minScore := math.MaxInt32
 	minScores := make(map[position]int)
-	bestSpots := make(map[aoc.GridPos]bool)
+	bestSpots := make(map[utils.GridPos]bool)
 	// max number of empty spaces - this might be needed for optimizations?
 	pq := make(PriorityQueue, 1)
-	pq[0] = &walk{[]aoc.GridPos{solver.start}, aoc.MOVE_R, 0}
+	pq[0] = &walk{[]utils.GridPos{solver.start}, utils.MOVE_R, 0}
 	heap.Init(&pq)
 	iterations := 0
 	for pq.Len() > 0 {
@@ -75,7 +77,7 @@ func (solver *day16) walkMaze() (int, int) {
 		w := heap.Pop(&pq).(*walk)
 		pos := w.path[len(w.path)-1]
 		if iterations%10000 == 0 {
-			aoc.Info("Iterations: %d - queue size: %d - score %d - head: %s/%d - cache: %d", iterations, pq.Len(), minScore, pos, w.score, len(minScores))
+			utils.Info("Iterations: %d - queue size: %d - score %d - head: %s/%d - cache: %d", iterations, pq.Len(), minScore, pos, w.score, len(minScores))
 		}
 		if pos == solver.end {
 			if w.score < minScore {
@@ -99,7 +101,7 @@ func (solver *day16) walkMaze() (int, int) {
 		}
 		// follow all avenues, but never walk back. Prioritise walking in a straight line if possible
 		// (should the queue be ordered by score instead?)
-		for _, d := range aoc.ALL_ORTHOGONAL {
+		for _, d := range utils.ALL_ORTHOGONAL {
 			if opposite(d, w.dir) {
 				continue
 			}
@@ -129,15 +131,15 @@ func (solver *day16) walkMaze() (int, int) {
 			heap.Push(&pq, &walk{append(slices.Clone(w.path), next), d, score})
 		}
 	}
-	aoc.Info("Found end: iterations: %d - score %d", iterations, minScore)
+	utils.Info("Found end: iterations: %d - score %d", iterations, minScore)
 	return minScore, len(bestSpots)
 }
 
-func opposite(a aoc.GridPos, b aoc.GridPos) bool {
-	return (a == aoc.MOVE_L && b == aoc.MOVE_R) ||
-		(a == aoc.MOVE_R && b == aoc.MOVE_L) ||
-		(a == aoc.MOVE_U && b == aoc.MOVE_D) ||
-		(a == aoc.MOVE_D && b == aoc.MOVE_U)
+func opposite(a utils.GridPos, b utils.GridPos) bool {
+	return (a == utils.MOVE_L && b == utils.MOVE_R) ||
+		(a == utils.MOVE_R && b == utils.MOVE_L) ||
+		(a == utils.MOVE_U && b == utils.MOVE_D) ||
+		(a == utils.MOVE_D && b == utils.MOVE_U)
 }
 
 type PriorityQueue []*walk

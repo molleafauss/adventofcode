@@ -1,7 +1,7 @@
-package main
+package year2024
 
 import (
-	"aoc/aoc"
+	"adventofcode/utils"
 	"strconv"
 	"strings"
 )
@@ -12,10 +12,12 @@ type day19 struct {
 	part2    int
 }
 
-func Day19() aoc.Solver {
-	return &day19{
-		patterns: []string{},
-	}
+func init() {
+	utils.RegisterSolver("2024", "day19", func() utils.Solver {
+		return &day19{
+			patterns: []string{},
+		}
+	})
 }
 
 func (solver *day19) Parse(line string) {
@@ -25,7 +27,7 @@ func (solver *day19) Parse(line string) {
 		for _, pattern := range solver.patterns {
 			totalSize += len(pattern)
 		}
-		aoc.Info("Found %d patterns, avg len %d - %s", len(solver.patterns), totalSize/len(solver.patterns), solver.patterns)
+		utils.Info("Found %d patterns, avg len %d - %s", len(solver.patterns), totalSize/len(solver.patterns), solver.patterns)
 	} else if len(line) > 0 {
 		cache := make(map[string]int)
 		count := designFeasible(cache, solver.patterns, line)
@@ -33,7 +35,7 @@ func (solver *day19) Parse(line string) {
 			solver.part1++
 		}
 		solver.part2 += count
-		aoc.Info("%s feasible in %d ways", line, count)
+		utils.Info("%s feasible in %d ways", line, count)
 	}
 }
 

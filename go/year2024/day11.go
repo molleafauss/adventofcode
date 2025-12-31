@@ -1,7 +1,7 @@
-package main
+package year2024
 
 import (
-	"aoc/aoc"
+	"adventofcode/utils"
 	"strconv"
 	"strings"
 )
@@ -10,8 +10,10 @@ type day11 struct {
 	stones []int
 }
 
-func Day11() aoc.Solver {
-	return &day11{}
+func init() {
+	utils.RegisterSolver("2024", "day11", func() utils.Solver {
+		return &day11{}
+	})
 }
 
 const ITERATIONS = 25
@@ -35,14 +37,14 @@ func (solver *day11) Solve() (*string, *string) {
 	for _, num := range solver.stones {
 		result += blink(num, 25, &cache)
 	}
-	aoc.Info("Found part1 result: %d, cache size %d", result, len(cache))
+	utils.Info("Found part1 result: %d, cache size %d", result, len(cache))
 	part1 := strconv.Itoa(result)
 
 	result = 0
 	for _, num := range solver.stones {
 		result += blink(num, 75, &cache)
 	}
-	aoc.Info("Found part2 result: %d, cache size %d", result, len(cache))
+	utils.Info("Found part2 result: %d, cache size %d", result, len(cache))
 	part2 := strconv.Itoa(result)
 
 	return &part1, &part2
