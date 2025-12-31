@@ -1,7 +1,7 @@
 package year2022
 
 import (
-	"aoc/aoc"
+	"adventofcode/utils"
 	"container/list"
 	"regexp"
 	"slices"
@@ -17,7 +17,7 @@ type day16 struct {
 }
 
 func init() {
-	aoc.RegisterSolver("2022", "day16", func() aoc.Solver {
+	utils.RegisterSolver("2022", "day16", func() utils.Solver {
 		return &day16{
 			valves:         []Valve{},
 			valvesWithFlow: []string{},
@@ -58,7 +58,7 @@ func (solver *day16) Parse(line string) {
 }
 
 func (solver *day16) Solve() (*string, *string) {
-	aoc.Info("Valves with flow: %s", solver.valvesWithFlow)
+	utils.Info("Valves with flow: %s", solver.valvesWithFlow)
 	solver.calculateDistances()
 
 	var t0 = time.Now()
@@ -67,7 +67,7 @@ func (solver *day16) Solve() (*string, *string) {
 	}
 	best_path1 := one_path.find_path(solver, InitOnePath(START))
 	var delta = time.Since(t0)
-	aoc.Info("[1] Found max flow is %d: %s (%d cache hits, %d calls, %d cache size) [%.3fsec]",
+	utils.Info("[1] Found max flow is %d: %s (%d cache hits, %d calls, %d cache size) [%.3fsec]",
 		best_path1.total_flow, best_path1.visited, one_path.cache_hits, one_path.calls, len(one_path.cache), delta.Seconds())
 
 	t0 = time.Now()
@@ -76,7 +76,7 @@ func (solver *day16) Solve() (*string, *string) {
 	}
 	var best_path2 = two_path.find_path(solver, InitTwoPath(START))
 	delta = time.Since(t0)
-	aoc.Info("[2] Found max flow is %d: %s / %s (%d cache hits, %d calls, %d cache size) [%.3fsec]",
+	utils.Info("[2] Found max flow is %d: %s / %s (%d cache hits, %d calls, %d cache size) [%.3fsec]",
 		best_path2.total_flow, best_path2.human_path, best_path2.ele_path, two_path.cache_hits, two_path.calls,
 		len(two_path.cache), delta.Seconds())
 
@@ -141,7 +141,7 @@ type OnePathSolver struct {
 func (s *OnePathSolver) find_path(p *day16, path OnePath) OnePath {
 	s.calls += 1
 	if (s.calls % 1000000) == 0 {
-		aoc.Info("%d calls, %d cache hits...", s.calls, s.cache_hits)
+		utils.Info("%d calls, %d cache hits...", s.calls, s.cache_hits)
 	}
 	var cave = path.visited[len(path.visited)-1]
 	var cache_key = path.cache_key()
@@ -236,7 +236,7 @@ type TwoPathSolver struct {
 func (s *TwoPathSolver) find_path(solver *day16, path TwoPath) TwoPath {
 	s.calls += 1
 	if (s.calls % 1000000) == 0 {
-		aoc.Info("%d calls, %d cache hits...", s.calls, s.cache_hits)
+		utils.Info("%d calls, %d cache hits...", s.calls, s.cache_hits)
 	}
 
 	var man_pos = path.human_path[len(path.human_path)-1]

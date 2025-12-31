@@ -102,6 +102,7 @@ func solveAll() error {
 }
 
 func solveDay(day string) error {
+	data := day[:5]
 	utils.Info("== Solving %s / %s ==", opts.year, day)
 
 	solver := utils.CreateSolver(opts.year, day)
@@ -109,12 +110,12 @@ func solveDay(day string) error {
 		return fmt.Errorf("no solver available for day: %s / %s", opts.year, day)
 	}
 
-	testFile := fmt.Sprintf("%s/%s/%s/test.txt", opts.inputDir, opts.year, day)
+	testFile := fmt.Sprintf("%s/%s/%s/test.txt", opts.inputDir, opts.year, data)
 	if err := solve(testFile, solver); err != nil {
 		return err
 	}
 
-	inputFile := fmt.Sprintf("%s/%s/%s/input.txt", opts.inputDir, opts.year, day)
+	inputFile := fmt.Sprintf("%s/%s/%s/input.txt", opts.inputDir, opts.year, data)
 	return solve(inputFile, utils.CreateSolver(opts.year, day))
 }
 
