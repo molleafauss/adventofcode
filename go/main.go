@@ -1,9 +1,9 @@
 package main
 
 import (
-	"aoc/aoc"
+	"adventofcode/utils"
 	// register all solvers
-	_ "aoc/year2022"
+	_ "adventofcode/year2022"
 	"bufio"
 	"fmt"
 	"os"
@@ -50,9 +50,10 @@ func main() {
 
 func adventOfCode(_ *cobra.Command, args []string) error {
 	if opts.debug {
-		aoc.SetLogLevel(aoc.INFO)
+		utils.SetLogLevel(utils.DEBUG)
+		utils.Debug("enabling debug mode")
 	} else {
-		aoc.SetLogLevel(aoc.INFO)
+		utils.SetLogLevel(utils.INFO)
 	}
 
 	if err := verifyInputDir(); err != nil {
@@ -101,9 +102,9 @@ func solveAll() error {
 }
 
 func solveDay(day string) error {
-	aoc.Info("== Solving %s / %s ==", opts.year, day)
+	utils.Info("== Solving %s / %s ==", opts.year, day)
 
-	solver := aoc.CreateSolver(opts.year, day)
+	solver := utils.CreateSolver(opts.year, day)
 	if solver == nil {
 		return fmt.Errorf("no solver available for day: %s / %s", opts.year, day)
 	}
@@ -114,10 +115,10 @@ func solveDay(day string) error {
 	}
 
 	inputFile := fmt.Sprintf("%s/%s/%s/input.txt", opts.inputDir, opts.year, day)
-	return solve(inputFile, aoc.CreateSolver(opts.year, day))
+	return solve(inputFile, utils.CreateSolver(opts.year, day))
 }
 
-func solve(file string, solver aoc.Solver) error {
+func solve(file string, solver utils.Solver) error {
 	var expectedPart1 string
 	var expectedPart2 string
 	f, err := os.Open(file)
@@ -139,21 +140,21 @@ func solve(file string, solver aoc.Solver) error {
 
 	part1, part2 := solver.Solve()
 	delta := time.Since(t0)
-	aoc.Info("File %s: %s", file, delta)
+	utils.Info("File %s: %s", file, delta)
 	if part1 != nil {
 		if *part1 == expectedPart1 {
-			aoc.Info("PART 1 - found expected result: %s = %s", expectedPart1, *part1)
+			utils.Info("PART 1 - found expected result: %s = %s", expectedPart1, *part1)
 		} else {
-			aoc.Error("ERROR - part 1 result is incorrect: expected %s, actual %s",
+			utils.Error("ERROR - part 1 result is incorrect: expected %s, actual %s",
 				expectedPart1, *part1)
 		}
 	}
 
 	if part2 != nil {
 		if *part2 == expectedPart2 {
-			aoc.Info("PART 2 - found expected result: %s = %s", expectedPart2, *part2)
+			utils.Info("PART 2 - found expected result: %s = %s", expectedPart2, *part2)
 		} else {
-			aoc.Error("ERROR - part 2 result is incorrect: expected %s, actual %s",
+			utils.Error("ERROR - part 2 result is incorrect: expected %s, actual %s",
 				expectedPart2, *part2)
 		}
 	}
