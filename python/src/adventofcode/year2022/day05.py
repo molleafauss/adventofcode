@@ -1,6 +1,6 @@
 import logging
 import re
-from advent import Solver
+from adventofcode import Solver
 
 # https://adventofcode.com/2022/day/5
 # This was a fun one - I accumulated stacks and instructions and then built the stacks from the input after parsing

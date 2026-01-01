@@ -1,6 +1,6 @@
 import logging
 
-from advent import Solver
+from adventofcode import Solver
 
 # https://adventofcode.com/2022/day/20
 # "easy" when you just remember to use the modulo list size (-1) when moving items. Handling the encryption key could

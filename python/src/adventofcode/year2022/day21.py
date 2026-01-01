@@ -2,7 +2,7 @@ import logging
 import re
 from dataclasses import dataclass
 
-from advent import Solver
+from adventofcode import Solver
 
 # https://adventofcode.com/2022/day/21
 # reasonably simple. I did calculate using recursion and was worried that it could hit a stack overflow (too many tree

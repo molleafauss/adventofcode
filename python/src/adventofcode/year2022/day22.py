@@ -1,7 +1,7 @@
 import logging
 from dataclasses import dataclass
 
-from advent import Solver
+from adventofcode import Solver
 
 # https://adventofcode.com/2022/day/22
 # part 1 was approachable. Part 2 ... tough. Test input and real input had a different cube shape; I was unable to

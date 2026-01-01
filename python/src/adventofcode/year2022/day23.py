@@ -1,7 +1,7 @@
 import logging
 
-from advent import Solver
-from grid import *
+from adventofcode import Solver
+from adventofcode.grid import *
 
 # https://adventofcode.com/2022/day/23
 # "simple" - the final solution is brute force - not sure if there is a "mathematical" way to calculate it
