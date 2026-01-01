@@ -52,6 +52,6 @@ impl Solver for Solution {
     fn solve(&mut self) -> Option<(String, String)> {
         info!("[1] increases found: {}", self.increases1);
         info!("[2] increases found: {}", self.increases2);
-        Some((self.increases1.to_string(), self.increases1.to_string()))
+        Some((self.increases1.to_string(), self.increases2.to_string()))
     }
 }
