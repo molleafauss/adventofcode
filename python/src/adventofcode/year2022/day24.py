@@ -1,7 +1,7 @@
 import logging
 from dataclasses import dataclass
 
-from advent import Solver
+from adventofcode import Solver
 from grid import GridPos, dir_from_char, DIR_N, DIR_E, DIR_S, DIR_W, char_from_dir
 
 

@@ -2,7 +2,7 @@ import logging
 import time
 from dataclasses import dataclass
 
-from advent import Solver
+from adventofcode import Solver
 import re
 import math
 

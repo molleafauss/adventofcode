@@ -1,6 +1,6 @@
 import logging
 
-from advent import Solver
+from adventofcode import Solver
 
 # https://adventofcode.com/2022/day/12
 # this was a bloody fun ride. For some reason I started some "Dynamic Programming" shenanigans which - of course - led

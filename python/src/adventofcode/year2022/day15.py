@@ -1,6 +1,6 @@
 import logging
 
-from advent import Solver
+from adventofcode import Solver
 from grid import Point
 from dataclasses import dataclass
 import re

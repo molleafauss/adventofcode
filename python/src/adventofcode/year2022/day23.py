@@ -1,6 +1,6 @@
 import logging
 
-from advent import Solver
+from adventofcode import Solver
 from grid import *
 
 # https://adventofcode.com/2022/day/23

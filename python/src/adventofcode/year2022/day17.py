@@ -1,7 +1,7 @@
 import logging
 from dataclasses import dataclass
 
-from advent import Solver
+from adventofcode import Solver
 
 # https://adventofcode.com/2022/day/17
 # being strict on coordinates: 0 <= x <= 7; y starts at 0 and grows "up"; pieces height and width are 1-based.

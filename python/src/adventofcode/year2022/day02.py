@@ -1,6 +1,6 @@
 import logging
 
-from advent import Solver
+from adventofcode import Solver
 
 # https://adventofcode.com/2022/day/2
 # 1st: A for Rock, B for Paper, and C for Scissors

@@ -1,6 +1,6 @@
 import logging
 
-from advent import Solver
+from adventofcode import Solver
 
 # https://adventofcode.com/2022/day/14
 # This was reasonably easy, no important optimizations needed even on the second part.

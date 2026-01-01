@@ -1,7 +1,7 @@
 import logging
 from dataclasses import dataclass
 
-from advent import Solver
+from adventofcode import Solver
 
 # https://adventofcode.com/2022/day/18
 # Was fun finding the right way to do it - in the end I just added a "layer" of air all around the 3D volume and

@@ -1,7 +1,7 @@
 import logging
 import time
 
-from advent import Solver
+from adventofcode import Solver
 import re
 
 # https://adventofcode.com/2022/day/19
