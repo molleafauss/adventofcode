@@ -50,7 +50,7 @@ impl Solver for Solution {
             .sum();
         info!("[2] Total winnings: {}", winnings_part2);
 
-        Some((winnings_part1.to_string(), "".to_string()))
+        Some((winnings_part1.to_string(), winnings_part2.to_string()))
     }
 }
 

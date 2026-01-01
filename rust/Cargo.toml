@@ -12,4 +12,6 @@ factorial = "0.4.0"
 log4rs = "1.2.0"
 log = "0.4.20"
 num = "0.4.1"
+clap = { version = "4.5.53", features = ["derive"] }
+chrono = "0.4.42"
 
