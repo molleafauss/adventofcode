@@ -1,7 +1,7 @@
 import logging
 
 from adventofcode import Solver
-from grid import Point
+from adventofcode.grid import Point
 from dataclasses import dataclass
 import re
 import time
