@@ -67,7 +67,7 @@ impl Solver for Solution {
         }
         info!("[1] Reached the end in {} steps", steps1);
 
-        // let's try part 2 without loop checks...
+        // TODO - this is not yet working, but I have solved it?
         let mut ghosts: Vec<&str> = self.nodes.keys()
             .filter(|k| k.ends_with("A"))
             .map(|k| k.as_str())
