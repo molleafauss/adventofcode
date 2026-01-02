@@ -89,9 +89,9 @@ impl Solver for Solution {
             }
             ghosts = wandering;
         }
-        info!("[2] Reached the end in {} steps", steps2);
+        info!("[2] Reached the end in {} steps", cycles);
 
-        Some((steps1.to_string(), steps2.to_string()))
+        Some((steps1.to_string(), cycles.to_string()))
     }
 }
 
