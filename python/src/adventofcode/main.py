@@ -33,14 +33,14 @@ class Aoc:
             self.solve_day(f"day{i:02}")
 
     def solve_day(self, day):
-        data = day[:5]
-        logging.info(f"== Solving {self.year}/{day} ==")
+        puzzle = day[:5]
+        logging.info(f"== Solving {self.year}/{puzzle} ==")
         try:
             module = import_module(f"adventofcode.year{self.year}.{day}")
             # test input
-            self.solve(day, "test.txt", module.Solution())
+            self.solve(puzzle, "test.txt", module.Solution())
             # real input
-            self.solve(day, "input.txt", module.Solution())
+            self.solve(puzzle, "input.txt", module.Solution())
         except ImportError:
             logging.warning(f"{self.year}/{day} | no solution implemented")
 

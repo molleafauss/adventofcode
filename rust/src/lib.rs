@@ -22,8 +22,8 @@ pub fn register_solver(year: &str, day: &str, constructor: Constructor) {
     SOLVERS.lock().unwrap().insert(format!("{year}/{day}"), constructor);
 }
 
-pub fn get_solver(year: &str, day: &str) -> Option<Box<dyn Solver>> {
+pub fn get_solver(year: &str, day: &str) -> Option<Constructor> {
         SOLVERS.lock().unwrap()
             .get(format!("{year}/{day}").as_str())
-            .and_then(|constructor| Some(constructor()))
+            .and_then(|constructor| Some(*constructor))
 }

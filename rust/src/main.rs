@@ -1,15 +1,15 @@
+use adventofcode::{get_solver, Solver};
+use chrono::{Datelike, Local};
+use clap::Parser;
+use log::{error, info, warn, LevelFilter};
+use log4rs::append::console::ConsoleAppender;
+use log4rs::config::{Appender, Root};
+use log4rs::encode::pattern::PatternEncoder;
+use log4rs::Config;
 use std::fs;
 use std::path::Path;
 use std::process::exit;
 use std::time::SystemTime;
-use chrono::{Datelike, Local};
-use adventofcode::{get_solver, Solver};
-use clap::Parser;
-use log::{error, info, warn, LevelFilter};
-use log4rs::append::console::ConsoleAppender;
-use log4rs::Config;
-use log4rs::config::{Appender, Root};
-use log4rs::encode::pattern::PatternEncoder;
 mod year2021;
 mod year2022;
 mod year2023;
@@ -41,7 +41,7 @@ struct Aoc {
 }
 
 fn main() {
-    let cmd= Aoc::parse();
+    let cmd = Aoc::parse();
     cmd.run();
 }
 
@@ -68,7 +68,10 @@ impl Aoc {
         } else if self.day.starts_with("day") {
             self.solve_day(year, &self.day);
         } else {
-            error!("Invalid day parameter: {}. Must be 'dayNN' or 'all'.", self.day);
+            error!(
+                "Invalid day parameter: {}. Must be 'dayNN' or 'all'.",
+                self.day
+            );
             exit(-1);
         }
     }
@@ -79,67 +82,67 @@ impl Aoc {
         }
     }
 
-
     fn solve_day(&self, year: u32, day: &str) {
         let data = &day[..5];
         info!("== Solving {year} / {data} ==");
-
-        // assume 'input' is a directory in the current directory
-        let test_file = format!("{}/{year}/{data}/test.txt", self.inputs);
-        if !Path::new(&test_file).exists() {
-            error!("ERROR: test file {test_file} does not exist");
-            exit(-1);
-        }
         let solver = get_solver(&year.to_string(), day);
         if solver.is_none() {
-            error!("ERROR: no solver for {year}/{day}");
-            exit(-1);
+            warn!("{year}/{day} | no solution implemented");
+            return;
         }
-        solve(&test_file, solver.unwrap());
-
-        let input_file = format!("{}/{year}/{data}/input.txt", self.inputs);
-        if !Path::new(&input_file).exists() {
-            error!("ERROR: input file {input_file} does not exist");
-            exit(-1);
-        }
-        solve(&input_file, get_solver(&year.to_string(), day).unwrap());
+        let solver = solver.unwrap();
+        self.solve(year, data, "test.txt", solver());
+        self.solve(year, data, "input.txt", solver());
     }
 
-}
+    fn solve(&self, year: u32, day: &str, datafile: &str, mut parser: Box<dyn Solver>) {
+        let filename = format!("{}/{year}/{day}/{datafile}", self.inputs);
+        if !Path::new(&filename).exists() {
+            warn!("{year}/{day} | missing file: {datafile}");
+            return;
+        }
+        let mut expected_part_1 = None;
+        let mut expected_part_2 = None;
+        let t0 = SystemTime::now();
+        for line in fs::read_to_string(filename).unwrap().lines() {
+            if line.starts_with("result part 1: ") {
+                expected_part_1 = Some(String::from(&line[15..]));
+            } else if line.starts_with("result part 2: ") {
+                expected_part_2 = Some(String::from(&line[15..]));
+            } else {
+                parser.parse(line);
+            }
+        }
+        let result = parser.solve();
+        let t1 = SystemTime::now();
+        info!(
+            "{year}/{day} | {datafile} solved in {:.3}sec",
+            t1.duration_since(t0).unwrap().as_secs_f32()
+        );
+        if result.is_none() {
+            warn!("{year}/{day} | {datafile} | no result returned?");
+            return;
+        }
+        let (part1, part2) = result.unwrap();
+        self.verify_result(year, day, datafile, 1, part1, expected_part_1);
+        self.verify_result(year, day, datafile, 2, part2, expected_part_2);
+    }
 
-fn solve(filename: &str, mut parser: Box<dyn Solver>) {
-    let mut expected_part_1 = None;
-    let mut expected_part_2 = None;
-    let t0 = SystemTime::now();
-    for line in fs::read_to_string(filename).unwrap().lines() {
-        if line.starts_with("result part 1: ") {
-            expected_part_1 = Some(String::from(&line[15..]));
-        } else if line.starts_with("result part 2: ") {
-            expected_part_2 = Some(String::from(&line[15..]));
-        } else {
-            parser.parse(line);
-        }
-    }
-    let result = parser.solve();
-    let t1 = SystemTime::now();
-    info!("File {filename}: {:.3}sec", t1.duration_since(t0).unwrap().as_secs_f32());
-    if result.is_none() {
-        warn!("==> No result given");
-        return;
-    }
-    let (part1, part2) = result.unwrap();
-    if let Some(expected1) = expected_part_1 {
-        if part1 == expected1 {
-            info!("PART 1 - found expected result: {expected1} = {part1}")
-        } else {
-            error!("ERROR - part 1 result is incorrect: expected {expected1}, actual {part1}");
-        }
-    }
-    if let Some(expected2) = expected_part_2 {
-        if part2 == expected2 {
-            info!("PART 2 - found expected result: {expected2} = {part2}", )
-        } else  {
-            error!("ERROR - part 2 result is incorrect: expected {expected2}, actual {part2}");
+    fn verify_result(
+        &self,
+        year: u32,
+        day: &str,
+        datafile: &str,
+        part: u32,
+        result: String,
+        value: Option<String>,
+    ) {
+        if let Some(expected) = value {
+            if result == expected {
+                info!("{year}/{day} | {datafile} | RESULT PART {part} - correct: {expected}")
+            } else {
+                error!("{year}/{day} | {datafile} | RESULT PART {part} - expected {expected}, actual {result}");
+            }
         }
     }
 }
