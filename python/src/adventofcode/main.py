@@ -7,38 +7,7 @@ import sys
 import time
 from importlib import import_module
 
-
-# reads a file line by line, passes each line to the parser and then call solve on the parser
-def solve(filename: pathlib.Path, parser):
-    expected_part_1 = None
-    expected_part_2 = None
-    with open(filename) as f:
-        for line in f:
-            if line.startswith("result part 1: "):
-                expected_part_1 = line[15:].strip()
-            elif line.startswith("result part 2: "):
-                expected_part_2 = line[15:].strip()
-            else:
-                parser.parse(line.rstrip())
-    t0 = time.time()
-    result = parser.solve()
-    t1 = time.time()
-    logging.info(f"File {filename}: {t1 - t0:.3f}sec")
-    if not result:
-        logging.warning("==> No result given")
-        return
-    if expected_part_1 and result[0] == expected_part_1:
-        logging.info(f"PART 1 - found expected result: {expected_part_1} = {result[0]}")
-    elif expected_part_1 and result[0] != expected_part_1:
-        logging.error(
-            f"ERROR - part 1 result is incorrect: expected {expected_part_1}, actual {result[0]}"
-        )
-    if expected_part_2 and result[1] == expected_part_2:
-        logging.info(f"PART 2 - found expected result: {expected_part_2} = {result[1]}")
-    elif expected_part_2 and result[1] != expected_part_2:
-        logging.error(
-            f"ERROR - part 2 result is incorrect: expected {expected_part_2}, actual {result[1]}"
-        )
+from adventofcode import Solver
 
 
 def get_last_available_year():
@@ -65,14 +34,52 @@ class Aoc:
 
     def solve_day(self, day):
         data = day[:5]
-        logging.info(f"== Solving {self.year} / {day} ==")
-        module = import_module(f"adventofcode.year{self.year}.{day}")
-        # test input
-        test_data = pathlib.Path(self.inputs_dir) / f"{self.year}/{data}/test.txt"
-        solve(test_data, module.Solution())
-        # real input
-        input_data = pathlib.Path(self.inputs_dir) / f"{self.year}/{data}/input.txt"
-        solve(input_data, module.Solution())
+        logging.info(f"== Solving {self.year}/{day} ==")
+        try:
+            module = import_module(f"adventofcode.year{self.year}.{day}")
+            # test input
+            self.solve(day, "test.txt", module.Solution())
+            # real input
+            self.solve(day, "input.txt", module.Solution())
+        except ImportError:
+            logging.warning(f"{self.year}/{day} | no solution implemented")
+
+    def solve(self, day: str, datafile: str, parser: Solver):
+        filename = pathlib.Path(self.inputs_dir) / f"{self.year}/{day}/{datafile}"
+        if not filename.exists():
+            logging.warning(f"{self.year}/{day} | missing file: {datafile}")
+            return
+        expected_part_1 = None
+        expected_part_2 = None
+        with filename.open() as f:
+            for line in f:
+                if line.startswith("result part 1: "):
+                    expected_part_1 = line[15:].strip()
+                elif line.startswith("result part 2: "):
+                    expected_part_2 = line[15:].strip()
+                else:
+                    parser.parse(line.rstrip())
+        t0 = time.time()
+        result = parser.solve()
+        t1 = time.time()
+        logging.info(f"{self.year}/{day} | {datafile} solved in {t1 - t0:.3f}sec")
+        if not result:
+            logging.warning(f"{self.year}/{day} | {datafile} | no result returned?")
+            return
+        self.verify_result(day, datafile, 1, result[0], expected_part_1)
+        self.verify_result(day, datafile, 2, result[1], expected_part_2)
+
+    def verify_result(
+        self, day: str, datafile: str, part: int, result: str, expected: str | None
+    ):
+        if expected and result == expected:
+            logging.info(
+                f"{self.year}/{day} | {datafile} | RESULT PART {part} - correct: {expected}"
+            )
+        elif expected and result != expected:
+            logging.error(
+                f"{self.year}/{day} | {datafile} | RESULT PART {part} - expected {expected}, actual {result}"
+            )
 
 
 def main():
