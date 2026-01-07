@@ -113,7 +113,7 @@ func solveDay(day string) error {
 	}
 
 	solve(puzzle, "test.txt", solver)
-	solve(puzzle, "input.txt", solver)
+	solve(puzzle, "input.txt", utils.CreateSolver(opts.year, day))
 	return nil
 }
 
