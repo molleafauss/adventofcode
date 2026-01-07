@@ -103,32 +103,31 @@ func solveAll() error {
 }
 
 func solveDay(day string) error {
-	data := day[:5]
-	utils.Info("== Solving %s / %s ==", opts.year, day)
+	puzzle := day[:5]
+	utils.Info("== Solving %s/%s ==", opts.year, puzzle)
 
 	solver := utils.CreateSolver(opts.year, day)
 	if solver == nil {
-		return fmt.Errorf("no solver available for day: %s / %s", opts.year, day)
+		utils.Warn("%s/%s | no solution implemented", opts.year, day)
+		return nil
 	}
 
-	testFile := fmt.Sprintf("%s/%s/%s/test.txt", opts.inputDir, opts.year, data)
-	if err := solve(testFile, solver); err != nil {
-		return err
-	}
-
-	inputFile := fmt.Sprintf("%s/%s/%s/input.txt", opts.inputDir, opts.year, data)
-	return solve(inputFile, utils.CreateSolver(opts.year, day))
+	solve(puzzle, "test.txt", solver)
+	solve(puzzle, "input.txt", solver)
+	return nil
 }
 
-func solve(file string, solver utils.Solver) error {
-	var expectedPart1 string
-	var expectedPart2 string
-	f, err := os.Open(file)
+func solve(puzzle string, file string, solver utils.Solver) {
+	filename := fmt.Sprintf("%s/%s/%s/%s", opts.inputDir, opts.year, puzzle, file)
+	f, err := os.Open(filename)
 	if err != nil {
-		return fmt.Errorf("cannot open file %s: %v", file, err)
+		utils.Warn("%s/%s | missing file: %s", opts.year, puzzle, file)
+		return
 	}
 	t0 := time.Now()
 	scanner := bufio.NewScanner(f)
+	var expectedPart1 string
+	var expectedPart2 string
 	for scanner.Scan() {
 		line := scanner.Text()
 		if strings.HasPrefix(line, "result part 1: ") {
@@ -142,23 +141,20 @@ func solve(file string, solver utils.Solver) error {
 
 	part1, part2 := solver.Solve()
 	delta := time.Since(t0)
-	utils.Info("File %s: %s", file, delta)
-	if part1 != nil {
-		if *part1 == expectedPart1 {
-			utils.Info("PART 1 - found expected result: %s = %s", expectedPart1, *part1)
-		} else {
-			utils.Error("ERROR - part 1 result is incorrect: expected %s, actual %s",
-				expectedPart1, *part1)
-		}
-	}
+	utils.Info("%s/%s | %s solved in %s", opts.year, puzzle, file, delta)
+	verify(puzzle, file, 1, expectedPart1, part1)
+	verify(puzzle, file, 2, expectedPart2, part2)
+}
 
-	if part2 != nil {
-		if *part2 == expectedPart2 {
-			utils.Info("PART 2 - found expected result: %s = %s", expectedPart2, *part2)
-		} else {
-			utils.Error("ERROR - part 2 result is incorrect: expected %s, actual %s",
-				expectedPart2, *part2)
-		}
+func verify(puzzle string, file string, part int, expected string, result *string) {
+	if result == nil {
+		return
 	}
-	return nil
+	if *result == expected {
+		utils.Info("%s/%s | %s | RESULT PART %d - correct: %s", opts.year, puzzle, file, part,
+			expected)
+	} else {
+		utils.Error("%s/%s | %s | RESULT PART %d - expected %s, actual %s", opts.year,
+			puzzle, file, part, expected, *result)
+	}
 }
