@@ -86,37 +86,6 @@ public class Main implements Callable<Integer> {
         inputsDir = inputsDir.getAbsoluteFile();
     }
 
-    private void solveDay(String day) throws IOException {
-        String data = day.substring(0, 5);
-        Log.info("== Solving %s / %s ==", year, data);
-
-        // assume 'input' is a directory in the current directory
-        var testFile = new File("%s/%s/%s/test.txt".formatted(inputsDir, year, data));
-        if (!testFile.exists()) {
-            Log.error("ERROR: test file %s does not exist", testFile);
-            System.exit(-1);
-        }
-        solve(testFile, createSolver(day));
-
-        var inputFile = new File("%s/%s/%s/input.txt".formatted(inputsDir, year, data));
-        if (!inputFile.exists()) {
-            Log.error("ERROR: input file %s does not exist".formatted(inputFile));
-            System.exit(-1);
-        }
-        solve(inputFile, createSolver(day));
-
-    }
-
-    private Solver createSolver(String day) {
-        String className = "adventofcode.year%s.%s%s".formatted(year,
-                Character.toUpperCase(day.charAt(0)), day.substring(1));
-        try {
-            return (Solver) Class.forName(className).getDeclaredConstructor().newInstance();
-        } catch (ReflectiveOperationException e) {
-            throw new RuntimeException("Cannot create solver for %s".formatted(className), e);
-        }
-    }
-
     private void solveAll() throws IOException {
         for (int d = 1; d < 26; d++) {
             var day = String.format("day%02d", d);
@@ -124,7 +93,37 @@ public class Main implements Callable<Integer> {
         }
     }
 
-    private static void solve(File input, Solver solver) throws IOException {
+    private void solveDay(String day) throws IOException {
+        String data = day.substring(0, 5);
+        Log.info("== Solving %s/%s ==", year, data);
+
+        var solver = createSolver(day);
+        if (solver == null) {
+            Log.warn("%s/%s | no solution implemented", year, day);
+            return;
+        }
+
+        solve(data, "test.txt", solver);
+        solve(data, "input.txt", createSolver(day));
+    }
+
+    private Solver createSolver(String day) {
+        try {
+            String className = "adventofcode.year%s.%s%s".formatted(year,
+                    Character.toUpperCase(day.charAt(0)), day.substring(1));
+            return (Solver) Class.forName(className).getDeclaredConstructor().newInstance();
+        } catch (ReflectiveOperationException e) {
+            return null;
+        }
+    }
+
+    private void solve(String puzzle, String filename, Solver solver) throws IOException {
+        var input = new File("%s/%s/%s/%s".formatted(inputsDir, year, puzzle, filename));
+        if (!input.exists()) {
+            Log.warn("%s/%s | missing file: %s", year, puzzle, filename);
+            return;
+        }
+
         String expectedPart1 = null;
         String expectedPart2 = null;
         var t0 = System.currentTimeMillis();
@@ -139,20 +138,30 @@ public class Main implements Callable<Integer> {
         }
         var result = solver.solve();
         var t1 = System.currentTimeMillis();
-        Log.info("File %s: %.3fsec", input, (t1 - t0) / 1000.0);
+        Log.info("%s/%s | %s solved in %.3fsec", year, puzzle, filename,
+                (t1 - t0) / 1000.0);
         if (result == null) {
-            Log.warn("==> No result given");
+            Log.warn("%s/%s | %s | no result returned?", year, puzzle, filename);
             return;
         }
-        if (Objects.equals(result.part1(), expectedPart1)) {
-            Log.info("PART 1 - found expected result: %s = %s".formatted(expectedPart1, result.part1()));
-        } else {
-            Log.error("ERROR - part 1 result is incorrect: expected %s, actual %s".formatted(expectedPart1, result.part1()));
-        }
+        verify(puzzle, filename, 1, expectedPart1, result.part1());
+        verify(puzzle, filename, 2, expectedPart2, result.part2());
         if (Objects.equals(result.part2(), expectedPart2)) {
             Log.info("PART 2 - found expected result: %s = %s".formatted(expectedPart2, result.part2()));
         } else {
             Log.error("ERROR - part 2 result is incorrect: expected %s, actual %s".formatted(expectedPart2, result.part2()));
+        }
+    }
+
+    private void verify(String puzzle, String filename, int part, String expected, String result) {
+        if (expected == null) {
+            return;
+        }
+        if (Objects.equals(result, expected)) {
+            Log.info("%s/%s | %s | RESULT PART %s - correct: %s", year, puzzle, filename, part, result);
+        } else {
+            Log.error("%s/%s | %s | RESULT PART %s - expected %s, actual %s", year, puzzle,
+                    filename, part, expected, result);
         }
     }
 }

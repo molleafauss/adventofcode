@@ -67,53 +67,42 @@ namespace adventofcode
 
                 if (settings.Day.Equals("all", StringComparison.OrdinalIgnoreCase))
                 {
-                    SolveAll(settings.InputDir, settings.Year);
+                    SolveAll(settings);
                 }
                 else
                 {
-                    SolveDay(settings.InputDir, settings.Year, settings.Day);
+                    SolveDay(settings, settings.Day);
                 }
                 
                 return 0;
             }
         }
 
-        private static void SolveAll(DirectoryInfo inputDir, string year)
+        private static void SolveAll(Settings settings)
         {
             foreach (var day in Enumerable.Range(1, 25))
             {
-                SolveDay(inputDir, year, $"day{day:D2}");
+                SolveDay(settings, $"day{day:D2}");
             }
         }
 
-        private static void SolveDay(DirectoryInfo inputDir, string year, string dayNum)
+        private static void SolveDay(Settings settings, string dayNum)
         {
-            Console.WriteLine($"== Solving {year} - {dayNum} ==");
-            var data = dayNum[..5];
+            var puzzle = dayNum[..5];
+            Log.Info($"== Solving {settings.Year}/{puzzle} ==");
 
-            var solver = CreateSolver(year, dayNum);
-            // test file
-            string testPath = Path.Combine(inputDir.FullName, year, data, "test.txt");
-            if (!File.Exists(testPath))
+            var solver = CreateSolver(settings.Year, dayNum);
+            if (solver == null)
             {
-                throw new Exception($"Test file missing: {testPath})");
+                Log.Warn($"{settings.Year}/{dayNum} | no solution implemented");
+                return;
             }
 
-            Solve(testPath, solver);
-
-            // re-create solver
-            solver = CreateSolver(year, dayNum);
-            // input file
-            string inputPath = Path.Combine(inputDir.FullName, year, data, "input.txt");
-            if (!File.Exists(inputPath))
-            {
-                throw new Exception($"Puzzle file missing: {inputPath})");
-            }
-
-            Solve(inputPath, solver);
+            Solve(settings, puzzle, "test.txt", solver);
+            Solve(settings, puzzle, "input.txt", CreateSolver(settings.Year, dayNum));
         }
 
-        private static ISolver CreateSolver(string year, string dayNum)
+        private static ISolver? CreateSolver(string year, string dayNum)
         {
             // Capitalize first character: "day03" -> "Day03"
             string fullName = $"adventofcode.year{year}.{char.ToUpper(dayNum[0])}{dayNum[1..]}";
@@ -122,20 +111,27 @@ namespace adventofcode
             Type? type = typeof(Program).Assembly.GetType(fullName, false, true);
             if (type == null)
             {
-                throw new ArgumentException($"Solver type not found: {fullName}");
+                return null;
             }
 
             if (!typeof(ISolver).IsAssignableFrom(type))
-                throw new Exception($"{fullName} does not implement ISolver");
+                return null;
             return (ISolver)Activator.CreateInstance(type)!;
         }
 
-        private static void Solve(string filePath, ISolver solver)
+        private static void Solve(Settings settings, string puzzle, string filePath, ISolver solver)
         {
+            // test file
+            string inputData = Path.Combine(settings.InputDir.FullName, settings.Year, puzzle, filePath);
+            if (!File.Exists(inputData))
+            {
+                Log.Warn($"{settings.Year}/{puzzle} | missing file: {filePath}");
+                return;
+            }
             string? expected1 = null;
             string? expected2 = null;
             var sw = Stopwatch.StartNew();
-            foreach (var l in File.ReadAllLines(filePath))
+            foreach (var l in File.ReadAllLines(inputData))
             {
                 if (l.StartsWith("result part 1:"))
                 {
@@ -153,18 +149,27 @@ namespace adventofcode
 
             var (part1, part2) = solver.Solve();
             sw.Stop();
-            Console.WriteLine($"{filePath} - solved in {PrintElapsed(sw.Elapsed)}");
+            Log.Info($"{settings.Year}/{puzzle} | {filePath} solved in {PrintElapsed(sw.Elapsed)}");
+            
+            verify(settings.Year, puzzle, filePath, 1, expected1, part1);
+            verify(settings.Year, puzzle, filePath, 2, expected2, part2);
+        }
 
+        private static void verify(string year, string puzzle, string filePath, int part, string? expected, string? result)
+        {
+            if (expected == null)
+            {
+                return;
+            }
 
-            if (part1 == expected1)
-                Console.WriteLine($"PART 1 - OK (expected {expected1})");
+            if (expected == result)
+            {
+                Log.Info($"{year}/{puzzle} | {filePath} | RESULT PART {part} - correct: {expected}");
+            }
             else
-                Console.WriteLine($"PART 1 - ERROR expected {expected1} actual {part1}");
-
-            if (part2 == expected2)
-                Console.WriteLine($"PART 2 - OK (expected {expected2})");
-            else
-                Console.WriteLine($"PART 2 - ERROR expected {expected2} actual {part2}");
+            {
+                Log.Error($"{year}/{puzzle} | {filePath} | RESULT PART {part} - expected {expected}, actual {result}");
+            }
         }
 
         private static string PrintElapsed(TimeSpan elapsed)
